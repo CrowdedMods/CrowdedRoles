@@ -70,6 +70,7 @@ namespace CrowdedRoles.Api.Patches
                     float scale = 1 - oddness * 0.1125f;
                     player.transform.localScale = player.NameText.transform.localScale = new Vector3(scale, scale, scale);
                     player.NameText.gameObject.SetActive(true);
+                    __instance.ImpostorText.Text = myRole.StartTip;
                 }
 
                 return false;

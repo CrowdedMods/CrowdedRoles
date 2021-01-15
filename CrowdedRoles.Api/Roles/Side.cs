@@ -1,6 +1,6 @@
 ﻿namespace CrowdedRoles.Api.Roles
 {
-    enum Side : byte
+    public enum Side : byte
     {
         Crewmate = 0,
         Impostor = 1,

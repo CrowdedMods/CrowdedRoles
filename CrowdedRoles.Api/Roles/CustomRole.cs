@@ -22,6 +22,7 @@ namespace CrowdedRoles.Api.Roles
         public bool AbleToKill = false;
         public string NameFormat = "{0}";
         public string StartTip = "Do nothing but [00FF00FF]kiss";
+        public Side Side = Side.Crewmate;
         public Visibility Visibility = Visibility.Myself;
 
         public CustomRole(string name, Color color = new Color())
