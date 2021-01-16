@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
+using CrowdedRoles.Api.Extensions;
 using HarmonyLib;
 using Hazel;
-using CrowdedRoles.Api.Game;
 using CrowdedRoles.Api.Roles;
 
 namespace CrowdedRoles.Api.Patches
@@ -13,7 +13,8 @@ namespace CrowdedRoles.Api.Patches
         {
             foreach(var id in players)
             {
-                PlayerManager.InitPlayer(id, RoleManager.GetRoleById(roleId));
+                var player = GameData.Instance.GetPlayerById(id);
+                player?.Object.InitRole(RoleManager.GetRoleById(roleId));
             }
         }
 

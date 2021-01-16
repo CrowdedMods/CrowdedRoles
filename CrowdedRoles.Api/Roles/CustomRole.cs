@@ -14,7 +14,7 @@ namespace CrowdedRoles.Api.Roles
                 !target.IsDead &&
                 !target.IsImpostor;
         }
-        private bool createdAmountOption = false;
+        private bool _createdAmountOption = false;
 
         public readonly string Name;
         public readonly Color Color;
@@ -33,14 +33,19 @@ namespace CrowdedRoles.Api.Roles
 
         public void CreateAmountOption()
         {
-            if(createdAmountOption)
+            if(_createdAmountOption)
             {
                 MainPlugin.Logger.LogWarning($"Role {Name} already has an amount option, ignoring");
                 return;
             }
-            createdAmountOption = true;
+            _createdAmountOption = true;
             // create option
             RoleManager.Limits[Id] = 0;
+        }
+
+        public bool Equals(CustomRole? other)
+        {
+            return Id == other?.Id;
         }
     }
 }

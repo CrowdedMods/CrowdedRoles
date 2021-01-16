@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 using CrowdedRoles.Api.Roles;
-using CrowdedRoles.Api.Game;
+using CrowdedRoles.Api.Extensions;
 
 namespace CrowdedRoles.Api.Patches
 {
@@ -27,7 +27,7 @@ namespace CrowdedRoles.Api.Patches
                 foreach((byte role, byte limit) in RoleManager.Limits)
                 {
                     if (limit == 0) continue; // fast skip
-                    var shuffledPlayers = goodPlayers.OrderBy(p => new Guid());
+                    var shuffledPlayers = goodPlayers.OrderBy(p => new Guid()).ToList();
                     goodPlayers = shuffledPlayers.Skip(limit).ToList();
                     
                     Rpc.RpcSelectCustomRole(role, shuffledPlayers.Take(limit).ToArray());
@@ -40,7 +40,7 @@ namespace CrowdedRoles.Api.Patches
         {
             private static bool Prefix(ref IntroCutscene __instance)
             {
-                var myRole = PlayerManager.GetRole(PlayerControl.LocalPlayer.PlayerId);
+                var myRole = PlayerControl.LocalPlayer.GetRole();
                 if (myRole == null)
                 {
                     return true;
@@ -48,7 +48,7 @@ namespace CrowdedRoles.Api.Patches
 
                 var myTeam = myRole.Visibility == Visibility.Myself ?
                     new List<PlayerControl>() { PlayerControl.LocalPlayer } : 
-                    PlayerManager.GetTeam(PlayerControl.LocalPlayer.PlayerId);
+                    PlayerControl.LocalPlayer.GetTeam();
 
                 for(var i = 0; i < myTeam.Count; i++)
                 {
@@ -82,23 +82,18 @@ namespace CrowdedRoles.Api.Patches
         {
             static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
             {
-                var role = PlayerManager.GetRole(data.PlayerId);
+                var role = data.Object.GetRole();
                 if(role != null)
                 {
                     bool flag = false;
                     var myId = PlayerControl.LocalPlayer.PlayerId;
-                    switch (role.Visibility)
+                    flag = role.Visibility switch
                     {
-                        case Visibility.Myself:
-                            flag = myId == data.PlayerId;
-                            break;
-                        case Visibility.Team:
-                            flag = PlayerManager.IsTeamedWith(myId, data.PlayerId);
-                            break;
-                        case Visibility.Everyone:
-                            flag = true;
-                            break;
-                    }
+                        Visibility.Myself => myId == data.PlayerId,
+                        Visibility.Team => PlayerControl.LocalPlayer.IsTeamedWith(data),
+                        Visibility.Everyone => true,
+                        _ => flag
+                    };
                     if(flag)
                     {
                         __result.NameText.Color = role.Color;
