@@ -18,7 +18,7 @@ namespace CrowdedRoles.Api.Patches
                 var goodPlayers = new List<byte>();
                 foreach(var p in GameData.Instance.AllPlayers)
                 {
-                    if(!p.Disconnected && !p.IsDead && !p.IsImpostor)
+                    if(!p.Disconnected && !p.IsImpostor)
                     {
                         goodPlayers.Add(p.PlayerId);
                     }
@@ -27,11 +27,10 @@ namespace CrowdedRoles.Api.Patches
                 foreach((byte role, byte limit) in RoleManager.Limits)
                 {
                     if (limit == 0) continue; // fast skip
-                    var luckers = goodPlayers
-                                    .OrderBy(p => new Guid()) // shuffle
-                                    .Take(limit)
-                                    .ToArray();
-                    Rpc.RpcSelectCustomRole(role, luckers);
+                    var shuffledPlayers = goodPlayers.OrderBy(p => new Guid());
+                    goodPlayers = shuffledPlayers.Skip(limit).ToList();
+                    
+                    Rpc.RpcSelectCustomRole(role, shuffledPlayers.Take(limit).ToArray());
                 }
             }
         }
