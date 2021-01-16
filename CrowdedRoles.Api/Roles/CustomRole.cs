@@ -14,11 +14,11 @@ namespace CrowdedRoles.Api.Roles
                 !target.IsDead &&
                 !target.IsImpostor;
         }
-        private bool _createdAmountOption = false;
+        private bool _createdAmountOption;
 
         public readonly string Name;
         public readonly Color Color;
-        public Func<PlayerControl, GameData.PlayerInfo, bool> KillFilter = new Func<PlayerControl, GameData.PlayerInfo, bool>(DefaultKillFilter);
+        public Func<PlayerControl, GameData.PlayerInfo, bool> KillFilter = DefaultKillFilter;
         public bool AbleToKill = false;
         public string NameFormat = "{0}";
         public string StartTip = "Do nothing but [00FF00FF]kiss";

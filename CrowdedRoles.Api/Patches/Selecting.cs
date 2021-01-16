@@ -77,27 +77,24 @@ namespace CrowdedRoles.Api.Patches
         }
 
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Method_7))]
-        [HarmonyPatch(new Type[] { typeof(GameData.PlayerInfo) })]
+        [HarmonyPatch(new[] { typeof(GameData.PlayerInfo) })]
         static class MeetingHud_CreateButton
         {
             static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
             {
                 var role = data.Object.GetRole();
-                if(role != null)
+                if (role == null) return;
+                
+                bool flag = role.Visibility switch
                 {
-                    bool flag = false;
-                    var myId = PlayerControl.LocalPlayer.PlayerId;
-                    flag = role.Visibility switch
-                    {
-                        Visibility.Myself => myId == data.PlayerId,
-                        Visibility.Team => PlayerControl.LocalPlayer.IsTeamedWith(data),
-                        Visibility.Everyone => true,
-                        _ => flag
-                    };
-                    if(flag)
-                    {
-                        __result.NameText.Color = role.Color;
-                    }
+                    Visibility.Myself => PlayerControl.LocalPlayer.PlayerId == data.PlayerId,
+                    Visibility.Team => PlayerControl.LocalPlayer.IsTeamedWith(data),
+                    Visibility.Everyone => true,
+                    _ => false
+                };
+                if(flag)
+                {
+                    __result.NameText.Color = role.Color;
                 }
             }
         }

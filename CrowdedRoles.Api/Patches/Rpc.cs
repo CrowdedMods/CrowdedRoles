@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using CrowdedRoles.Api.Extensions;
 using HarmonyLib;
 using Hazel;
@@ -31,7 +30,7 @@ namespace CrowdedRoles.Api.Patches
         }
 
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
-        [HarmonyPatch(new Type[] { typeof(byte), typeof(MessageReader) })]
+        [HarmonyPatch(new[] { typeof(byte), typeof(MessageReader) })]
         private static class PlayerControl_HandleRpc
         {
             static bool Prefix([HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
