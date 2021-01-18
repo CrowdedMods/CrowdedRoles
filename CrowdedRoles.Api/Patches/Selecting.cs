@@ -24,13 +24,15 @@ namespace CrowdedRoles.Api.Patches
                     }
                 }
 
-                foreach((byte role, byte limit) in RoleManager.Limits)
+                foreach((CustomRole role, byte limit) in RoleManager.Limits)
                 {
                     if (limit == 0) continue; // fast skip
-                    var shuffledPlayers = goodPlayers.OrderBy(p => new Guid()).ToList();
+                    if (role.PatchFilterFlags.HasFlag(PatchFilter.SelectInfected)) continue;
+                    
+                    List<byte> shuffledPlayers = goodPlayers.OrderBy(p => new Guid()).ToList();
                     goodPlayers = shuffledPlayers.Skip(limit).ToList();
                     
-                    Rpc.RpcSelectCustomRole(role, shuffledPlayers.Take(limit).ToArray());
+                    Rpc.RpcSelectCustomRole(role.Id, shuffledPlayers.Take(limit).ToArray());
                 }
             }
         }
@@ -40,14 +42,14 @@ namespace CrowdedRoles.Api.Patches
         {
             private static bool Prefix(ref IntroCutscene __instance)
             {
-                var myRole = PlayerControl.LocalPlayer.GetRole();
-                if (myRole == null)
+                CustomRole? myRole = PlayerControl.LocalPlayer.GetRole();
+                if (myRole == null || myRole.PatchFilterFlags.HasFlag(PatchFilter.IntroCutScene))
                 {
                     return true;
                 }
 
                 var myTeam = myRole.Visibility == Visibility.Myself ?
-                    new List<PlayerControl>() { PlayerControl.LocalPlayer } : 
+                    new List<PlayerControl> { PlayerControl.LocalPlayer } : 
                     PlayerControl.LocalPlayer.GetTeam();
 
                 for(var i = 0; i < myTeam.Count; i++)
@@ -65,7 +67,7 @@ namespace CrowdedRoles.Api.Patches
                     DestroyableSingleton<HatManager>.Instance.Method_4(player.SkinSlot, data.SkinId);
                     player.HatSlot.SetHat(data.HatId, data.ColorId);
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
-                    player.NameText.Text = string.Format(myRole.NameFormat, data.PlayerName);
+                    player.NameText.Text = myRole.NameFormat(player.NameText.Text);
                     float scale = 1 - oddness * 0.1125f;
                     player.transform.localScale = player.NameText.transform.localScale = new Vector3(scale, scale, scale);
                     player.NameText.gameObject.SetActive(true);
@@ -82,19 +84,16 @@ namespace CrowdedRoles.Api.Patches
         {
             static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
             {
-                var role = data.Object.GetRole();
-                if (role == null) return;
-                
-                bool flag = role.Visibility switch
+                CustomRole? role = data.Object.GetRole();
+                if (role == null || role.PatchFilterFlags.HasFlag(PatchFilter.MeetingHud))
                 {
-                    Visibility.Myself => PlayerControl.LocalPlayer.PlayerId == data.PlayerId,
-                    Visibility.Team => PlayerControl.LocalPlayer.IsTeamedWith(data),
-                    Visibility.Everyone => true,
-                    _ => false
-                };
-                if(flag)
+                    return;
+                }
+                
+                if(PlayerControl.LocalPlayer.CanSee(data.Object))
                 {
                     __result.NameText.Color = role.Color;
+                    __result.NameText.Text = role.NameFormat(__result.NameText.Text);
                 }
             }
         }

@@ -38,13 +38,9 @@ namespace CrowdedRoles.Api.Patches
                 switch((CustomRpcCalls)callId)
                 {
                     case CustomRpcCalls.SelectCustomRole:
-                        var numOfRoles = reader.ReadByte();
-                        for(var i = 0; i < numOfRoles; i++)
-                        {
-                            var roleId = reader.ReadByte();
-                            var players = reader.ReadBytesAndSize();
-                            RpcSelectCustomRole(roleId, players);
-                        }
+                        var roleId = reader.ReadByte();
+                        var players = reader.ReadBytesAndSize();
+                        RpcSelectCustomRole(roleId, players);
                         break;
                     case CustomRpcCalls.SyncCustomSettings:
                         var version = reader.ReadByte();

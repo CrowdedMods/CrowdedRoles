@@ -25,7 +25,7 @@ namespace CrowdedRoles.Api.Extensions
 
         public static bool IsTeamedWith(this PlayerControl me, GameData.PlayerInfo other)
         {
-            var myRole = me.GetRole();
+            CustomRole? myRole = me.GetRole();
             if(myRole == null)
             {
                 return me.Data.IsImpostor == other.IsImpostor;
@@ -38,13 +38,25 @@ namespace CrowdedRoles.Api.Extensions
             var result = new List<PlayerControl>();
             foreach(var p in PlayerControl.AllPlayerControls)
             {
-                if(player.IsTeamedWith(p.PlayerId))
+                if(p != null && player.IsTeamedWith(p.PlayerId))
                 {
                     result.Add(p);
                 }
             }
 
             return result;
+        }
+
+        public static bool CanSee(this PlayerControl me, PlayerControl whom)
+        {
+            Visibility? state = whom.GetRole()?.Visibility;
+            return state switch
+            {
+                Visibility.Myself => me.PlayerId == whom.PlayerId,
+                Visibility.Team => whom.IsTeamedWith(me.PlayerId),
+                Visibility.Everyone => true,
+                _ => false
+            };
         }
     }
 }
