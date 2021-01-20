@@ -67,10 +67,13 @@ namespace CrowdedRoles.Api.Patches
                     DestroyableSingleton<HatManager>.Instance.Method_4(player.SkinSlot, data.SkinId);
                     player.HatSlot.SetHat(data.HatId, data.ColorId);
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
-                    player.NameText.Text = myRole.NameFormat(player.NameText.Text);
                     float scale = 1 - oddness * 0.1125f;
                     player.transform.localScale = player.NameText.transform.localScale = new Vector3(scale, scale, scale);
-                    player.NameText.gameObject.SetActive(true);
+                    player.NameText.Text = myRole.NameFormat(player.NameText.Text);
+                    if (myTeam.Count > 1 && myRole.Visibility != Visibility.Everyone)
+                    {
+                        player.NameText.gameObject.SetActive(true);
+                    }
                     __instance.ImpostorText.Text = myRole.StartTip;
                 }
 
