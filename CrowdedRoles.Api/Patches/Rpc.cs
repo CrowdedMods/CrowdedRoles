@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using CrowdedRoles.Api.Extensions;
 using HarmonyLib;
 using Hazel;
-using CrowdedRoles.Api.Game;
 using CrowdedRoles.Api.Roles;
 
 namespace CrowdedRoles.Api.Patches
@@ -13,7 +12,8 @@ namespace CrowdedRoles.Api.Patches
         {
             foreach(var id in players)
             {
-                PlayerManager.InitPlayer(id, RoleManager.GetRoleById(roleId));
+                var player = GameData.Instance.GetPlayerById(id);
+                player?.Object.InitRole(RoleManager.GetRoleById(roleId));
             }
         }
 
@@ -30,7 +30,7 @@ namespace CrowdedRoles.Api.Patches
         }
 
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
-        [HarmonyPatch(new Type[] { typeof(byte), typeof(MessageReader) })]
+        [HarmonyPatch(new[] { typeof(byte), typeof(MessageReader) })]
         private static class PlayerControl_HandleRpc
         {
             static bool Prefix([HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
@@ -38,13 +38,9 @@ namespace CrowdedRoles.Api.Patches
                 switch((CustomRpcCalls)callId)
                 {
                     case CustomRpcCalls.SelectCustomRole:
-                        var numOfRoles = reader.ReadByte();
-                        for(var i = 0; i < numOfRoles; i++)
-                        {
-                            var roleId = reader.ReadByte();
-                            var players = reader.ReadBytesAndSize();
-                            RpcSelectCustomRole(roleId, players);
-                        }
+                        var roleId = reader.ReadByte();
+                        var players = reader.ReadBytesAndSize();
+                        RpcSelectCustomRole(roleId, players);
                         break;
                     case CustomRpcCalls.SyncCustomSettings:
                         var version = reader.ReadByte();

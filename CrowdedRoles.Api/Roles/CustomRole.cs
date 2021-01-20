@@ -14,16 +14,16 @@ namespace CrowdedRoles.Api.Roles
                 !target.IsDead &&
                 !target.IsImpostor;
         }
-        private bool createdAmountOption = false;
 
         public readonly string Name;
         public readonly Color Color;
-        public Func<PlayerControl, GameData.PlayerInfo, bool> KillFilter = new Func<PlayerControl, GameData.PlayerInfo, bool>(DefaultKillFilter);
+        public Func<PlayerControl, GameData.PlayerInfo, bool> KillFilter = DefaultKillFilter;
         public bool AbleToKill = false;
-        public string NameFormat = "{0}";
+        public Func<string, string> NameFormat = s => s;
         public string StartTip = "Do nothing but [00FF00FF]kiss";
         public Side Side = Side.Crewmate;
         public Visibility Visibility = Visibility.Myself;
+        public PatchFilter PatchFilterFlags = 0;
 
         public CustomRole(string name, Color color = new Color())
         {
@@ -31,16 +31,9 @@ namespace CrowdedRoles.Api.Roles
             Color = color;
         }
 
-        public void CreateAmountOption()
+        public bool Equals(CustomRole? other)
         {
-            if(createdAmountOption)
-            {
-                MainPlugin.Logger.LogWarning($"Role {Name} already has an amount option, ignoring");
-                return;
-            }
-            createdAmountOption = true;
-            // create option
-            RoleManager.Limits[Id] = 0;
+            return Id == other?.Id;
         }
     }
 }
