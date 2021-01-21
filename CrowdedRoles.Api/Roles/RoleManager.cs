@@ -8,11 +8,6 @@ namespace CrowdedRoles.Api.Roles
        
         public static readonly Dictionary<byte, BaseRole> PlayerRoles = new();
         public static readonly Dictionary<string, Dictionary<byte, BaseRole>> Roles = new();
-        
-        public static void AddRole(BaseRole role)
-        {
-            
-        }
 
         public static BaseRole? GetRoleByData(RoleData data)
         {

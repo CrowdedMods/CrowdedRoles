@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using CrowdedRoles.Api.Extensions;
 using HarmonyLib;
 using Hazel;
@@ -8,11 +9,11 @@ namespace CrowdedRoles.Api.Patches
 {
     internal static class Rpc
     {
-        private static void SelectCustomRole(RoleData data, byte[] players)
+        private static void SelectCustomRole(RoleData data, IEnumerable<byte> players)
         {
             foreach(var id in players)
             {
-                var player = GameData.Instance.GetPlayerById(id);
+                GameData.PlayerInfo? player = GameData.Instance.GetPlayerById(id);
                 player?.Object.InitRole(RoleManager.GetRoleByData(data));
             }
         }
@@ -23,7 +24,7 @@ namespace CrowdedRoles.Api.Patches
             {
                 SelectCustomRole(data, players);
             }
-            var writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRpcCalls.SelectCustomRole, SendOption.Reliable);
+            MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRpcCalls.SelectCustomRole, SendOption.Reliable);
             writer.Write(data);
             writer.Write(players.ToArray());
             writer.EndMessage();

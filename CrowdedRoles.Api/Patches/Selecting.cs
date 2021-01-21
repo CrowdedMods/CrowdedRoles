@@ -8,7 +8,7 @@ using CrowdedRoles.Api.Extensions;
 
 namespace CrowdedRoles.Api.Patches
 {
-    static class Selecting
+    internal static class Selecting
     {
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.SelectInfected))]
         private static class ShipStatus_SelectInfected
@@ -29,7 +29,7 @@ namespace CrowdedRoles.Api.Patches
                     if (limit == 0) continue; // fast skip
                     if (role.PatchFilterFlags.HasFlag(PatchFilter.SelectInfected)) continue;
                     
-                    List<byte> shuffledPlayers = goodPlayers.OrderBy(p => new Guid()).ToList();
+                    List<byte> shuffledPlayers = goodPlayers.OrderBy(_ => new Guid()).ToList();
                     goodPlayers = shuffledPlayers.Skip(limit).ToList();
                     
                     Rpc.RpcSelectCustomRole(role.Data, shuffledPlayers.Take(limit).ToArray());
@@ -42,23 +42,23 @@ namespace CrowdedRoles.Api.Patches
         {
             private static bool Prefix(ref IntroCutscene __instance)
             {
-                var myRole = PlayerControl.LocalPlayer.GetRole();
+                BaseRole? myRole = PlayerControl.LocalPlayer.GetRole();
                 if (myRole == null || myRole.PatchFilterFlags.HasFlag(PatchFilter.IntroCutScene))
                 {
                     return true;
                 }
 
-                var myTeam = myRole.Visibility == Visibility.Myself ?
+                List<PlayerControl> myTeam = myRole.Visibility == Visibility.Myself ?
                     new List<PlayerControl> { PlayerControl.LocalPlayer } : 
                     PlayerControl.LocalPlayer.GetTeam();
 
                 for(var i = 0; i < myTeam.Count; i++)
                 {
-                    var data = myTeam[i].Data;
+                    GameData.PlayerInfo data = myTeam[i].Data;
                     int oddness = (i + 1) / 2;
                     PoolablePlayer player = UnityEngine.Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
                     player.transform.position = new Vector3(
-                        oddness * ((i % 2 == 0) ? -1 : 1) * (1 - oddness*0.035f),
+                        oddness * (i % 2 == 0 ? -1 : 1) * (1 - oddness*0.035f),
                         __instance.BaseY + oddness * 0.15f,
                         (i == 0 ? -8 : -1) + oddness * 0.01f
                     ) * 1.5f;
@@ -87,7 +87,7 @@ namespace CrowdedRoles.Api.Patches
         {
             static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
             {
-                var role = data.Object.GetRole();
+                BaseRole? role = data.Object.GetRole();
                 if (role == null || role.PatchFilterFlags.HasFlag(PatchFilter.MeetingHud))
                 {
                     return;

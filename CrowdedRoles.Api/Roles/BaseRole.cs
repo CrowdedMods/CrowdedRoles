@@ -27,7 +27,7 @@ namespace CrowdedRoles.Api.Roles
                 RoleManager.Roles.Add(guid, new Dictionary<byte, BaseRole>());
             }
 
-            var localRoles = RoleManager.Roles[guid]!;
+            Dictionary<byte, BaseRole> localRoles = RoleManager.Roles[guid]!;
             Data = new RoleData(guid, (byte)localRoles.Count);
             
             localRoles.Add((byte)localRoles.Count, this);
@@ -56,7 +56,7 @@ namespace CrowdedRoles.Api.Roles
         public override bool Equals(object? obj)
         {
             return ReferenceEquals(this, obj) &&
-                   obj.GetType() == this.GetType() && 
+                   obj.GetType() == GetType() && 
                    Equals((BaseRole) obj);
         }
 

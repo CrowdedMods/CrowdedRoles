@@ -40,7 +40,7 @@ namespace CrowdedRoles.Api.Roles
         public override bool Equals(object? obj)
         {
             return ReferenceEquals(this, obj) &&
-                   obj.GetType() == this.GetType() &&
+                   obj.GetType() == GetType() &&
                    Equals((RoleData) obj);
         }
 
