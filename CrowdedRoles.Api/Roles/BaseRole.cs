@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BepInEx;
 using BepInEx.IL2CPP;
-using CrowdedRoles.Api.Extensions;
-using Hazel;
 using UnityEngine;
 
 namespace CrowdedRoles.Api.Roles
@@ -49,8 +46,8 @@ namespace CrowdedRoles.Api.Roles
                    !target.IsImpostor;
         }
 
-        public static bool operator ==(BaseRole me, BaseRole? other) => me.Data == other?.Data;
-        public static bool operator !=(BaseRole me, BaseRole? other) => me.Data != other?.Data;
+        public static bool operator ==(BaseRole? me, BaseRole? other) => me?.Data == other?.Data;
+        public static bool operator !=(BaseRole? me, BaseRole? other) => me?.Data != other?.Data;
         private bool Equals(BaseRole other)
         {
             return Data.Equals(other.Data);
