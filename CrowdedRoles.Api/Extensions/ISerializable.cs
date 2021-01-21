@@ -1,14 +1,10 @@
-﻿using System;
-using Hazel;
+﻿using Hazel;
 
 namespace CrowdedRoles.Api.Extensions
 {
-    public interface ISerializable
+    public interface ISerializable<out T> where T : ISerializable<T>
     {
-        public static ISerializable Deserialize(MessageReader reader)
-        {
-            throw new NotImplementedException();
-        }
-        public void Serialize(MessageWriter writer);
+        void Serialize(MessageWriter writer);
+        T Deserialize (MessageReader reader);
     }
 }
