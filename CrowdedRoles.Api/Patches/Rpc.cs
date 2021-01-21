@@ -6,25 +6,25 @@ using CrowdedRoles.Api.Roles;
 
 namespace CrowdedRoles.Api.Patches
 {
-    public static class Rpc
+    internal static class Rpc
     {
-        private static void SelectCustomRole(byte roleId, byte[] players)
+        private static void SelectCustomRole(RoleData data, byte[] players)
         {
             foreach(var id in players)
             {
                 var player = GameData.Instance.GetPlayerById(id);
-                player?.Object.InitRole(RoleManager.GetRoleById(roleId));
+                player?.Object.InitRole(RoleManager.GetRoleByData(data));
             }
         }
 
-        public static void RpcSelectCustomRole(byte roleId, byte[] players)
+        public static void RpcSelectCustomRole(RoleData data, byte[] players)
         {
             if(AmongUsClient.Instance.AmClient)
             {
-                SelectCustomRole(roleId, players);
+                SelectCustomRole(data, players);
             }
             var writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRpcCalls.SelectCustomRole, SendOption.Reliable);
-            writer.Write(roleId);
+            writer.Write(data);
             writer.Write(players.ToArray());
             writer.EndMessage();
         }
@@ -38,9 +38,9 @@ namespace CrowdedRoles.Api.Patches
                 switch((CustomRpcCalls)callId)
                 {
                     case CustomRpcCalls.SelectCustomRole:
-                        var roleId = reader.ReadByte();
+                        var data = reader.Read<RoleData>();
                         var players = reader.ReadBytesAndSize();
-                        RpcSelectCustomRole(roleId, players);
+                        SelectCustomRole(data, players);
                         break;
                     case CustomRpcCalls.SyncCustomSettings:
                         var version = reader.ReadByte();

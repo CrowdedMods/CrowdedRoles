@@ -24,7 +24,7 @@ namespace CrowdedRoles.Api.Patches
                     }
                 }
 
-                foreach((CustomRole role, byte limit) in RoleManager.Limits)
+                foreach((BaseRole role, byte limit) in RoleManager.Limits)
                 {
                     if (limit == 0) continue; // fast skip
                     if (role.PatchFilterFlags.HasFlag(PatchFilter.SelectInfected)) continue;
@@ -32,7 +32,7 @@ namespace CrowdedRoles.Api.Patches
                     List<byte> shuffledPlayers = goodPlayers.OrderBy(p => new Guid()).ToList();
                     goodPlayers = shuffledPlayers.Skip(limit).ToList();
                     
-                    Rpc.RpcSelectCustomRole(role.Id, shuffledPlayers.Take(limit).ToArray());
+                    Rpc.RpcSelectCustomRole(role.Data, shuffledPlayers.Take(limit).ToArray());
                 }
             }
         }
@@ -42,7 +42,7 @@ namespace CrowdedRoles.Api.Patches
         {
             private static bool Prefix(ref IntroCutscene __instance)
             {
-                CustomRole? myRole = PlayerControl.LocalPlayer.GetRole();
+                var myRole = PlayerControl.LocalPlayer.GetRole();
                 if (myRole == null || myRole.PatchFilterFlags.HasFlag(PatchFilter.IntroCutScene))
                 {
                     return true;
@@ -69,7 +69,7 @@ namespace CrowdedRoles.Api.Patches
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
                     float scale = 1 - oddness * 0.1125f;
                     player.transform.localScale = player.NameText.transform.localScale = new Vector3(scale, scale, scale);
-                    player.NameText.Text = myRole.NameFormat(player.NameText.Text);
+                    player.NameText.Text = myRole.FormatName(player.NameText.Text);
                     if (myTeam.Count > 1 && myRole.Visibility != Visibility.Everyone)
                     {
                         player.NameText.gameObject.SetActive(true);
@@ -87,7 +87,7 @@ namespace CrowdedRoles.Api.Patches
         {
             static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
             {
-                CustomRole? role = data.Object.GetRole();
+                var role = data.Object.GetRole();
                 if (role == null || role.PatchFilterFlags.HasFlag(PatchFilter.MeetingHud))
                 {
                     return;
@@ -96,7 +96,7 @@ namespace CrowdedRoles.Api.Patches
                 if(PlayerControl.LocalPlayer.CanSee(data.Object))
                 {
                     __result.NameText.Color = role.Color;
-                    __result.NameText.Text = role.NameFormat(__result.NameText.Text);
+                    __result.NameText.Text = role.FormatName(__result.NameText.Text);
                 }
             }
         }

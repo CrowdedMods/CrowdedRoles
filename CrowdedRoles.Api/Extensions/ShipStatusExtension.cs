@@ -1,4 +1,4 @@
-﻿
+﻿using CrowdedRoles.Api.Roles;
 
 namespace CrowdedRoles.Api.Extensions
 {
@@ -6,7 +6,7 @@ namespace CrowdedRoles.Api.Extensions
     {
         public static void GameEnded(this ShipStatus _)
         {
-            PlayerControlExtension.PlayerRoles.Clear();
+            RoleManager.PlayerRoles.Clear();
         }
     }
 }

@@ -1,23 +1,39 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CrowdedRoles.Api.Roles;
 
 namespace CrowdedRoles.Api.Extensions
 {
     public static class PlayerControlExtension
     {
-        internal static readonly Dictionary<byte, CustomRole> PlayerRoles = new Dictionary<byte, CustomRole>();
-
-        public static void InitRole(this PlayerControl player, CustomRole? role = null)
+        public static void InitRole(this PlayerControl player, BaseRole? role = null)
         {
-            if (role != null)
+            if (role is null) return;
+            try
             {
-                PlayerRoles.Add(player.PlayerId, role);
+                RoleManager.PlayerRoles.Add(player.PlayerId, role);
+            }
+            catch(ArgumentException)
+            {
+                MainPlugin.Logger.LogWarning($"{role.Name} already exists in {nameof(RoleManager.PlayerRoles)}, redefining...");
+                RoleManager.PlayerRoles[player.PlayerId] = role;
             }
         }
 
-        public static CustomRole? GetRole(this PlayerControl player)
+        public static BaseRole? GetRole(this PlayerControl player)
         {
-            return PlayerRoles.GetValueOrDefault(player.PlayerId);
+            return RoleManager.PlayerRoles.GetValueOrDefault(player.PlayerId);
+        }
+
+        public static T? GetRole<T>(this PlayerControl player) where T : BaseRole
+        {
+            BaseRole? baseRole = player.GetRole();
+            return baseRole is T role ? role : null;
+        }
+
+        public static bool Is<T>(this PlayerControl player) where T : BaseRole
+        {
+            return player.GetRole<T>() != null;
         }
 
         public static bool IsTeamedWith(this PlayerControl me, byte other) 
@@ -25,7 +41,7 @@ namespace CrowdedRoles.Api.Extensions
 
         public static bool IsTeamedWith(this PlayerControl me, GameData.PlayerInfo other)
         {
-            CustomRole? myRole = me.GetRole();
+            var myRole = me.GetRole();
             if(myRole == null)
             {
                 return me.Data.IsImpostor == other.IsImpostor;
