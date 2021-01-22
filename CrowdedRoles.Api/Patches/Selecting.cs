@@ -8,7 +8,7 @@ using CrowdedRoles.Api.Extensions;
 
 namespace CrowdedRoles.Api.Patches
 {
-    static class Selecting
+    internal static class Selecting
     {
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.SelectInfected))]
         private static class ShipStatus_SelectInfected
@@ -24,15 +24,15 @@ namespace CrowdedRoles.Api.Patches
                     }
                 }
 
-                foreach((CustomRole role, byte limit) in RoleManager.Limits)
+                foreach((BaseRole role, byte limit) in RoleManager.Limits)
                 {
                     if (limit == 0) continue; // fast skip
                     if (role.PatchFilterFlags.HasFlag(PatchFilter.SelectInfected)) continue;
                     
-                    List<byte> shuffledPlayers = goodPlayers.OrderBy(p => new Guid()).ToList();
+                    List<byte> shuffledPlayers = goodPlayers.OrderBy(_ => new Guid()).ToList();
                     goodPlayers = shuffledPlayers.Skip(limit).ToList();
                     
-                    Rpc.RpcSelectCustomRole(role.Id, shuffledPlayers.Take(limit).ToArray());
+                    Rpc.RpcSelectCustomRole(role.Data, shuffledPlayers.Take(limit).ToArray());
                 }
             }
         }
@@ -42,23 +42,23 @@ namespace CrowdedRoles.Api.Patches
         {
             private static bool Prefix(ref IntroCutscene __instance)
             {
-                CustomRole? myRole = PlayerControl.LocalPlayer.GetRole();
+                BaseRole? myRole = PlayerControl.LocalPlayer.GetRole();
                 if (myRole == null || myRole.PatchFilterFlags.HasFlag(PatchFilter.IntroCutScene))
                 {
                     return true;
                 }
 
-                var myTeam = myRole.Visibility == Visibility.Myself ?
+                List<PlayerControl> myTeam = myRole.Visibility == Visibility.Myself ?
                     new List<PlayerControl> { PlayerControl.LocalPlayer } : 
                     PlayerControl.LocalPlayer.GetTeam();
 
                 for(var i = 0; i < myTeam.Count; i++)
                 {
-                    var data = myTeam[i].Data;
+                    GameData.PlayerInfo data = myTeam[i].Data;
                     int oddness = (i + 1) / 2;
                     PoolablePlayer player = UnityEngine.Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
                     player.transform.position = new Vector3(
-                        oddness * ((i % 2 == 0) ? -1 : 1) * (1 - oddness*0.035f),
+                        oddness * (i % 2 == 0 ? -1 : 1) * (1 - oddness*0.035f),
                         __instance.BaseY + oddness * 0.15f,
                         (i == 0 ? -8 : -1) + oddness * 0.01f
                     ) * 1.5f;
@@ -67,10 +67,13 @@ namespace CrowdedRoles.Api.Patches
                     DestroyableSingleton<HatManager>.Instance.Method_4(player.SkinSlot, data.SkinId);
                     player.HatSlot.SetHat(data.HatId, data.ColorId);
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
-                    player.NameText.Text = myRole.NameFormat(player.NameText.Text);
                     float scale = 1 - oddness * 0.1125f;
                     player.transform.localScale = player.NameText.transform.localScale = new Vector3(scale, scale, scale);
-                    player.NameText.gameObject.SetActive(true);
+                    player.NameText.Text = myRole.FormatName(player.NameText.Text);
+                    if (myTeam.Count > 1 && myRole.Visibility != Visibility.Everyone)
+                    {
+                        player.NameText.gameObject.SetActive(true);
+                    }
                     __instance.ImpostorText.Text = myRole.StartTip;
                 }
 
@@ -84,7 +87,7 @@ namespace CrowdedRoles.Api.Patches
         {
             static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
             {
-                CustomRole? role = data.Object.GetRole();
+                BaseRole? role = data.Object.GetRole();
                 if (role == null || role.PatchFilterFlags.HasFlag(PatchFilter.MeetingHud))
                 {
                     return;
@@ -93,7 +96,7 @@ namespace CrowdedRoles.Api.Patches
                 if(PlayerControl.LocalPlayer.CanSee(data.Object))
                 {
                     __result.NameText.Color = role.Color;
-                    __result.NameText.Text = role.NameFormat(__result.NameText.Text);
+                    __result.NameText.Text = role.FormatName(__result.NameText.Text);
                 }
             }
         }

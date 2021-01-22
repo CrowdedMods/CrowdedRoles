@@ -14,11 +14,12 @@
     <Nullable>enable</Nullable>
     <Company>CrowdedMods</Company>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Deobfuscate Include="$(AmongUs)\BepInEx\plugins\Reactor-$(GameVersion).dll" />
-    <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.2.2" />
+    <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.2.4" />
   </ItemGroup>
 
   <Target Name="Copy" AfterTargets="Reobfuscate">

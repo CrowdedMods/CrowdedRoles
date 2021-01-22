@@ -2,21 +2,16 @@
 
 namespace CrowdedRoles.Api.Roles
 {
-    public static class RoleManager
+    internal static class RoleManager
     {
-        private static readonly Dictionary<byte, CustomRole?> _roles = new Dictionary<byte, CustomRole?>();
-        internal static readonly Dictionary<CustomRole, byte> Limits = new Dictionary<CustomRole, byte>();
+        public static readonly Dictionary<BaseRole, byte> Limits = new();
+       
+        public static readonly Dictionary<byte, BaseRole> PlayerRoles = new();
+        public static readonly Dictionary<string, Dictionary<byte, BaseRole>> Roles = new();
 
-        public static void AddRole(CustomRole role)
+        public static BaseRole? GetRoleByData(RoleData data)
         {
-            role.Id = (byte)_roles.Count;
-            _roles.Add(role.Id, role);
-            Limits.Add(role, 0);
-        }
-
-        public static CustomRole? GetRoleById(byte roleId)
-        {
-            return _roles.GetValueOrDefault(roleId);
+            return Roles[data.pluginId]?[data.localId];
         }
     }
 }
