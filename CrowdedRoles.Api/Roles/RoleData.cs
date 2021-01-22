@@ -4,7 +4,7 @@ using Hazel;
 
 namespace CrowdedRoles.Api.Roles
 {
-    internal class RoleData : ISerializable<RoleData>
+    public class RoleData : ISerializable<RoleData>
     {
         public readonly string pluginId;
         public readonly byte localId;
