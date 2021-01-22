@@ -21,33 +21,19 @@ namespace CrowdedRoles.Api.Extensions
         }
 
         public static BaseRole? GetRole(this PlayerControl player)
-        {
-            return RoleManager.PlayerRoles.GetValueOrDefault(player.PlayerId);
-        }
+            => RoleManager.PlayerRoles.GetValueOrDefault(player.PlayerId);
 
         public static T? GetRole<T>(this PlayerControl player) where T : BaseRole
-        {
-            BaseRole? baseRole = player.GetRole();
-            return baseRole is T role ? role : null;
-        }
+            => player.GetRole() as T;
 
         public static bool Is<T>(this PlayerControl player) where T : BaseRole
-        {
-            return player.GetRole<T>() != null;
-        }
+            => player.GetRole<T>() is not null;
 
         public static bool IsTeamedWith(this PlayerControl me, byte other) 
-            => me.IsTeamedWith(GameData.Instance.GetPlayerById(other));
+            => me.IsTeamedWith(GameData.Instance!.GetPlayerById(other)!);
 
         public static bool IsTeamedWith(this PlayerControl me, GameData.PlayerInfo other)
-        {
-            var myRole = me.GetRole();
-            if(myRole == null)
-            {
-                return me.Data.IsImpostor == other.IsImpostor;
-            }
-            return myRole.Equals(other.Object.GetRole());
-        }
+            => me.GetRole()?.Equals(other.Object.GetRole()) ?? me.Data.IsImpostor == other.IsImpostor;
         
         public static List<PlayerControl> GetTeam(this PlayerControl player)
         {
@@ -65,8 +51,7 @@ namespace CrowdedRoles.Api.Extensions
 
         public static bool CanSee(this PlayerControl me, PlayerControl whom)
         {
-            Visibility? state = whom.GetRole()?.Visibility;
-            return state switch
+            return whom.GetRole()?.Visibility switch
             {
                 Visibility.Myself => me.PlayerId == whom.PlayerId,
                 Visibility.Team => whom.IsTeamedWith(me.PlayerId),
