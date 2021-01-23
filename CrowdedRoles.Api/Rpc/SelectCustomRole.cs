@@ -1,5 +1,4 @@
-﻿using System;
-using CrowdedRoles.Api.Extensions;
+﻿using CrowdedRoles.Api.Extensions;
 using CrowdedRoles.Api.Roles;
 using Hazel;
 using Reactor;
