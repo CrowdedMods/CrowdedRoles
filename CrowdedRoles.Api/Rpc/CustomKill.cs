@@ -1,4 +1,5 @@
 ﻿using System;
+using CrowdedRoles.Api.Extensions;
 using Hazel;
 using Reactor;
 
@@ -11,7 +12,6 @@ namespace CrowdedRoles.Api.Rpc
 
         public class Data
         {
-            public byte killer;
             public byte target;
             public bool noSnap = true;
         }
@@ -20,21 +20,22 @@ namespace CrowdedRoles.Api.Rpc
         
         public override void Write(MessageWriter writer, Data data)
         {
-            writer.Write(data.killer);
             writer.Write(data.target);
             writer.Write(data.noSnap);
         }
 
         public override Data Read(MessageReader reader) => new()
         {
-            killer = reader.ReadByte(),
             target = reader.ReadByte(),
             noSnap = reader.ReadBoolean()
         };
 
-        public override void Handle(PlayerControl innerNetObject, Data data)
+        public override void Handle(PlayerControl sender, Data data)
         {
-            throw new NotImplementedException();
+            sender.CustomMurderPlayer(
+                GameData.Instance.GetPlayerById(data.target)?.Object, 
+                data.noSnap
+            );
         }
     }
 }
