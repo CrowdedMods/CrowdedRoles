@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CrowdedRoles.Api.Roles;
 
-namespace CrowdedRoles.Api.Roles
+namespace CrowdedRoles.Api.Managers
 {
     internal static class RoleManager
     {

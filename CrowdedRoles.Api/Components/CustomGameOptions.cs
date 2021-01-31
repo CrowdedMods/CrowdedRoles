@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using CrowdedRoles.Api.Managers;
 using CrowdedRoles.Api.Roles;
 using Reactor;
 using Reactor.Extensions;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BepInEx;
 using BepInEx.IL2CPP;
+using CrowdedRoles.Api.Managers;
 using UnityEngine;
 
 namespace CrowdedRoles.Api.Roles
