@@ -19,6 +19,9 @@ namespace CrowdedRoles.Api
 
         public override void Load()
         {
+            RegisterCustomRpcAttribute.Register(this);
+            RegisterInIl2CppAttribute.Register();
+            
             Harmony.PatchAll();
             Logger = Log;
         }
