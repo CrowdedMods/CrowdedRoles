@@ -8,10 +8,11 @@ namespace CrowdedRoles.Api
 {
     [BepInPlugin(Id)]
     [BepInDependency(ReactorPlugin.Id)]
+    [ReactorPluginSide(PluginSide.ClientOnly)]
     public class MainPlugin : BasePlugin
     {
         private const string Id = "ru.galster.CrowdedRoles.Api";
-        internal Harmony Harmony { get; } = new(Id);
+        private Harmony Harmony { get; } = new(Id);
 #pragma warning disable CS8618
         public static ManualLogSource Logger { get; private set; }
 #pragma warning restore CS8618

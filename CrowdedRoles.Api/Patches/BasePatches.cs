@@ -5,10 +5,12 @@ using HarmonyLib;
 using UnityEngine;
 using CrowdedRoles.Api.Roles;
 using CrowdedRoles.Api.Extensions;
+using CrowdedRoles.Api.Rpc;
+using Reactor.Extensions;
 
 namespace CrowdedRoles.Api.Patches
 {
-    internal static class Selecting
+    internal static class BasePatches
     {
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.SelectInfected))]
         private static class ShipStatus_SelectInfected
@@ -32,7 +34,12 @@ namespace CrowdedRoles.Api.Patches
                     List<byte> shuffledPlayers = goodPlayers.OrderBy(_ => new Guid()).ToList();
                     goodPlayers = shuffledPlayers.Skip(limit).ToList();
                     
-                    Rpc.RpcSelectCustomRole(role.Data, shuffledPlayers.Take(limit).ToArray());
+                    PlayerControl.LocalPlayer.Send<SelectCustomRole>(
+                        new SelectCustomRole.Data {
+                            role = role.Data, 
+                            holders = shuffledPlayers.Take(limit).ToArray()
+                        }
+                    );
                 }
             }
         }
