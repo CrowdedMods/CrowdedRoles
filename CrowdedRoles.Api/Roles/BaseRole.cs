@@ -33,10 +33,10 @@ namespace CrowdedRoles.Api.Roles
             localRoles.Add((byte)localRoles.Count, this);
             RoleManager.Limits.Add(this, 0);
         }
-        public virtual string FormatName(string name)
-        {
-            return name;
-        }
+
+        public virtual string FormatName(string name) => name;
+
+        public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target) => true;
 
         public virtual bool KillFilter(PlayerControl me, GameData.PlayerInfo target)
         {

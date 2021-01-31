@@ -75,7 +75,10 @@ namespace CrowdedRoles.Api.Extensions
             };
         }
 
-        public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl? target, bool noSnap = false)
+        public static void ForceCustomMurderPlayer(this PlayerControl killer, PlayerControl? target, bool noSnap = false)
+            => killer.CustomMurderPlayer(target, noSnap, true);
+        
+        public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl? target, bool noSnap = false, bool force = false)
         {
             #region Checks
 
@@ -85,10 +88,27 @@ namespace CrowdedRoles.Api.Extensions
                 return;
             }
 
-            if (target is null || killer.Data.IsDead || killer.GetRole() is null || killer.GetRole()!.AbleToKill || killer.Data.Disconnected)
+            BaseRole? role = killer.GetRole();
+            if (target is null || role is null)
             {
                 // ReSharper disable once Unity.NoNullPropagation
-                MainPlugin.Logger.LogWarning($"Not allowed kill by {killer.PlayerId} to {target?.PlayerId ?? -1}");
+                MainPlugin.Logger.LogWarning($"Null kill ({killer.PlayerId} -> {target?.PlayerId ?? -1})");
+                return;
+            }
+            
+            if(killer.Data.IsDead || killer.Data.Disconnected )
+            {
+                if (!force)
+                {
+                    MainPlugin.Logger.LogWarning($"Not allowed kill ({killer.PlayerId} -> {target.PlayerId})");
+                    return;
+                }
+                MainPlugin.Logger.LogDebug($"Forced bad kill ({killer.PlayerId} -> {target.PlayerId})");
+            }
+
+            if (!force && !role.PreKill(ref killer, ref target))
+            {
+                MainPlugin.Logger.LogDebug($"Custom kill ({killer.PlayerId} -> {target.PlayerId}) is cancelled by a plugin");
                 return;
             }
 
