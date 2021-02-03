@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using CrowdedRoles.Api.Managers;
 using CrowdedRoles.Api.Roles;
 using CrowdedRoles.Api.Rpc;
 using Reactor;

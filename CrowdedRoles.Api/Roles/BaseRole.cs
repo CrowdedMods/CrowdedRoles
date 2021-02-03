@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using BepInEx;
 using BepInEx.IL2CPP;
-using CrowdedRoles.Api.Managers;
 using UnityEngine;
 
 namespace CrowdedRoles.Api.Roles
@@ -28,13 +27,14 @@ namespace CrowdedRoles.Api.Roles
                 RoleManager.Roles.Add(guid, new Dictionary<byte, BaseRole>());
             }
 
-            Dictionary<byte, BaseRole> localRoles = RoleManager.Roles[guid]!;
+            Dictionary<byte, BaseRole> localRoles = RoleManager.Roles[guid];
             Data = new RoleData(guid, (byte)localRoles.Count);
             
             localRoles.Add((byte)localRoles.Count, this);
+            RoleManager.Roles[guid] = localRoles;
             RoleManager.Limits.Add(this, 0);
         }
-
+        
         public virtual string FormatName(string name) => name;
 
         public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target) => true;

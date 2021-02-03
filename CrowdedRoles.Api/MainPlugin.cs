@@ -2,6 +2,7 @@
 using BepInEx;
 using BepInEx.IL2CPP;
 using BepInEx.Logging;
+using CrowdedRoles.Api.Options;
 using HarmonyLib;
 
 namespace CrowdedRoles.Api
@@ -21,9 +22,14 @@ namespace CrowdedRoles.Api
         {
             RegisterCustomRpcAttribute.Register(this);
             RegisterInIl2CppAttribute.Register();
-            
+
             Harmony.PatchAll();
             Logger = Log;
         }
     }
+}
+
+namespace System.Runtime.CompilerServices
+{
+    internal static class IsExternalInit {}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
-using CrowdedRoles.Api.Managers;
+using CrowdedRoles.Api.Options;
 using CrowdedRoles.Api.Roles;
 using Reactor;
 using Reactor.Extensions;
@@ -15,7 +16,6 @@ namespace CrowdedRoles.Api.Components
         {
         }
         
-        public bool hasChanged;
         public TextRenderer text = new();
 
         public void Start()
@@ -36,7 +36,7 @@ namespace CrowdedRoles.Api.Components
             UpdateText();
         }
 
-        private void UpdateText()
+        internal void UpdateText()
         {
             var builder = new StringBuilder();
 
@@ -44,6 +44,13 @@ namespace CrowdedRoles.Api.Components
             foreach ((var role, byte limit) in RoleManager.EditableLimits)
             {
                 builder.AppendLine($"{role.Name}: {limit}");
+            }
+            
+            builder.AppendLine();
+
+            foreach (var option in OptionsManager.CustomOptions.SelectMany(p => p.Value))
+            {
+                builder.AppendLine($"{option.Name}: {option.ValueText}");
             }
 
             text.Text = builder.ToString();

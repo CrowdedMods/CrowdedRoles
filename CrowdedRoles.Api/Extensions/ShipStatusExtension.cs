@@ -1,5 +1,4 @@
-﻿using CrowdedRoles.Api.Managers;
-using CrowdedRoles.Api.Roles;
+﻿using CrowdedRoles.Api.Roles;
 
 namespace CrowdedRoles.Api.Extensions
 {
