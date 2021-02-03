@@ -57,7 +57,7 @@ namespace CrowdedRoles.Api.Extensions
 
         public static void RpcCustomMurderPlayer(this PlayerControl me, PlayerControl target, bool noSnap = false)
         {
-            me.Send<CustomKill>(new CustomKill.Data
+            Rpc<CustomKill>.Instance.Send(new CustomKill.Data
             {
                 target = target.PlayerId,
                 noSnap = noSnap

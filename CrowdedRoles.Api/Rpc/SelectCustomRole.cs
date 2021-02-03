@@ -6,7 +6,7 @@ using Reactor;
 namespace CrowdedRoles.Api.Rpc
 {
     [RegisterCustomRpc]
-    public class SelectCustomRole : CustomRpc<MainPlugin, PlayerControl, SelectCustomRole.Data>
+    public class SelectCustomRole : PlayerCustomRpc<MainPlugin, SelectCustomRole.Data>
     {
         public SelectCustomRole(MainPlugin plugin) : base(plugin){}
 

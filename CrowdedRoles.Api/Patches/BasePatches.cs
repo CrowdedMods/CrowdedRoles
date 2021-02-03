@@ -6,7 +6,7 @@ using UnityEngine;
 using CrowdedRoles.Api.Roles;
 using CrowdedRoles.Api.Extensions;
 using CrowdedRoles.Api.Rpc;
-using Reactor.Extensions;
+using Reactor;
 
 namespace CrowdedRoles.Api.Patches
 {
@@ -34,7 +34,7 @@ namespace CrowdedRoles.Api.Patches
                     List<byte> shuffledPlayers = goodPlayers.OrderBy(_ => new Guid()).ToList();
                     goodPlayers = shuffledPlayers.Skip(limit).ToList();
                     
-                    PlayerControl.LocalPlayer.Send<SelectCustomRole>(
+                    Rpc<SelectCustomRole>.Instance.Send(
                         new SelectCustomRole.Data {
                             role = role.Data, 
                             holders = shuffledPlayers.Take(limit).ToArray()
