@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using BepInEx.IL2CPP;
 using CrowdedRoles.Api.Components;
-using CrowdedRoles.Api.Roles;
 using Reactor;
 
 namespace CrowdedRoles.Api.Options
@@ -23,7 +22,7 @@ namespace CrowdedRoles.Api.Options
             options.Add(option);
             CustomOptions[plugin] = options;
         }
-            
+        
         internal static void ValueChanged()
         {
             DestroyableSingleton<HudManager>.Instance.GetComponentInChildren<CustomGameOptions>()?.UpdateText();
