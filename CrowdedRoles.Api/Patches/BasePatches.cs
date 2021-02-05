@@ -77,7 +77,7 @@ namespace CrowdedRoles.Api.Patches
                     float scale = 1 - oddness * 0.1125f;
                     player.transform.localScale = player.NameText.transform.localScale = new Vector3(scale, scale, scale);
                     player.NameText.Text = myRole.FormatName(player.NameText.Text);
-                    if (myTeam.Count > 1 && myRole.Visibility != Visibility.Everyone)
+                    if (i > 0 && myRole.Visibility != Visibility.Everyone)
                     {
                         player.NameText.gameObject.SetActive(true);
                     }
