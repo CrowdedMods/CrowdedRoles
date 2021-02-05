@@ -27,26 +27,31 @@ namespace CrowdedRoles.Api.Extensions
         }
 
         public static BaseRole? GetRole(this PlayerControl player)
-            => RoleManager.PlayerRoles.GetValueOrDefault(player.PlayerId);
+        {
+            return RoleManager.PlayerRoles.GetValueOrDefault(player.PlayerId);
+        }
 
         public static T? GetRole<T>(this PlayerControl player) where T : BaseRole
-            => player.GetRole() as T;
+        {
+            return player.GetRole() as T;;
+        }
 
         public static bool Is<T>(this PlayerControl player) where T : BaseRole
-            => player.GetRole<T>() is not null;
-
-        public static bool IsTeamedWith(this PlayerControl me, byte other) 
-            => me.IsTeamedWith(GameData.Instance!.GetPlayerById(other)!);
+        {
+            return player.GetRole<T>() != null;
+        }
 
         public static bool IsTeamedWith(this PlayerControl me, GameData.PlayerInfo other)
-            => me.GetRole()?.Equals(other.Object.GetRole()) ?? me.Data.IsImpostor == other.IsImpostor;
+        {
+            return me.GetRole()?.Equals(other.Object.GetRole()) ?? me.Data.IsImpostor == other.IsImpostor;            
+        }
         
         public static List<PlayerControl> GetTeam(this PlayerControl player)
         {
             var result = new List<PlayerControl>();
             foreach(var p in PlayerControl.AllPlayerControls)
             {
-                if(p != null && player.IsTeamedWith(p.PlayerId))
+                if(p != null && player.IsTeamedWith(p.Data))
                 {
                     result.Add(p);
                 }
@@ -69,7 +74,7 @@ namespace CrowdedRoles.Api.Extensions
             return whom.GetRole()?.Visibility switch
             {
                 Visibility.Myself => me.PlayerId == whom.PlayerId,
-                Visibility.Team => whom.IsTeamedWith(me.PlayerId),
+                Visibility.Team => whom.IsTeamedWith(me.Data),
                 Visibility.Everyone => true,
                 _ => false
             };
