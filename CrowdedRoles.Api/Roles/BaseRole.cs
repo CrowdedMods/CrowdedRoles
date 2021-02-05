@@ -47,6 +47,10 @@ namespace CrowdedRoles.Api.Roles
                    !target.IsImpostor;
         }
 
+        protected internal virtual void PlayerControl_FixedUpdate(PlayerControl instance)
+        {
+        }
+
         public static bool operator ==(BaseRole? me, BaseRole? other) => me?.Data == other?.Data;
         public static bool operator !=(BaseRole? me, BaseRole? other) => me?.Data != other?.Data;
         private bool Equals(BaseRole other)

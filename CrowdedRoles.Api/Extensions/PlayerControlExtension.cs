@@ -33,7 +33,7 @@ namespace CrowdedRoles.Api.Extensions
 
         public static T? GetRole<T>(this PlayerControl player) where T : BaseRole
         {
-            return player.GetRole() as T;;
+            return player.GetRole() as T;
         }
 
         public static bool Is<T>(this PlayerControl player) where T : BaseRole
@@ -168,6 +168,41 @@ namespace CrowdedRoles.Api.Extensions
 
             Coroutines.Start(killer.KillAnimations.Random().CoPerformCustomKill(killer, target, noSnap));
             //killer.MyPhysics.StartCoroutine(killer.KillAnimations.Random().CoPerformKill(killer, target));
+        }
+
+        public static PlayerControl? CustomFindClosetTarget(this PlayerControl me)
+        {
+            if (!ShipStatus.Instance)
+            {
+                return null;
+            }
+            
+            BaseRole? role = me.GetRole();
+            if (role == null)
+            {
+                return null;
+            }
+
+            PlayerControl? result = null;
+            Vector2 myPos = me.GetTruePosition();
+            float lowestDistance =
+                GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)];
+            
+            foreach (GameData.PlayerInfo player in GameData.Instance.AllPlayers)
+            {
+                PlayerControl obj = player.Object;
+                if(obj is null || !role.KillFilter(me, player)) continue;
+                Vector2 vec = obj.GetTruePosition() - myPos;
+                float magnitude = vec.magnitude;
+                if (magnitude < lowestDistance && !PhysicsHelpers.AnyNonTriggersBetween(myPos, vec.normalized,
+                    magnitude, Constants.ShipAndObjectsMask))
+                {
+                    result = obj;
+                    lowestDistance = magnitude;
+                }
+            }
+
+            return result;
         }
     }
 }
