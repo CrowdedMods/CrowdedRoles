@@ -47,6 +47,8 @@ namespace CrowdedRoles.Api.Patches
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
         private static class IntroCutScene_BeginCrewmate
         {
+            private static readonly int Color = Shader.PropertyToID("_Color");
+
             private static bool Prefix(ref IntroCutscene __instance)
             {
                 BaseRole? myRole = PlayerControl.LocalPlayer.GetRole();
@@ -55,33 +57,43 @@ namespace CrowdedRoles.Api.Patches
                     return true;
                 }
 
-                List<PlayerControl> myTeam = myRole.Visibility == Visibility.Myself ?
-                    new List<PlayerControl> { PlayerControl.LocalPlayer } : 
-                    PlayerControl.LocalPlayer.GetTeam();
+                List<PlayerControl> myTeam = new()
+                {
+                    PlayerControl.LocalPlayer
+                };
+                if (myRole.Visibility != Visibility.Myself)
+                {
+                    myTeam.AddRange(PlayerControl.LocalPlayer.GetTeam());
+                }
 
+                __instance.Title.Text = myRole.Name;
+                __instance.Title.Color = myRole.Color;
+                __instance.BackgroundBar.material.SetColor(Color, myRole.Color);
+                __instance.ImpostorText.Text = myRole.StartTip;
+                PlayerControl.LocalPlayer.nameText.Color = myRole.Color;
+                
                 for(var i = 0; i < myTeam.Count; i++)
                 {
                     GameData.PlayerInfo data = myTeam[i].Data;
                     int oddness = (i + 1) / 2;
                     PoolablePlayer player = UnityEngine.Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
-                    player.transform.position = new Vector3(
-                        oddness * (i % 2 == 0 ? -1 : 1) * (1 - oddness*0.035f),
-                        __instance.BaseY + oddness * 0.15f,
+                    player.transform.localPosition = new Vector3(
+                        0.8f* oddness * (i % 2 == 0 ? -1 : 1) * (1 - oddness * 0.08f),
+                        __instance.BaseY - 0.25f + oddness * 0.1f,
                         (i == 0 ? -8 : -1) + oddness * 0.01f
                     ) * 1.5f;
-                    player.SetFlipX(i % 2 == 1);
+                    player.SetFlipX(i % 2 == 0);
                     PlayerControl.SetPlayerMaterialColors(data.ColorId, player.Body);
                     DestroyableSingleton<HatManager>.Instance.Method_4(player.SkinSlot, data.SkinId);
                     player.HatSlot.SetHat(data.HatId, data.ColorId);
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
-                    float scale = 1 - oddness * 0.1125f;
+                    float scale = (i == 0 ? 1.8f : 1.5f) - oddness * 0.18f;
                     player.transform.localScale = player.NameText.transform.localScale = new Vector3(scale, scale, scale);
                     player.NameText.Text = myRole.FormatName(player.NameText.Text);
                     if (i > 0 && myRole.Visibility != Visibility.Everyone)
                     {
                         player.NameText.gameObject.SetActive(true);
                     }
-                    __instance.ImpostorText.Text = myRole.StartTip;
                 }
 
                 return false;
