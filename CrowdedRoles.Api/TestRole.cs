@@ -1,4 +1,5 @@
-﻿using BepInEx.IL2CPP;
+﻿#if DEBUG
+using BepInEx.IL2CPP;
 using CrowdedRoles.Api.Roles;
 using UnityEngine;
 
@@ -14,3 +15,4 @@ namespace CrowdedRoles.Api
         public override Color Color { get; } = Color.cyan;
     }
 }
+#endif
