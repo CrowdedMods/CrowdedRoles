@@ -12,6 +12,11 @@ namespace CrowdedRoles.Api.Patches
         [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
         static void FixedUpdate_Postfix(ref PlayerControl __instance)
         {
+            if (GameData.Instance == null || __instance.Data == null)
+            {
+                return;
+            }
+            
             BaseRole? role = __instance.GetRole();
             
             role?.PlayerControl_FixedUpdate(__instance);

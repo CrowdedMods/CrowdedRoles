@@ -29,7 +29,7 @@ namespace CrowdedRoles.Api.Roles
             localId = id;
         }
 
-        public static bool operator ==(RoleData? me, RoleData? other) => me?.Equals(other) ?? false;
+        public static bool operator ==(RoleData? me, RoleData? other) => me?.Equals(other) ?? ReferenceEquals(other, null);
         public static bool operator !=(RoleData? me, RoleData? other)=> !(me == other); // c# is cool
 
         private bool Equals(RoleData? other)
