@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using CrowdedRoles.Api.Components;
 using CrowdedRoles.Api.Options;
 using HarmonyLib;
+using Reactor.Extensions;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -9,6 +11,8 @@ namespace CrowdedRoles.Api.Patches
 {
     internal static class OptionPatches
     {
+        private static GameObject? CustomGameOptionsObject;
+        
         [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
         [HarmonyPriority(Priority.First)]
         static class GameOptionsMenu_Start
@@ -46,6 +50,26 @@ namespace CrowdedRoles.Api.Patches
 
                 DestroyableSingleton<GameSettingMenu>.Instance.GetComponent<Scroller>().YBounds.max += optionsAdded * 0.5f;
                 OptionsManager.ValueChanged();
+            }
+        }
+
+        [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
+        private static class LobbyBehaviour_Start
+        {
+            private static void Postfix()
+            {
+                CustomGameOptionsObject = new GameObject("CustomRoleOptions");
+                CustomGameOptionsObject.transform.SetParent(DestroyableSingleton<HudManager>.Instance.transform);
+                CustomGameOptionsObject.AddComponent<CustomGameOptions>();
+            }
+        }
+
+        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Start))]
+        private static class ShipStatus_Start
+        {
+            private static void Postfix()
+            {
+                CustomGameOptionsObject.Destroy();
             }
         }
     }
