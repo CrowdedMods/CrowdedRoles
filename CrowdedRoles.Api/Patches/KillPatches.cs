@@ -29,7 +29,7 @@ namespace CrowdedRoles.Api.Patches
         }
 
         // Patches all (i hope) methods disabling kill button
-        [HarmonyPatch]
+        //[HarmonyPatch]
         private static class KillButtonSetActivePatches
         {
             [HarmonyPostfix]
