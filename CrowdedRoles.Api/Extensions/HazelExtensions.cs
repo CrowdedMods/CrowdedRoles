@@ -3,7 +3,7 @@ using Hazel;
 
 namespace CrowdedRoles.Api.Extensions
 {
-    public static class HazelExtensions
+    internal static class HazelExtensions
     {
         public static T Read<T>(this MessageReader reader) where T : ISerializable<T>
         {

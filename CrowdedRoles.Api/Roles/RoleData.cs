@@ -23,6 +23,12 @@ namespace CrowdedRoles.Api.Roles
             );
         }
 
+        public RoleData() // for Deserializing (needs refactoring)
+        {
+            pluginId = "broken";
+            localId = 0;
+        }
+        
         public RoleData(string guid, byte id)
         {
             pluginId = guid;
