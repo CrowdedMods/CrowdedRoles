@@ -57,20 +57,19 @@ namespace CrowdedRoles.Api.Patches
                     return true;
                 }
 
-                List<PlayerControl> myTeam = new()
-                {
-                    PlayerControl.LocalPlayer
-                };
-                if (myRole.Visibility != Visibility.Myself)
-                {
+                List<PlayerControl> myTeam = new();
+                // {
+                //     PlayerControl.LocalPlayer
+                // };
+                // if (myRole.Visibility != Visibility.Myself)
+                // {
                     myTeam.AddRange(PlayerControl.LocalPlayer.GetTeam());
-                }
+                // }
 
                 __instance.Title.Text = myRole.Name;
                 __instance.Title.Color = myRole.Color;
                 __instance.BackgroundBar.material.SetColor(Color, myRole.Color);
                 __instance.ImpostorText.Text = myRole.StartTip;
-                PlayerControl.LocalPlayer.nameText.Color = myRole.Color;
                 
                 for(var i = 0; i < myTeam.Count; i++)
                 {
@@ -116,6 +115,35 @@ namespace CrowdedRoles.Api.Patches
                 {
                     __result.NameText.Color = role.Color;
                     __result.NameText.Text = role.FormatName(__result.NameText.Text);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.Start))]
+        private static class EndGameManager_Start
+        {
+            private static void Postfix()
+            {
+                ShipStatus.Instance.GameEnded();
+            }
+        }
+
+        [HarmonyPatch(typeof(IntroCutscene.CoBegin__d), nameof(IntroCutscene.CoBegin__d.MoveNext))]
+        private static class IntroCutScene_CoBegin
+        {
+            private static void Postfix(bool __result)
+            {
+                if (__result)
+                {
+                    foreach (var player in PlayerControl.AllPlayerControls)
+                    {
+                        BaseRole? role = player.GetRole();
+                        if (PlayerControl.LocalPlayer.CanSee(player) && role != null)
+                        {
+                            player.nameText.Color = role.Color;
+                            player.nameText.Text = role.FormatName(player.nameText.Text);
+                        }
+                    }
                 }
             }
         }

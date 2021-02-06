@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CrowdedRoles.Api.Roles;
 using CrowdedRoles.Api.Rpc;
 using Reactor;
@@ -46,16 +47,29 @@ namespace CrowdedRoles.Api.Extensions
             return me.GetRole()?.Equals(other.Object.GetRole()) ?? me.Data.IsImpostor == other.IsImpostor;            
         }
         
-        public static List<PlayerControl> GetTeam(this PlayerControl player)
+        public static IEnumerable<PlayerControl> GetTeam(this PlayerControl player)
         {
             var result = new List<PlayerControl>();
-            foreach(var p in PlayerControl.AllPlayerControls)
+            BaseRole? ownRole = player.GetRole();
+            switch (ownRole?.Visibility)
             {
-                if(p != null && player.IsTeamedWith(p.Data))
-                {
-                    result.Add(p);
-                }
+                case Visibility.Everyone:
+                    result = PlayerControl.AllPlayerControls.ToArray().ToList();
+                    break;
+                case Visibility.Myself:
+                    result.Add(player);
+                    break;
+                case Visibility.Team:
+                    result = PlayerControl.AllPlayerControls.ToArray().Where(p => p.IsTeamedWith(player.Data)).ToList();
+                    break;
             }
+            // foreach(var p in PlayerControl.AllPlayerControls)
+            // {
+            //     if(p != null && player.IsTeamedWith(p.Data))
+            //     {
+            //         result.Add(p);
+            //     }
+            // }
 
             return result;
         }
