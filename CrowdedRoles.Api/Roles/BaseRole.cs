@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BepInEx;
 using BepInEx.IL2CPP;
+using CrowdedRoles.Api.Options;
 using UnityEngine;
 
 namespace CrowdedRoles.Api.Roles
@@ -33,6 +34,7 @@ namespace CrowdedRoles.Api.Roles
             localRoles.Add((byte)localRoles.Count, this);
             RoleManager.Roles[guid] = localRoles;
             RoleManager.Limits.Add(this, 0);
+            OptionsManager.AddLimitOptionIfNecessary(this);
         }
         
         public virtual string FormatName(string name) => name;

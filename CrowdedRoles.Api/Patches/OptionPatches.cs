@@ -21,37 +21,11 @@ namespace CrowdedRoles.Api.Patches
                 StringOption stringPrefab = __instance.GetComponentInChildren<StringOption>();
                 byte optionsAdded = 0;
                 
-                foreach (var baseOption in OptionsManager.CustomOptions.SelectMany(p => p.Value))
+                foreach (var baseOption in 
+                    OptionsManager.LimitOptions.Values
+                        .Concat(OptionsManager.CustomOptions.SelectMany(p => p.Value))
+                )
                 {
-                    /*OptionBehaviour? behaviour = null;
-                    switch (baseOption)
-                    {
-                        case CustomToggleOption toggleOption:
-                        {
-                            ToggleOption option = Object.Instantiate(copyableToggle, __instance.transform);
-                            toggleOption.ImplementOption(ref option);
-                            behaviour = option;
-                            break;
-                        }
-                        case CustomNumberOption numberOption:
-                        {
-                            NumberOption option = Object.Instantiate(copyableNumber, __instance.transform);
-                            numberOption.ImplementOption(ref option);
-                            behaviour = option;
-                            break;
-                        }
-                    }
-
-                    if (behaviour == null)
-                    {
-                        // shouldn't be thrown
-                        throw new NullReferenceException($"Custom option type of {baseOption.Name} is undefined");
-                    }
-                    
-                    Vector3 oldPos = behaviour.transform.position;
-                    oldPos.y = lowestY -= 0.5f;
-                    behaviour.transform.position = oldPos;*/
-
                     var option = Object.Instantiate<OptionBehaviour>(
                         baseOption switch
                         {
