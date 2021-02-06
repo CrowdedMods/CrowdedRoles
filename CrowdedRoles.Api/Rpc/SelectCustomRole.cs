@@ -32,11 +32,18 @@ namespace CrowdedRoles.Api.Rpc
 
         public override void Handle(PlayerControl innerNetObject, Data data)
         {
-            if (innerNetObject.PlayerId != GameData.Instance.GetHost().PlayerId)
+            if (GameData.Instance == null)
             {
-                MainPlugin.Logger.LogError($"{innerNetObject.NetId} sent {nameof(SelectCustomRole)} but was not a host");
+                MainPlugin.Logger.LogWarning($"{innerNetObject.NetId} sent {nameof(SelectCustomRole)} without the game going");
                 return;
             }
+            
+            if (innerNetObject.PlayerId != GameData.Instance.GetHost().PlayerId)
+            {
+                MainPlugin.Logger.LogWarning($"{innerNetObject.NetId} sent {nameof(SelectCustomRole)} but was not a host");
+                return;
+            }
+            
             foreach (var id in data.holders)
             {
                 GameData.Instance.GetPlayerById(id)?.Object.InitRole(RoleManager.GetRoleByData(data.role));
