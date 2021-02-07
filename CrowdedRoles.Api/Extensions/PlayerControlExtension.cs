@@ -85,12 +85,13 @@ namespace CrowdedRoles.Api.Extensions
 
         public static bool CanSee(this PlayerControl me, PlayerControl whom)
         {
-            return whom.GetRole()?.Visibility switch
+            BaseRole? role = whom.GetRole();
+            return role?.Visibility switch
             {
                 Visibility.Myself => me.PlayerId == whom.PlayerId,
-                Visibility.Team => whom.IsTeamedWith(me.Data),
+                Visibility.Team => whom.IsTeamedWith(me.Data) || role.Side == (me.Data.IsImpostor ? Side.Impostor : Side.Crewmate) ,
                 Visibility.Everyone => true,
-                _ => false
+                _ => me.GetRole()?.Side == (whom.Data.IsImpostor ? Side.Impostor : Side.Crewmate) 
             };
         }
 

@@ -63,7 +63,10 @@ namespace CrowdedRoles.Api.Patches
                 // };
                 // if (myRole.Visibility != Visibility.Myself)
                 // {
-                    myTeam.AddRange(PlayerControl.LocalPlayer.GetTeam());
+                    myTeam.AddRange(
+                    PlayerControl.LocalPlayer.GetTeam()
+                        .OrderBy(p => p != PlayerControl.LocalPlayer)
+                    );
                 // }
 
                 __instance.Title.Text = myRole.Name;
@@ -106,15 +109,18 @@ namespace CrowdedRoles.Api.Patches
             static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
             {
                 BaseRole? role = data.Object.GetRole();
-                if (role == null || role.PatchFilterFlags.HasFlag(PatchFilter.MeetingHud))
+                if (role?.PatchFilterFlags.HasFlag(PatchFilter.MeetingHud) ?? false)
                 {
                     return;
                 }
                 
                 if(PlayerControl.LocalPlayer.CanSee(data.Object))
                 {
-                    __result.NameText.Color = role.Color;
-                    __result.NameText.Text = role.FormatName(__result.NameText.Text);
+                    __result.NameText.Color = role?.Color ?? Palette.ImpostorRed;
+                    if (role != null)
+                    {
+                        __result.NameText.Text = role.FormatName(__result.NameText.Text);
+                    }
                 }
             }
         }
@@ -133,15 +139,18 @@ namespace CrowdedRoles.Api.Patches
         {
             private static void Postfix(bool __result)
             {
-                if (__result)
+                if (!__result) // yield break
                 {
                     foreach (var player in PlayerControl.AllPlayerControls)
                     {
                         BaseRole? role = player.GetRole();
-                        if (PlayerControl.LocalPlayer.CanSee(player) && role != null)
+                        if (PlayerControl.LocalPlayer.CanSee(player))
                         {
-                            player.nameText.Color = role.Color;
-                            player.nameText.Text = role.FormatName(player.nameText.Text);
+                            player.nameText.Color = role?.Color ?? Palette.ImpostorRed;
+                            if (role != null)
+                            {
+                                player.nameText.Text = role.FormatName(player.nameText.Text);
+                            }
                         }
                     }
                 }

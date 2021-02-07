@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BepInEx;
 using BepInEx.IL2CPP;
+using CrowdedRoles.Api.Extensions;
 using CrowdedRoles.Api.Options;
 using UnityEngine;
 
@@ -46,7 +47,7 @@ namespace CrowdedRoles.Api.Roles
             return !target.Disconnected &&
                    me.PlayerId != target.PlayerId &&
                    !target.IsDead &&
-                   !target.IsImpostor;
+                   !me.IsTeamedWith(target);
         }
 
         protected internal virtual void PlayerControl_FixedUpdate(PlayerControl instance)
