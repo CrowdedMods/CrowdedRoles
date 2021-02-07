@@ -205,11 +205,11 @@ namespace CrowdedRoles.Api.Extensions
             foreach (GameData.PlayerInfo player in GameData.Instance.AllPlayers)
             {
                 PlayerControl obj = player.Object;
-                if(obj is null || !role.KillFilter(me, player)) continue;
+                if(obj == null || !role.KillFilter(me, player)) continue;
                 Vector2 vec = obj.GetTruePosition() - myPos;
                 float magnitude = vec.magnitude;
-                if (magnitude < lowestDistance && !PhysicsHelpers.AnyNonTriggersBetween(myPos, vec.normalized,
-                    magnitude, Constants.ShipAndObjectsMask))
+                if (magnitude <= lowestDistance && !PhysicsHelpers.AnyNonTriggersBetween(myPos, vec.normalized,
+                    magnitude, Constants.InfinitySymbol))
                 {
                     result = obj;
                     lowestDistance = magnitude;

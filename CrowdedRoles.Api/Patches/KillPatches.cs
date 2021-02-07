@@ -18,7 +18,7 @@ namespace CrowdedRoles.Api.Patches
                     return true;
                 }
 
-                if (__instance.isActiveAndEnabled && __instance.CurrentTarget && !__instance.CurrentTarget &&
+                if (__instance.isActiveAndEnabled && __instance.CurrentTarget && !__instance.isCoolingDown &&
                     !localPlayer.Data.IsDead && localPlayer.CanMove)
                 {
                     localPlayer.RpcCustomMurderPlayer(__instance.CurrentTarget);
@@ -30,43 +30,52 @@ namespace CrowdedRoles.Api.Patches
 
         // Patches all (i hope) methods disabling kill button
         //[HarmonyPatch]
-        private static class KillButtonSetActivePatches
+        internal static class KillButtonSetActivePatches
         {
-            [HarmonyPostfix]
+            //[HarmonyPostfix]
             [HarmonyPatch(typeof(HudManager), nameof(HudManager.SetHudActive))]
-            private static void HudManager_SetHudActive(HudManager __instance)
+            private static class HudManager_SetHudActive
             {
-                BaseRole? role = PlayerControl.LocalPlayer.GetRole();
-                if (role != null)
+                private static void Postfix(HudManager __instance, [HarmonyArgument(0)] bool isActive)
                 {
-                    __instance.KillButton.gameObject.SetActive(role.AbleToKill);
-                }
-            }
-
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Revive))]
-            private static void PlayerControl_Revive(PlayerControl __instance)
-            {
-                if (__instance.AmOwner)
-                {
-                    BaseRole? role = __instance.GetRole();
+                    BaseRole? role = PlayerControl.LocalPlayer.GetRole();
                     if (role != null)
                     {
-                        HudManager.Instance.KillButton.gameObject.SetActive(role.AbleToKill);
+                        __instance.KillButton.gameObject.SetActive(isActive && role.AbleToKill);
                     }
                 }
             }
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(PlayerControl.CoSetTasks__d), nameof(PlayerControl.CoSetTasks__d.MoveNext))]
-            private static void PlayerControl_CoSetTasks(PlayerControl.CoSetTasks__d __instance, bool __result)
+            //[HarmonyPostfix]
+            [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Revive))]
+            private static class PlayerControl_Revive
             {
-                if (__result && __instance.__this.AmOwner) // yield break
+                private static void Postfix(PlayerControl __instance)
                 {
-                    BaseRole? role = __instance.__this.GetRole();
-                    if (role != null)
+                    if (__instance.AmOwner)
                     {
-                        HudManager.Instance.KillButton.gameObject.SetActive(role.AbleToKill);
+                        BaseRole? role = __instance.GetRole();
+                        if (role != null)
+                        {
+                            HudManager.Instance.KillButton.gameObject.SetActive(role.AbleToKill);
+                        }
+                    }
+                }
+            }
+
+            //[HarmonyPostfix]
+            [HarmonyPatch(typeof(PlayerControl.CoSetTasks__d), nameof(PlayerControl.CoSetTasks__d.MoveNext))]
+            private static class PlayerControl_CoSetTasks
+            {
+                private static void Postfix(PlayerControl.CoSetTasks__d __instance)
+                {
+                    if (__instance.__this.AmOwner)
+                    {
+                        BaseRole? role = __instance.__this.GetRole();
+                        if (role != null)
+                        {
+                            HudManager.Instance.KillButton.gameObject.SetActive(role.AbleToKill);
+                        }
                     }
                 }
             }
