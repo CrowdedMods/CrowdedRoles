@@ -8,7 +8,7 @@
     <Authors>Galster</Authors>
 
     <GameVersion>2020.12.9s</GameVersion>
-    <Mappings>NuclearPowered/Mappings:0.1.1</Mappings>
+    <Mappings>NuclearPowered/Mappings:0.1.2</Mappings>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>
@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Deobfuscate Include="$(AmongUs)\BepInEx\plugins\Reactor-$(GameVersion).dll" />
-    <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.2.4" />
+    <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.2.5" />
   </ItemGroup>
 
   <Target Name="Copy" AfterTargets="Reobfuscate">

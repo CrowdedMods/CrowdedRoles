@@ -209,7 +209,7 @@ namespace CrowdedRoles.Api.Extensions
                 Vector2 vec = obj.GetTruePosition() - myPos;
                 float magnitude = vec.magnitude;
                 if (magnitude <= lowestDistance && !PhysicsHelpers.AnyNonTriggersBetween(myPos, vec.normalized,
-                    magnitude, Constants.InfinitySymbol))
+                    magnitude, Constants.ShipAndObjectsMask))
                 {
                     result = obj;
                     lowestDistance = magnitude;
