@@ -42,9 +42,10 @@ namespace CrowdedRoles.Api.Extensions
             return player.GetRole<T>() != null;
         }
 
-        public static bool IsTeamedWith(this PlayerControl me, GameData.PlayerInfo other)
+        public static bool IsTeamedWith(this PlayerControl me, PlayerControl other)
         {
-            return me.GetRole()?.Equals(other.Object.GetRole()) ?? me.Data.IsImpostor == other.IsImpostor;            
+            return me.GetRole()?.Equals(other.GetRole()) ?? 
+                   other.GetRole() == null && me.Data.IsImpostor == other.Data.IsImpostor;            
         }
         
         public static IEnumerable<PlayerControl> GetTeam(this PlayerControl player)
@@ -60,7 +61,7 @@ namespace CrowdedRoles.Api.Extensions
                     result.Add(player);
                     break;
                 case Visibility.Team:
-                    result = PlayerControl.AllPlayerControls.ToArray().Where(p => p.IsTeamedWith(player.Data)).ToList();
+                    result = PlayerControl.AllPlayerControls.ToArray().Where(p => p.IsTeamedWith(player)).ToList();
                     break;
             }
             // foreach(var p in PlayerControl.AllPlayerControls)
@@ -89,7 +90,7 @@ namespace CrowdedRoles.Api.Extensions
             return role?.Visibility switch
             {
                 Visibility.Myself => me.PlayerId == whom.PlayerId,
-                Visibility.Team => whom.IsTeamedWith(me.Data) || role.Side == (me.Data.IsImpostor ? Side.Impostor : Side.Crewmate) ,
+                Visibility.Team => whom.IsTeamedWith(me) || role.Side == (me.Data.IsImpostor ? Side.Impostor : Side.Crewmate) ,
                 Visibility.Everyone => true,
                 _ => me.GetRole()?.Side == (whom.Data.IsImpostor ? Side.Impostor : Side.Crewmate) 
             };

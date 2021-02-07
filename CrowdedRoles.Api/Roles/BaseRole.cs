@@ -47,7 +47,7 @@ namespace CrowdedRoles.Api.Roles
             return !target.Disconnected &&
                    me.PlayerId != target.PlayerId &&
                    !target.IsDead &&
-                   !me.IsTeamedWith(target);
+                   !me.IsTeamedWith(target.Object);
         }
 
         protected internal virtual void PlayerControl_FixedUpdate(PlayerControl instance)
