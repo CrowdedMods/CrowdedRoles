@@ -9,7 +9,6 @@ namespace CrowdedRoles.Api.Roles
     public abstract class BaseRole
     {
         internal RoleData Data { get; }
-        public bool AbleToKill { get; set; } = false;
         
         public abstract string Name { get; }
         public abstract Color Color { get; }
@@ -18,6 +17,7 @@ namespace CrowdedRoles.Api.Roles
         public virtual Visibility Visibility { get; } = Visibility.Myself;
         public virtual string StartTip { get; } = "Do nothing but [FF0000FF]kiss";
         public virtual PatchFilter PatchFilterFlags { get; } = PatchFilter.None;
+        public virtual bool AbleToKill { get; } = false;
 
         internal BaseRole(BasePlugin plugin)
         {
