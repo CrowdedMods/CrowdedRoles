@@ -1,10 +1,9 @@
 ﻿using System;
-using CrowdedRoles.Api.Extensions;
 using Hazel;
 
 namespace CrowdedRoles.Api.Roles
 {
-    public class RoleData : ISerializable<RoleData>
+    public class RoleData
     {
         public readonly string pluginId;
         public readonly byte localId;
@@ -15,18 +14,12 @@ namespace CrowdedRoles.Api.Roles
             writer.Write(localId);
         }
 
-        public RoleData Deserialize(MessageReader reader)
+        public static RoleData Deserialize(MessageReader reader)
         {
             return new(
                 reader.ReadString(),
                 reader.ReadByte()
             );
-        }
-
-        public RoleData() // for Deserializing (needs refactoring)
-        {
-            pluginId = "broken";
-            localId = 0;
         }
         
         public RoleData(string guid, byte id)

@@ -20,13 +20,13 @@ namespace CrowdedRoles.Api.Rpc
 
         public override void Write(MessageWriter writer, Data data)
         {
-            writer.Write(data.role);
+            data.role.Serialize(writer);
             writer.WriteBytesAndSize(data.holders);
         }
 
         public override Data Read(MessageReader reader) => new()
             {
-                role = reader.Read<RoleData>(),
+                role = RoleData.Deserialize(reader),
                 holders = reader.ReadBytesAndSize()
             };
 
