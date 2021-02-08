@@ -22,7 +22,7 @@ namespace CrowdedRoles.Api.Extensions
             }
             catch(ArgumentException)
             {
-                MainPlugin.Logger.LogWarning($"{role.Name} already exists in {nameof(RoleManager.PlayerRoles)}, redefining...");
+                RoleApiPlugin.Logger.LogWarning($"{role.Name} already exists in {nameof(RoleManager.PlayerRoles)}, redefining...");
                 RoleManager.PlayerRoles[player.PlayerId] = role;
             }
         }
@@ -105,7 +105,7 @@ namespace CrowdedRoles.Api.Extensions
 
             if (AmongUsClient.Instance.IsGameOver)
             {
-                MainPlugin.Logger.LogWarning($"{killer.PlayerId} tried to kill when game is over");
+                RoleApiPlugin.Logger.LogWarning($"{killer.PlayerId} tried to kill when game is over");
                 return;
             }
 
@@ -113,7 +113,7 @@ namespace CrowdedRoles.Api.Extensions
             if (target is null || role is null)
             {
                 // ReSharper disable once Unity.NoNullPropagation
-                MainPlugin.Logger.LogWarning($"Null kill ({killer.PlayerId} -> {target?.PlayerId ?? -1})");
+                RoleApiPlugin.Logger.LogWarning($"Null kill ({killer.PlayerId} -> {target?.PlayerId ?? -1})");
                 return;
             }
             
@@ -121,21 +121,21 @@ namespace CrowdedRoles.Api.Extensions
             {
                 if (!force)
                 {
-                    MainPlugin.Logger.LogWarning($"Not allowed kill ({killer.PlayerId} -> {target.PlayerId})");
+                    RoleApiPlugin.Logger.LogWarning($"Not allowed kill ({killer.PlayerId} -> {target.PlayerId})");
                     return;
                 }
-                MainPlugin.Logger.LogDebug($"Forced bad kill ({killer.PlayerId} -> {target.PlayerId})");
+                RoleApiPlugin.Logger.LogDebug($"Forced bad kill ({killer.PlayerId} -> {target.PlayerId})");
             }
 
             if (!force && !role.PreKill(ref killer, ref target, ref noSnap))
             {
-                MainPlugin.Logger.LogDebug($"Custom kill ({killer.PlayerId} -> {target.PlayerId}) is cancelled by a plugin");
+                RoleApiPlugin.Logger.LogDebug($"Custom kill ({killer.PlayerId} -> {target.PlayerId}) is cancelled by a plugin");
                 return;
             }
 
             if (target.Data is null || target.Data.IsDead)
             {
-                MainPlugin.Logger.LogWarning($"{killer.PlayerId} tried to kill {target.PlayerId}, but they are already dead");
+                RoleApiPlugin.Logger.LogWarning($"{killer.PlayerId} tried to kill {target.PlayerId}, but they are already dead");
                 return;
             }
 

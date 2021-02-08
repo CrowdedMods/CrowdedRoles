@@ -10,7 +10,7 @@ namespace CrowdedRoles.Api
     [BepInPlugin(Id)]
     [BepInDependency(ReactorPlugin.Id)]
     [ReactorPluginSide(PluginSide.ClientOnly)]
-    public class MainPlugin : BasePlugin
+    public class RoleApiPlugin : BasePlugin
     {
         private const string Id = "ru.galster.CrowdedRoles.Api";
         private Harmony Harmony { get; } = new(Id);

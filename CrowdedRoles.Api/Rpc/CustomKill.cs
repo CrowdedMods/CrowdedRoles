@@ -6,9 +6,9 @@ using Reactor;
 namespace CrowdedRoles.Api.Rpc
 {
     [RegisterCustomRpc]
-    public class CustomKill : PlayerCustomRpc<MainPlugin, CustomKill.Data>
+    public class CustomKill : PlayerCustomRpc<RoleApiPlugin, CustomKill.Data>
     {
-        public CustomKill(MainPlugin plugin) : base(plugin) {}
+        public CustomKill(RoleApiPlugin plugin) : base(plugin) {}
 
         public class Data
         {

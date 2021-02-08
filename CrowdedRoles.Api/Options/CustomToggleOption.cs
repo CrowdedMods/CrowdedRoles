@@ -26,7 +26,7 @@ namespace CrowdedRoles.Api.Options
             var option = baseOption.TryCast<ToggleOption>();
             if (option == null)
             {
-                MainPlugin.Logger.LogError($"Object `{baseOption.name}` is not {nameof(ToggleOption)}");
+                RoleApiPlugin.Logger.LogError($"Object `{baseOption.name}` is not {nameof(ToggleOption)}");
                 return;
             }
             
@@ -34,7 +34,7 @@ namespace CrowdedRoles.Api.Options
             option.TitleText.Text = Name; // why the heck it's not in OptionBehaviour
             option.CheckMark.enabled = Value;
             option.OnValueChanged = (Action<OptionBehaviour>) OnValueChangedRaw;
-            MainPlugin.Logger.LogDebug($"Added toggle option {Name}");
+            RoleApiPlugin.Logger.LogDebug($"Added toggle option {Name}");
         }
     }
 }

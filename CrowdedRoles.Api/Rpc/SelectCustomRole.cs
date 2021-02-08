@@ -6,9 +6,9 @@ using Reactor;
 namespace CrowdedRoles.Api.Rpc
 {
     [RegisterCustomRpc]
-    public class SelectCustomRole : PlayerCustomRpc<MainPlugin, SelectCustomRole.Data>
+    public class SelectCustomRole : PlayerCustomRpc<RoleApiPlugin, SelectCustomRole.Data>
     {
-        public SelectCustomRole(MainPlugin plugin) : base(plugin){}
+        public SelectCustomRole(RoleApiPlugin plugin) : base(plugin){}
 
         public struct Data
         {
@@ -34,13 +34,13 @@ namespace CrowdedRoles.Api.Rpc
         {
             if (GameData.Instance == null)
             {
-                MainPlugin.Logger.LogWarning($"{innerNetObject.NetId} sent {nameof(SelectCustomRole)} without the game going");
+                RoleApiPlugin.Logger.LogWarning($"{innerNetObject.NetId} sent {nameof(SelectCustomRole)} without the game going");
                 return;
             }
             
             if (innerNetObject.PlayerId != GameData.Instance.GetHost().PlayerId)
             {
-                MainPlugin.Logger.LogWarning($"{innerNetObject.NetId} sent {nameof(SelectCustomRole)} but was not a host");
+                RoleApiPlugin.Logger.LogWarning($"{innerNetObject.NetId} sent {nameof(SelectCustomRole)} but was not a host");
                 return;
             }
             

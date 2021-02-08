@@ -35,7 +35,7 @@ namespace CrowdedRoles.Api.Options
             var option = baseOption.TryCast<StringOption>();
             if (option == null)
             {
-                MainPlugin.Logger.LogError($"Object `{baseOption.name}` is not {nameof(StringOption)}");
+                RoleApiPlugin.Logger.LogError($"Object `{baseOption.name}` is not {nameof(StringOption)}");
                 return;
             }
 
