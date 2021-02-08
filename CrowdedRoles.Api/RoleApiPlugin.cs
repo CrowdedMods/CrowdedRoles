@@ -12,7 +12,7 @@ namespace CrowdedRoles.Api
     [ReactorPluginSide(PluginSide.ClientOnly)]
     public class RoleApiPlugin : BasePlugin
     {
-        private const string Id = "ru.galster.CrowdedRoles.Api";
+        public const string Id = "ru.galster.CrowdedRoles.Api";
         private Harmony Harmony { get; } = new(Id);
 #pragma warning disable CS8618
         public static ManualLogSource Logger { get; private set; }
