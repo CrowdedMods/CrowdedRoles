@@ -2,6 +2,7 @@
 using BepInEx;
 using BepInEx.IL2CPP;
 using BepInEx.Logging;
+using CrowdedRoles.Api.Attributes;
 using HarmonyLib;
 
 namespace CrowdedRoles.Api
@@ -23,7 +24,7 @@ namespace CrowdedRoles.Api
             RegisterInIl2CppAttribute.Register();
 
 #if DEBUG
-            var _ = new TestRole(this);
+            RegisterCustomRoleAttribute.Register(this);
 #endif
             Harmony.PatchAll();
             Logger = Log;
