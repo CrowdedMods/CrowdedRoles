@@ -127,7 +127,7 @@ namespace CrowdedRoles.Api.Extensions
                 MainPlugin.Logger.LogDebug($"Forced bad kill ({killer.PlayerId} -> {target.PlayerId})");
             }
 
-            if (!force && !role.PreKill(ref killer, ref target))
+            if (!force && !role.PreKill(ref killer, ref target, ref noSnap))
             {
                 MainPlugin.Logger.LogDebug($"Custom kill ({killer.PlayerId} -> {target.PlayerId}) is cancelled by a plugin");
                 return;

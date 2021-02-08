@@ -10,21 +10,21 @@ namespace CrowdedRoles.Api.Extensions
         {
             FollowerCamera camera = Camera.main!.GetComponent<FollowerCamera>();
             bool isParticipant = source == PlayerControl.LocalPlayer || target == PlayerControl.LocalPlayer;
-            KillAnimation.SetMovement(source, false);
             KillAnimation.SetMovement(target, false);
             if (isParticipant)
             {
                 camera.Locked = true;
             }
             target.Die(DeathReason.Kill);
-            SpriteAnim sourceAnim = source.GetComponent<SpriteAnim>();
-            yield return new WaitForAnimationFinish(sourceAnim, anim.BlurAnim);
             if (!noSnap)
             {
+                KillAnimation.SetMovement(source, false);
+                SpriteAnim sourceAnim = source.GetComponent<SpriteAnim>();
+                yield return new WaitForAnimationFinish(sourceAnim, anim.BlurAnim);
                 source.NetTransform.SnapTo(target.transform.position);
+                sourceAnim.Play(source.MyPhysics.IdleAnim, 1f);
+                KillAnimation.SetMovement(source, true);
             }
-            sourceAnim.Play(source.MyPhysics.IdleAnim, 1f);
-            KillAnimation.SetMovement(source, true);
             DeadBody deadBody = Object.Instantiate(anim.bodyPrefab);
             Vector3 vector = target.transform.position + anim.BodyOffset;
             vector.z = vector.y / 1000;
