@@ -72,7 +72,7 @@ namespace CrowdedRoles.Patches
                 __instance.Title.Text = myRole.Name;
                 __instance.Title.Color = myRole.Color;
                 __instance.BackgroundBar.material.SetColor(Color, myRole.Color);
-                __instance.ImpostorText.Text = myRole.StartTip;
+                __instance.ImpostorText.Text = myRole.Description;
                 
                 for(var i = 0; i < myTeam.Count; i++)
                 {

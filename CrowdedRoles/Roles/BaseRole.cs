@@ -17,7 +17,7 @@ namespace CrowdedRoles.Roles
         
         public virtual Side Side { get; } = Side.Crewmate;
         public virtual Visibility Visibility { get; } = Visibility.Myself;
-        public virtual string StartTip { get; } = "Do nothing but [FF0000FF]kiss";
+        public virtual string Description { get; } = "Do nothing but [FF0000FF]kiss";
         public virtual PatchFilter PatchFilterFlags { get; } = PatchFilter.None;
         public virtual bool AbleToKill { get; } = false;
 
