@@ -26,7 +26,7 @@ namespace CrowdedRoles.Patches
                     }
                 }
 
-                foreach((BaseRole role, byte limit) in RoleManager.Limits)
+                foreach((BaseRole role, byte limit) in RoleManager.Limits.Where(p => !p.Key.isDisabled)) // we just don't give people disabled roles
                 {
                     if (limit == 0) continue; // fast skip
                     if (role.PatchFilterFlags.HasFlag(PatchFilter.SelectInfected)) continue;

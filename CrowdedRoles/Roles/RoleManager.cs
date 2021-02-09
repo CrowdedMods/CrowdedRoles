@@ -7,7 +7,7 @@ namespace CrowdedRoles.Roles
     {
         public static readonly Dictionary<BaseRole, byte> Limits = new();
         public static Dictionary<BaseRole, byte> EditableLimits =>
-            Limits.Where(r => !r.Key.PatchFilterFlags.HasFlag(PatchFilter.AmountOption))
+            Limits.Where(r => !r.Key.isDisabled && !r.Key.PatchFilterFlags.HasFlag(PatchFilter.AmountOption))
                 .ToDictionary(i => i.Key, i => i.Value);
 
         public static readonly Dictionary<byte, BaseRole> PlayerRoles = new();
