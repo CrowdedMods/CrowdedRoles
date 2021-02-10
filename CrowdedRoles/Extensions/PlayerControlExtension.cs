@@ -85,13 +85,22 @@ namespace CrowdedRoles.Extensions
             });
         }
 
-        public static void RpcSyncCustomSettings(this PlayerControl me)
+        public static void RpcSyncCustomSettings(this PlayerControl _, int target = -1)
         {
-            Rpc<SyncCustomSettings>.Instance.Send(new SyncCustomSettings.Data
+            var data = new SyncCustomSettings.Data
             {
                 limits = RoleManager.EditableLimits.ToDictionary(p => p.Key.Data, p => p.Value),
-                options = OptionsManager.CustomOptions.ToDictionary(p => p.Key, p => p.Value.Select(o => o.ToBytes()).ToList())
-            });
+                options = OptionsManager.CustomOptions.ToDictionary(p => p.Key,
+                    p => p.Value.Select(o => o.ToBytes()).ToList())
+            };
+            if (target == -1)
+            {
+                Rpc<SyncCustomSettings>.Instance.Send(data);
+            }
+            else
+            {
+                Rpc<SyncCustomSettings>.Instance.SendTo(target, data);
+            }
         }
 
         public static bool CanSee(this PlayerControl me, PlayerControl whom)
