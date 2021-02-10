@@ -16,6 +16,12 @@ namespace CrowdedRoles.Extensions
                 camera.Locked = true;
             }
             target.Die(DeathReason.Kill);
+            DeadBody deadBody = Object.Instantiate(anim.bodyPrefab); // https://github.com/Herysia/AmongUsTryhard
+            Vector3 vector = target.transform.position + anim.BodyOffset;
+            vector.z = vector.y / 1000;
+            deadBody.transform.position = vector;
+            deadBody.ParentId = target.PlayerId;
+            target.SetPlayerMaterialColors(deadBody.GetComponent<Renderer>());
             if (!options.HasFlag(CustomMurderOptions.NoSnap))
             {
                 KillAnimation.SetMovement(source, false);
@@ -25,12 +31,6 @@ namespace CrowdedRoles.Extensions
                 sourceAnim.Play(source.MyPhysics.IdleAnim, 1f);
                 KillAnimation.SetMovement(source, true);
             }
-            DeadBody deadBody = Object.Instantiate(anim.bodyPrefab);
-            Vector3 vector = target.transform.position + anim.BodyOffset;
-            vector.z = vector.y / 1000;
-            deadBody.transform.position = vector;
-            deadBody.ParentId = target.PlayerId;
-            target.SetPlayerMaterialColors(deadBody.GetComponent<Renderer>());
             KillAnimation.SetMovement(target, true);
             if (isParticipant)
             {
