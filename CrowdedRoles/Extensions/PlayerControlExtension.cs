@@ -174,9 +174,9 @@ namespace CrowdedRoles.Extensions
 
                 if (!options.HasFlag(CustomMurderOptions.NoAnimation))
                 {
-                    DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowOne(killer.Data, target.Data);
+                    HudManager.Instance.KillOverlay.ShowOne(killer.Data, target.Data);
                 }
-                DestroyableSingleton<HudManager>.Instance.ShadowQuad.gameObject.SetActive(false);
+                HudManager.Instance.ShadowQuad.gameObject.SetActive(false);
                 target.nameText.GetComponent<MeshRenderer>().material.SetInt(Mask, 0);
                 target.RpcSetScanner(false);
                 ImportantTextTask text = new GameObject("_Player").AddComponent<ImportantTextTask>();

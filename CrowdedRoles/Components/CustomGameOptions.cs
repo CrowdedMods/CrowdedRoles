@@ -22,13 +22,13 @@ namespace CrowdedRoles.Components
         {
             text = gameObject.AddTextRenderer();
             text.RightAligned = true;
-            text.scale = DestroyableSingleton<HudManager>.Instance.GameSettings.scale;
+            text.scale = HudManager.Instance.GameSettings.scale;
             
             var myAspect = gameObject.AddComponent<AspectPosition>();
             myAspect.Alignment = AspectPosition.EdgeAlignments.RightTop;
             myAspect.DistanceFromEdge = new Vector3(
                 0.1f,
-                DestroyableSingleton<HudManager>.Instance.transform.FindChild("MenuButton")?.lossyScale.y ?? 1.5f,
+                HudManager.Instance.transform.FindChild("MenuButton")?.lossyScale.y ?? 1.5f,
                 myAspect.DistanceFromEdge.z
             );
             myAspect.AdjustPosition();

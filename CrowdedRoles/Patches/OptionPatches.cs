@@ -59,7 +59,7 @@ namespace CrowdedRoles.Patches
             private static void Postfix()
             {
                 CustomGameOptionsObject = new GameObject("CustomRoleOptions");
-                CustomGameOptionsObject.transform.SetParent(DestroyableSingleton<HudManager>.Instance.transform);
+                CustomGameOptionsObject.transform.SetParent(HudManager.Instance.transform);
                 CustomGameOptionsObject.AddComponent<CustomGameOptions>();
             }
         }

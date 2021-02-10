@@ -45,7 +45,7 @@ namespace CrowdedRoles.Options
         
         internal static void ValueChanged()
         {
-            DestroyableSingleton<HudManager>.Instance.GetComponentInChildren<CustomGameOptions>()?.UpdateText();
+            HudManager.Instance.GetComponentInChildren<CustomGameOptions>()?.UpdateText();
         }
     }
 }

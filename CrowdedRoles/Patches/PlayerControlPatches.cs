@@ -26,11 +26,11 @@ namespace CrowdedRoles.Patches
                 if (role.AbleToKill &&  __instance.CanMove && !__instance.Data.IsDead)
                 {
                     __instance.SetKillTimer(Mathf.Max(0, __instance.killTimer - Time.fixedDeltaTime));
-                    DestroyableSingleton<HudManager>.Instance.KillButton.SetTarget(__instance.CustomFindClosetTarget());
+                    HudManager.Instance.KillButton.SetTarget(__instance.CustomFindClosetTarget());
                 }
                 else
                 {
-                    DestroyableSingleton<HudManager>.Instance.KillButton.SetTarget(null);
+                    HudManager.Instance.KillButton.SetTarget(null);
                 }
             }
         }
@@ -42,7 +42,7 @@ namespace CrowdedRoles.Patches
             __instance.killTimer = time;
             if (__instance.AmOwner)
             {
-                DestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(
+                HudManager.Instance.KillButton.SetCoolDown(
                     PlayerControl.GameOptions.KillCooldown > 0 ? time : 0,
                     PlayerControl.GameOptions.KillCooldown
                 );
