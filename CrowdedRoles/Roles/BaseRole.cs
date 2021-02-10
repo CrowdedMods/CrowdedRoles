@@ -41,7 +41,7 @@ namespace CrowdedRoles.Roles
         
         public virtual string FormatName(string name) => name;
 
-        public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref bool noSnap) => true;
+        public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref CustomMurderOptions options) => true;
 
         public virtual bool KillFilter(PlayerControl me, GameData.PlayerInfo target)
         {

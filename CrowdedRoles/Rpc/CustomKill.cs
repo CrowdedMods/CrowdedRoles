@@ -10,10 +10,10 @@ namespace CrowdedRoles.Rpc
     {
         public CustomKill(RoleApiPlugin plugin) : base(plugin) {}
 
-        public class Data
+        public struct Data
         {
             public byte target;
-            public bool noSnap = true;
+            public CustomMurderOptions options;
         }
 
         public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
@@ -21,20 +21,20 @@ namespace CrowdedRoles.Rpc
         public override void Write(MessageWriter writer, Data data)
         {
             writer.Write(data.target);
-            writer.Write(data.noSnap);
+            writer.Write((uint)data.options);
         }
 
         public override Data Read(MessageReader reader) => new()
         {
             target = reader.ReadByte(),
-            noSnap = reader.ReadBoolean()
+            options = (CustomMurderOptions)reader.ReadUInt32()
         };
 
         public override void Handle(PlayerControl sender, Data data)
         {
             sender.CustomMurderPlayer(
                 GameData.Instance.GetPlayerById(data.target)?.Object, 
-                data.noSnap
+                data.options
             );
         }
     }

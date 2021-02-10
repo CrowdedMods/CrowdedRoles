@@ -6,7 +6,7 @@ namespace CrowdedRoles.Extensions
 {
     public static class KillAnimationExtensions
     {
-        public static IEnumerator CoPerformCustomKill(this KillAnimation anim, PlayerControl source, PlayerControl target, bool noSnap)
+        public static IEnumerator CoPerformCustomKill(this KillAnimation anim, PlayerControl source, PlayerControl target, CustomMurderOptions options)
         {
             FollowerCamera camera = Camera.main!.GetComponent<FollowerCamera>();
             bool isParticipant = source == PlayerControl.LocalPlayer || target == PlayerControl.LocalPlayer;
@@ -16,7 +16,7 @@ namespace CrowdedRoles.Extensions
                 camera.Locked = true;
             }
             target.Die(DeathReason.Kill);
-            if (!noSnap)
+            if (!options.HasFlag(CustomMurderOptions.NoSnap))
             {
                 KillAnimation.SetMovement(source, false);
                 SpriteAnim sourceAnim = source.GetComponent<SpriteAnim>();

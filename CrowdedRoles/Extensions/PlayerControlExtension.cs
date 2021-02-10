@@ -75,12 +75,12 @@ namespace CrowdedRoles.Extensions
             return result;
         }
 
-        public static void RpcCustomMurderPlayer(this PlayerControl me, PlayerControl target, bool noSnap = false)
+        public static void RpcCustomMurderPlayer(this PlayerControl me, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
         {
             Rpc<CustomKill>.Instance.Send(new CustomKill.Data
             {
                 target = target.PlayerId,
-                noSnap = noSnap
+                options = options
             });
         }
 
@@ -95,11 +95,8 @@ namespace CrowdedRoles.Extensions
                 _ => me.GetRole()?.Side == (whom.Data.IsImpostor ? Side.Impostor : Side.Crewmate) 
             };
         }
-
-        public static void ForceCustomMurderPlayer(this PlayerControl killer, PlayerControl? target, bool noSnap = false)
-            => killer.CustomMurderPlayer(target, noSnap, true);
         
-        public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl? target, bool noSnap = false, bool force = false)
+        public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl? target, CustomMurderOptions options = CustomMurderOptions.None)
         {
             #region Checks
 
@@ -119,7 +116,7 @@ namespace CrowdedRoles.Extensions
             
             if(killer.Data.IsDead || killer.Data.Disconnected )
             {
-                if (!force)
+                if (!options.HasFlag(CustomMurderOptions.Force))
                 {
                     RoleApiPlugin.Logger.LogWarning($"Not allowed kill ({killer.PlayerId} -> {target.PlayerId})");
                     return;
@@ -127,7 +124,7 @@ namespace CrowdedRoles.Extensions
                 RoleApiPlugin.Logger.LogDebug($"Forced bad kill ({killer.PlayerId} -> {target.PlayerId})");
             }
 
-            if (!force && !role.PreKill(ref killer, ref target, ref noSnap))
+            if (!options.HasFlag(CustomMurderOptions.Force) && !role.PreKill(ref killer, ref target, ref options))
             {
                 RoleApiPlugin.Logger.LogDebug($"Custom kill ({killer.PlayerId} -> {target.PlayerId}) is cancelled by a plugin");
                 return;
@@ -164,7 +161,11 @@ namespace CrowdedRoles.Extensions
                         // ignored
                     }
                 }
-                DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowOne(killer.Data, target.Data);
+
+                if (!options.HasFlag(CustomMurderOptions.NoAnimation))
+                {
+                    DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowOne(killer.Data, target.Data);
+                }
                 DestroyableSingleton<HudManager>.Instance.ShadowQuad.gameObject.SetActive(false);
                 target.nameText.GetComponent<MeshRenderer>().material.SetInt(Mask, 0);
                 target.RpcSetScanner(false);
@@ -182,7 +183,7 @@ namespace CrowdedRoles.Extensions
                 target.myTasks.Insert(0, text);
             }
 
-            Coroutines.Start(killer.KillAnimations.Random().CoPerformCustomKill(killer, target, noSnap));
+            Coroutines.Start(killer.KillAnimations.Random().CoPerformCustomKill(killer, target, options));
             //killer.MyPhysics.StartCoroutine(killer.KillAnimations.Random().CoPerformKill(killer, target));
         }
 
