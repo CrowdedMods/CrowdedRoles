@@ -1,4 +1,5 @@
 ﻿using System;
+using CrowdedRoles.Extensions;
 
 namespace CrowdedRoles.Options
 {
@@ -11,14 +12,30 @@ namespace CrowdedRoles.Options
 
         public bool Value { get; private set; }
 
-        public Action<bool>? OnValueChanged;
+        public Action<bool>? OnValueChanged { get; init; }
 
         private void OnValueChangedRaw(OptionBehaviour opt)
         {
-            Value = opt.GetBool();
+            ValueChanged(opt.GetBool());
+            PlayerControl.LocalPlayer.RpcSyncCustomSettings();
+            OptionsManager.ValueChanged();
+        }
+
+        private void ValueChanged(bool newValue)
+        {
+            Value = newValue;
             ValueText = Value ? "On" : "Off";
             OnValueChanged?.Invoke(Value);
-            OptionsManager.ValueChanged();
+        }
+
+        internal override byte[] ToBytes()
+        {
+            return BitConverter.GetBytes(Value);
+        }
+
+        internal override void ByteValueChanged(byte[] newValue)
+        {
+            ValueChanged(BitConverter.ToBoolean(newValue));
         }
 
         internal override void ImplementOption(ref OptionBehaviour baseOption)

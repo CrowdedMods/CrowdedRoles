@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CrowdedRoles.Options;
 using CrowdedRoles.Roles;
 using CrowdedRoles.Rpc;
 using Reactor;
@@ -81,6 +82,15 @@ namespace CrowdedRoles.Extensions
             {
                 target = target.PlayerId,
                 options = options
+            });
+        }
+
+        public static void RpcSyncCustomSettings(this PlayerControl me)
+        {
+            Rpc<SyncCustomSettings>.Instance.Send(new SyncCustomSettings.Data
+            {
+                limits = RoleManager.EditableLimits.ToDictionary(p => p.Key.Data, p => p.Value),
+                options = OptionsManager.CustomOptions.ToDictionary(p => p.Key, p => p.Value.Select(o => o.ToBytes()).ToList())
             });
         }
 

@@ -10,6 +10,9 @@
             Name = name;
         }
 
+        internal abstract byte[] ToBytes();
+        internal abstract void ByteValueChanged(byte[] newValue);
+
         internal abstract void ImplementOption(ref OptionBehaviour baseOption);
     }
 }

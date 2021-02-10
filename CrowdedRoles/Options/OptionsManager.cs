@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BepInEx;
 using BepInEx.IL2CPP;
 using CrowdedRoles.Components;
 using CrowdedRoles.Roles;
@@ -10,19 +11,20 @@ namespace CrowdedRoles.Options
     {
 
         internal static readonly CustomStringName CustomOptionStringName = CustomStringName.Register("You found a glitch!"); // should never appear
-        internal static Dictionary<BasePlugin, List<CustomOption>> CustomOptions { get; } = new();
+        internal static Dictionary<string, List<CustomOption>> CustomOptions { get; } = new();
         internal static Dictionary<BaseRole, CustomOption> LimitOptions { get; } = new();
 
         public static void AddCustomOption(BasePlugin plugin, CustomOption option)
         {
-            if (!CustomOptions.TryGetValue(plugin, out var options))
+            string guid = MetadataHelper.GetMetadata(plugin).GUID;
+            if (!CustomOptions.TryGetValue(guid, out var options))
             {
                 options = new List<CustomOption>();
-                CustomOptions.Add(plugin, options);
+                CustomOptions.Add(guid, options);
             }
             
             options.Add(option);
-            CustomOptions[plugin] = options;
+            CustomOptions[guid] = options;
         }
 
         internal static void AddLimitOptionIfNecessary(BaseRole role)
