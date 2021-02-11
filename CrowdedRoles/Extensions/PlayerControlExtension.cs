@@ -45,35 +45,32 @@ namespace CrowdedRoles.Extensions
 
         public static bool IsTeamedWith(this PlayerControl me, PlayerControl other)
         {
-            return me.GetRole()?.Equals(other.GetRole()) ?? 
-                   other.GetRole() == null && me.Data.IsImpostor == other.Data.IsImpostor;            
+            BaseRole? role = me.GetRole();
+            BaseRole? theirRole = other.GetRole();
+            if (role != null)
+            {
+                return role.Side switch
+                {
+                    Side.Alone => me == other,
+                    Side.Crewmate => !other.Data.IsImpostor,
+                    Side.Impostor => other.Data.IsImpostor || theirRole?.Side == Side.Impostor,
+                    Side.Team => role == theirRole,
+                    _ => false
+                };
+            }
+
+            return theirRole == null
+                ? me.Data.IsImpostor == other.Data.IsImpostor
+                : other.IsTeamedWith(me); // there's no way it's gonna stack overflow
         }
         
         public static IEnumerable<PlayerControl> GetTeam(this PlayerControl player)
         {
-            var result = new List<PlayerControl>();
-            BaseRole? ownRole = player.GetRole();
-            switch (ownRole?.Visibility)
-            {
-                case Visibility.Everyone:
-                    result = PlayerControl.AllPlayerControls.ToArray().ToList();
-                    break;
-                case Visibility.Myself:
-                    result.Add(player);
-                    break;
-                case Visibility.Team:
-                    result = PlayerControl.AllPlayerControls.ToArray().Where(p => p.IsTeamedWith(player)).ToList();
-                    break;
-            }
-            // foreach(var p in PlayerControl.AllPlayerControls)
-            // {
-            //     if(p != null && player.IsTeamedWith(p.Data))
-            //     {
-            //         result.Add(p);
-            //     }
-            // }
-
-            return result;
+            return GameData.Instance.AllPlayers
+                .ToArray()
+                .Where(p => !p.Disconnected && p.Object != null && p.Object.IsTeamedWith(player))
+                .Select(p => p.Object)
+                .ToList();
         }
 
         public static void RpcCustomMurderPlayer(this PlayerControl me, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
