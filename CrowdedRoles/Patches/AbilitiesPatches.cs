@@ -1,6 +1,8 @@
 ﻿using CrowdedRoles.Extensions;
 using CrowdedRoles.Roles;
 using HarmonyLib;
+using System;
+using UnityEngine;
 
 namespace CrowdedRoles.Patches
 {
@@ -28,9 +30,9 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        // Patches all (i hope) methods disabling kill button
+        // Patches all (i hope) methods disabling special buttons
         [HarmonyPatch]
-        internal static class KillButtonSetActivePatches
+        internal static class ButtonsSetActivePatches
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(HudManager), nameof(HudManager.SetHudActive))]
@@ -69,6 +71,59 @@ namespace CrowdedRoles.Patches
                         HudManager.Instance.KillButton.gameObject.SetActive(role.Abilities.HasFlag(PlayerAbilities.Kill));
                     }
                 }
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(UseButtonManager), nameof(UseButtonManager.SetTarget))]
+            private static void UseButtonManager_SetTarget(UseButtonManager __instance, [HarmonyArgument(0)] IUsable? target)
+            {
+                if (target == null && PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data != null &&
+                    (PlayerControl.LocalPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Sabotage) ?? false) &&
+                    PlayerControl.LocalPlayer.CanMove)
+                {
+                    __instance.UseButton.sprite = __instance.SabotageImage;
+                    CooldownHelpers.SetCooldownNormalizedUvs(__instance.UseButton);
+                    __instance.UseButton.color = UseButtonManager.EnabledColor;
+                }
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(UseButtonManager), nameof(UseButtonManager.DoClick))]
+            private static void UseButtonManager_DoClick(UseButtonManager __instance)
+            {
+                if (__instance.isActiveAndEnabled && PlayerControl.LocalPlayer != null &&
+                    PlayerControl.LocalPlayer.Data != null && __instance.currentTarget == null &&
+                    (PlayerControl.LocalPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Sabotage) ?? false))
+                {
+                    HudManager.Instance.ShowMap((Action<MapBehaviour>)(m => m.ShowInfectedMap()));
+                }
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(Vent), nameof(Vent.CanUse))]
+            private static bool Vent_CanUse(Vent __instance, 
+                [HarmonyArgument(0)] GameData.PlayerInfo player, 
+                [HarmonyArgument(1)] ref bool canUse,
+                [HarmonyArgument(2)] ref bool couldUse,
+                ref float __result)
+            {
+                PlayerControl pc = player.Object;
+                if (!(pc.GetRole()?.Abilities.HasFlag(PlayerAbilities.Vent) ?? false))
+                {
+                    return true;
+                }
+                __result = float.MaxValue;
+                canUse = couldUse = !player.IsDead && (pc.CanMove || pc.inVent);
+                if (canUse)
+                {
+                    Vector3 myPos = pc.GetTruePosition();
+                    Vector3 ventPos = __instance.transform.position;
+                    __result = Vector2.Distance(myPos, ventPos);
+                    canUse = __result <= __instance.UsableDistance &&
+                             !PhysicsHelpers.AnythingBetween(myPos, ventPos, Constants.ShipOnlyMask, false);
+                }
+
+                return false;
             }
         }      
     }
