@@ -13,7 +13,7 @@ namespace CrowdedRoles.Patches
             private static bool Prefix(ref KillButtonManager __instance)
             {
                 PlayerControl localPlayer = PlayerControl.LocalPlayer;
-                if (localPlayer.Data.IsImpostor || !(localPlayer.GetRole()?.AbleToKill ?? false))
+                if (localPlayer.Data.IsImpostor || !(localPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Kill) ?? false))
                 {
                     return true;
                 }
@@ -39,7 +39,7 @@ namespace CrowdedRoles.Patches
                 BaseRole? role = PlayerControl.LocalPlayer.GetRole();
                 if (role != null)
                 {
-                    __instance.KillButton.gameObject.SetActive(isActive && role.AbleToKill);
+                    __instance.KillButton.gameObject.SetActive(isActive && role.Abilities.HasFlag(PlayerAbilities.Kill));
                 }
             }
 
@@ -52,7 +52,7 @@ namespace CrowdedRoles.Patches
                     BaseRole? role = __instance.GetRole();
                     if (role != null)
                     {
-                        HudManager.Instance.KillButton.gameObject.SetActive(role.AbleToKill);
+                        HudManager.Instance.KillButton.gameObject.SetActive(role.Abilities.HasFlag(PlayerAbilities.Kill));
                     }
                 }
             }
@@ -66,7 +66,7 @@ namespace CrowdedRoles.Patches
                     BaseRole? role = __instance.__this.GetRole();
                     if (role != null)
                     {
-                        HudManager.Instance.KillButton.gameObject.SetActive(role.AbleToKill);
+                        HudManager.Instance.KillButton.gameObject.SetActive(role.Abilities.HasFlag(PlayerAbilities.Kill));
                     }
                 }
             }
