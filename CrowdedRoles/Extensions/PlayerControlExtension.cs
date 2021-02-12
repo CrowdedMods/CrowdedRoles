@@ -219,12 +219,12 @@ namespace CrowdedRoles.Extensions
             PlayerControl? result = null;
             Vector2 myPos = me.GetTruePosition();
             float lowestDistance =
-                GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)];
+                GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, GameOptionsData.KillDistances.Length-1)];
             
             foreach (GameData.PlayerInfo player in GameData.Instance.AllPlayers)
             {
                 PlayerControl obj = player.Object;
-                if(obj == null || !role.KillFilter(me, player)) continue;
+                if(obj == null || player.Disconnected || !role.KillFilter(me, player)) continue;
                 Vector2 vec = obj.GetTruePosition() - myPos;
                 float magnitude = vec.magnitude;
                 if (magnitude <= lowestDistance && !PhysicsHelpers.AnyNonTriggersBetween(myPos, vec.normalized,

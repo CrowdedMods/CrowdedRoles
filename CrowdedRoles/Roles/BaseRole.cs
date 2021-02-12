@@ -45,8 +45,7 @@ namespace CrowdedRoles.Roles
 
         public virtual bool KillFilter(PlayerControl me, GameData.PlayerInfo target)
         {
-            return !target.Disconnected &&
-                   me.PlayerId != target.PlayerId &&
+            return me.PlayerId != target.PlayerId &&
                    !target.IsDead &&
                    !me.IsTeamedWith(target.Object);
         }
