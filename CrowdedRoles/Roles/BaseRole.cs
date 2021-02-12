@@ -21,7 +21,7 @@ namespace CrowdedRoles.Roles
         public virtual PatchFilter PatchFilterFlags { get; } = PatchFilter.None;
         public virtual PlayerAbilities Abilities { get; } = PlayerAbilities.None;
 
-        internal BaseRole(BasePlugin plugin)
+        protected BaseRole(BasePlugin plugin)
         {
             var guid = MetadataHelper.GetMetadata(plugin).GUID;
             
