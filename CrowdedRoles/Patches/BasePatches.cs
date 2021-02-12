@@ -57,17 +57,10 @@ namespace CrowdedRoles.Patches
                     return true;
                 }
 
-                List<PlayerControl> myTeam = new();
-                // {
-                //     PlayerControl.LocalPlayer
-                // };
-                // if (myRole.Visibility != Visibility.Myself)
-                // {
-                    myTeam.AddRange(
-                    PlayerControl.LocalPlayer.GetTeam()
-                        .OrderBy(p => p != PlayerControl.LocalPlayer)
-                    );
-                // }
+                List<PlayerControl> myTeam = PlayerControl.AllPlayerControls.ToArray()
+                    .Where(p => PlayerControl.LocalPlayer.CanSee(p))
+                    .OrderBy(p => !p.AmOwner)
+                    .ToList();
 
                 __instance.Title.Text = myRole.Name;
                 __instance.Title.Color = myRole.Color;
