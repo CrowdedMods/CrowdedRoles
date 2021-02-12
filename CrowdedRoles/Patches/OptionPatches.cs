@@ -20,7 +20,7 @@ namespace CrowdedRoles.Patches
             static void Postfix(ref GameOptionsMenu __instance)
             {
                 float lowestY = __instance.GetComponentsInChildren<OptionBehaviour>().Min(o => o.transform.position.y) - 0.2f;
-                ToggleOption togglePrefab = __instance.GetComponentsInChildren<ToggleOption>().FirstOrDefault(o => o.Title != StringNames.GameRecommendedSettings)!; // GameRecommendedSettings has a specific design
+                ToggleOption togglePrefab = __instance.GetComponentsInChildren<ToggleOption>().First(o => o.Title != StringNames.GameRecommendedSettings); // GameRecommendedSettings has a specific design
                 NumberOption numberPrefab = __instance.GetComponentInChildren<NumberOption>();
                 StringOption stringPrefab = __instance.GetComponentInChildren<StringOption>();
                 byte optionsAdded = 0;
@@ -40,6 +40,8 @@ namespace CrowdedRoles.Patches
                         },
                         __instance.transform
                     );
+                    
+                    option.Title = OptionsManager.CustomOptionStringName;
                     baseOption.ImplementOption(ref option);
                     
                     Vector3 oldPos = option.transform.position;

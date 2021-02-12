@@ -56,7 +56,6 @@ namespace CrowdedRoles.Options
                 return;
             }
 
-            Option.Title = OptionsManager.CustomOptionStringName;
             Option.TitleText.Text = Name;
             Option.Value = Value;
             Option.Values = Enumerable.Repeat<StringNames>(OptionsManager.CustomOptionStringName, Values.Length).ToArray();

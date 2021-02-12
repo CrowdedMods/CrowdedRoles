@@ -53,7 +53,6 @@ namespace CrowdedRoles.Options
                 return;
             }
             
-            option.Title = OptionsManager.CustomOptionStringName;
             option.TitleText.Text = Name;
             option.Increment = Increment;
             option.FormatString = ValueFormat;
