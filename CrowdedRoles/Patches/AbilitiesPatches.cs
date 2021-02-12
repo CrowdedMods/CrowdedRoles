@@ -2,6 +2,8 @@
 using CrowdedRoles.Roles;
 using HarmonyLib;
 using System;
+using CrowdedRoles.Rpc;
+using Reactor;
 using UnityEngine;
 
 namespace CrowdedRoles.Patches
@@ -26,6 +28,28 @@ namespace CrowdedRoles.Patches
                     localPlayer.RpcCustomMurderPlayer(__instance.CurrentTarget);
                 }
 
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.RpcRepairSystem))]
+        [HarmonyPriority(Priority.First)]
+        private static class ShipStatus_RpcRepairSystem
+        {
+            private static bool Prefix(ShipStatus __instance, [HarmonyArgument(0)] SystemTypes type, [HarmonyArgument(1)] int someEnumProbably)
+            {
+                if (AmongUsClient.Instance.AmHost || type != SystemTypes.Sabotage ||
+                    PlayerControl.LocalPlayer.Data.IsImpostor || 
+                    !(PlayerControl.LocalPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Sabotage) ?? false))
+                {
+                    return true;
+                }
+                
+                Rpc<CustomSabotage>.Instance.SendTo(__instance, AmongUsClient.Instance.HostId, new CustomSabotage.Data
+                {
+                    amount = (byte)someEnumProbably
+                });
+                
                 return false;
             }
         }
