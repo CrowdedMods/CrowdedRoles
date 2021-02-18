@@ -34,7 +34,7 @@ namespace CrowdedRoles.Rpc
             writer.Write(data.options.Count);
             foreach (var (plugin, options) in data.options)
             {
-                writer.Write(MetadataHelper.GetMetadata(plugin).GUID);
+                writer.Write(plugin);
                 writer.Write(options.Count);
                 foreach (byte[] option in options)
                 {
@@ -67,7 +67,7 @@ namespace CrowdedRoles.Rpc
                     var values = new List<byte[]>(len);
                     for (int j = 0; j < len; j++)
                     {
-                        values[j] = reader.ReadBytesAndSize();
+                        values.Add(reader.ReadBytesAndSize());
                     }
                     options.Add(guid, values);
                 }

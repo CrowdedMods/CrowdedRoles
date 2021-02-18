@@ -75,6 +75,12 @@ namespace CrowdedRoles.Extensions
 
         public static void RpcCustomMurderPlayer(this PlayerControl me, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
         {
+            if (!options.HasFlag(CustomMurderOptions.Force) && !me.GetRole()!.PreKill(ref me, ref target, ref options))
+            {
+                RoleApiPlugin.Logger.LogDebug($"Custom kill ({me.PlayerId} -> {target.PlayerId}) is cancelled by a plugin");
+                return;
+            }
+            
             Rpc<CustomKill>.Instance.Send(new CustomKill.Data
             {
                 target = target.PlayerId,
@@ -138,12 +144,6 @@ namespace CrowdedRoles.Extensions
                     return;
                 }
                 RoleApiPlugin.Logger.LogDebug($"Forced bad kill ({killer.PlayerId} -> {target.PlayerId})");
-            }
-
-            if (!options.HasFlag(CustomMurderOptions.Force) && !role.PreKill(ref killer, ref target, ref options))
-            {
-                RoleApiPlugin.Logger.LogDebug($"Custom kill ({killer.PlayerId} -> {target.PlayerId}) is cancelled by a plugin");
-                return;
             }
 
             if (target.Data is null || target.Data.IsDead)

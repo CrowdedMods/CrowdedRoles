@@ -13,7 +13,7 @@ namespace CrowdedRoles.Patches
             {
                 if (__instance.AmHost && !data.Character.AmOwner)
                 {
-                    PlayerControl.LocalPlayer.RpcSyncCustomSettings((int)data.Character.NetId);
+                    PlayerControl.LocalPlayer.RpcSyncCustomSettings(data.Character.OwnerId);
                 }
             }
         }
