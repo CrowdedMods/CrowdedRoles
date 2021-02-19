@@ -32,6 +32,20 @@ namespace CrowdedRoles.Patches
             }
         }
 
+        [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Method_21))] // HandleHud
+        private static class KeyboardJoystick_HandleHud
+        {
+            private static void Postfix()
+            {
+                if (PlayerControl.LocalPlayer != null &&
+                    (PlayerControl.LocalPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Kill) ?? false)
+                    && Input.GetKeyDown(KeyCode.Q))
+                {
+                    HudManager.Instance.KillButton.PerformKill();
+                }
+            }
+        }
+
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.RpcRepairSystem))]
         [HarmonyPriority(Priority.First)]
         private static class ShipStatus_RpcRepairSystem
