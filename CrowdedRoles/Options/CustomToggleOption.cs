@@ -16,12 +16,12 @@ namespace CrowdedRoles.Options
 
         private void OnValueChangedRaw(OptionBehaviour opt)
         {
-            ValueChanged(opt.GetBool());
+            UpdateValue(opt.GetBool());
             PlayerControl.LocalPlayer.RpcSyncCustomSettings();
             OptionsManager.ValueChanged();
         }
 
-        private void ValueChanged(bool newValue)
+        private void UpdateValue(bool newValue)
         {
             Value = newValue;
             ValueText = Value ? "On" : "Off";
@@ -35,7 +35,7 @@ namespace CrowdedRoles.Options
 
         internal override void ByteValueChanged(byte[] newValue)
         {
-            ValueChanged(BitConverter.ToBoolean(newValue));
+            UpdateValue(BitConverter.ToBoolean(newValue));
         }
 
         internal override void ImplementOption(ref OptionBehaviour baseOption)

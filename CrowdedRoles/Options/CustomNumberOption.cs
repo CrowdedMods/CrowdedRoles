@@ -22,12 +22,12 @@ namespace CrowdedRoles.Options
         
         private void OnValueChangedRaw(OptionBehaviour opt)
         {
-            ValueChanged(opt.GetFloat());
+            UpdateValue(opt.GetFloat());
             PlayerControl.LocalPlayer.RpcSyncCustomSettings();
             OptionsManager.ValueChanged();
         }
 
-        private void ValueChanged(float newValue)
+        private void UpdateValue(float newValue)
         {
             Value = newValue;
             ValueText = string.Format(ValueFormat, Value);
@@ -41,7 +41,7 @@ namespace CrowdedRoles.Options
 
         internal override void ByteValueChanged(byte[] newValue)
         {
-            ValueChanged(BitConverter.ToSingle(newValue));
+            UpdateValue(BitConverter.ToSingle(newValue));
         }
 
         internal override void ImplementOption(ref OptionBehaviour baseOption)
