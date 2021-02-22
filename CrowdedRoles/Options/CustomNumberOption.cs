@@ -14,12 +14,12 @@ namespace CrowdedRoles.Options
 
         public float Increment { get; init; } = 1f;
         private FloatRange ValidRange { get; }
-        internal bool ZeroIsInfinity { get; init; }
-        internal string ValueFormat { get; init; } = "{0}";
+        public bool ZeroIsInfinity { get; init; }
+        public string ValueFormat { get; init; } = "{0}";
         public Action<float>? OnValueChanged { get; init; }
-        
+
         public float Value { get; private set; }
-        
+
         private void OnValueChangedRaw(OptionBehaviour opt)
         {
             UpdateValue(opt.GetFloat());

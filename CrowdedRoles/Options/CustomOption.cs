@@ -1,4 +1,6 @@
-﻿namespace CrowdedRoles.Options
+﻿using BepInEx.IL2CPP;
+
+namespace CrowdedRoles.Options
 {
     public abstract class CustomOption
     {
@@ -8,6 +10,16 @@
         protected CustomOption(string name)
         {
             Name = name;
+        }
+
+        public T Register<T>(OptionPluginWrapper wrapper) where T : CustomOption
+        {
+            return wrapper.AddCustomOption((T)this);
+        }
+        
+        public T Register<T>(BasePlugin plugin) where T : CustomOption
+        {
+            return OptionsManager.AddCustomOption(plugin, (T)this);
         }
 
         internal abstract byte[] ToBytes();

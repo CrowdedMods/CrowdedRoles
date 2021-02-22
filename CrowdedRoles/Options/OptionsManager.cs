@@ -14,7 +14,7 @@ namespace CrowdedRoles.Options
         internal static Dictionary<string, List<CustomOption>> CustomOptions { get; } = new();
         internal static Dictionary<BaseRole, CustomOption> LimitOptions { get; } = new();
 
-        public static void AddCustomOption(BasePlugin plugin, CustomOption option)
+        public static T AddCustomOption<T>(BasePlugin plugin, T option) where T : CustomOption
         {
             string guid = MetadataHelper.GetMetadata(plugin).GUID;
             if (!CustomOptions.TryGetValue(guid, out var options))
@@ -25,6 +25,7 @@ namespace CrowdedRoles.Options
             
             options.Add(option);
             CustomOptions[guid] = options;
+            return option;
         }
 
         internal static void AddLimitOptionIfNecessary(BaseRole role)
@@ -46,6 +47,31 @@ namespace CrowdedRoles.Options
         internal static void ValueChanged()
         {
             HudManager.Instance.GetComponentInChildren<CustomGameOptions>()?.UpdateText();
+        }
+    }
+
+    public class OptionPluginWrapper
+    {
+        private BasePlugin plugin { get; }
+
+        public OptionPluginWrapper(BasePlugin plugin)
+        {
+            this.plugin = plugin;
+        }
+
+        public T AddCustomOption<T>(T option) where T : CustomOption
+        {
+            return OptionsManager.AddCustomOption(plugin, option);
+        }
+
+        public OptionPluginWrapper AddCustomOptions(IEnumerable<CustomOption> options)
+        {
+            foreach (CustomOption option in options)
+            {
+                OptionsManager.AddCustomOption(plugin, option);
+            }
+
+            return this;
         }
     }
 }
