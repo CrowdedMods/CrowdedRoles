@@ -15,6 +15,7 @@ namespace CrowdedRoles.Options
         }
 
         public int Value { get; private set; }
+        public string StringValue => Values[Value];
         public Action<int>? OnValueChanged { get; init; }
         public string[] Values { get; }
         private StringOption? Option;
