@@ -12,14 +12,14 @@ namespace CrowdedRoles.Options
             Name = name;
         }
 
-        public T Register<T>(OptionPluginWrapper wrapper) where T : CustomOption
+        public void Register<T>(OptionPluginWrapper wrapper) where T : CustomOption
         {
-            return wrapper.AddCustomOption((T)this);
+            wrapper.AddCustomOption((T)this);
         }
         
-        public T Register<T>(BasePlugin plugin) where T : CustomOption
+        public void Register(BasePlugin plugin)
         {
-            return OptionsManager.AddCustomOption(plugin, (T)this);
+            OptionsManager.AddCustomOption(plugin, this);
         }
 
         internal abstract byte[] ToBytes();
