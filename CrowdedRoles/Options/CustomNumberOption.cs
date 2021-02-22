@@ -9,13 +9,21 @@ namespace CrowdedRoles.Options
         {
             Value = 0;
             ValidRange = validRange;
-            ValueText = string.Format(ValueFormat, Value);
         }
 
         public float Increment { get; init; } = 1f;
         private FloatRange ValidRange { get; }
-        public bool ZeroIsInfinity { get; init; }
-        public string ValueFormat { get; init; } = "{0}";
+        public bool ZeroIsInfinity { get; init; } = false;
+        private readonly string _valueFormat = "{0}";
+        public string ValueFormat
+        {
+            get => _valueFormat;
+            init
+            {
+                _valueFormat = value;
+                ValueText = string.Format(value, Value);
+            }
+        }
         public Action<float>? OnValueChanged { get; init; }
 
         public float Value { get; private set; }
