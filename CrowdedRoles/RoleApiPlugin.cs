@@ -25,6 +25,7 @@ namespace CrowdedRoles
 
 #if DEBUG
             RegisterCustomRoleAttribute.Register(this);
+            MyCustomOptions.RegisterOptions(this);
 #endif
             Harmony.PatchAll();
             Logger = Log;
