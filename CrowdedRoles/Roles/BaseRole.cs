@@ -19,7 +19,9 @@ namespace CrowdedRoles.Roles
         public virtual Visibility Visibility { get; } = Visibility.Myself;
         public virtual string Description { get; } = "Do nothing but [FF0000FF]kiss";
         public virtual PatchFilter PatchFilterFlags { get; } = PatchFilter.None;
-        public virtual PlayerAbilities Abilities { get; } = PlayerAbilities.None;
+        public virtual bool CanKill => false;
+        public virtual bool CanVent => false;
+        public virtual bool CanSabotage => false;
 
         protected BaseRole(BasePlugin plugin)
         {

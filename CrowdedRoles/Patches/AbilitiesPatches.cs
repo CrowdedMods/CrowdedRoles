@@ -17,7 +17,7 @@ namespace CrowdedRoles.Patches
             private static bool Prefix(ref KillButtonManager __instance)
             {
                 PlayerControl localPlayer = PlayerControl.LocalPlayer;
-                if (localPlayer.Data.IsImpostor || !(localPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Kill) ?? false))
+                if (localPlayer.Data.IsImpostor || !(localPlayer.GetRole()?.CanKill ?? false))
                 {
                     return true;
                 }
@@ -38,7 +38,7 @@ namespace CrowdedRoles.Patches
             private static void Postfix()
             {
                 if (PlayerControl.LocalPlayer != null &&
-                    (PlayerControl.LocalPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Kill) ?? false)
+                    (PlayerControl.LocalPlayer.GetRole()?.CanKill ?? false)
                     && Input.GetKeyDown(KeyCode.Q))
                 {
                     HudManager.Instance.KillButton.PerformKill();
@@ -54,7 +54,7 @@ namespace CrowdedRoles.Patches
             {
                 if (AmongUsClient.Instance.AmHost || type != SystemTypes.Sabotage ||
                     PlayerControl.LocalPlayer.Data.IsImpostor || 
-                    !(PlayerControl.LocalPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Sabotage) ?? false))
+                    !(PlayerControl.LocalPlayer.GetRole()?.CanSabotage ?? false))
                 {
                     return true;
                 }
@@ -79,7 +79,7 @@ namespace CrowdedRoles.Patches
                 BaseRole? role = PlayerControl.LocalPlayer.GetRole();
                 if (role != null)
                 {
-                    __instance.KillButton.gameObject.SetActive(isActive && role.Abilities.HasFlag(PlayerAbilities.Kill));
+                    __instance.KillButton.gameObject.SetActive(isActive && role.CanKill);
                 }
             }
 
@@ -92,7 +92,7 @@ namespace CrowdedRoles.Patches
                     BaseRole? role = __instance.GetRole();
                     if (role != null)
                     {
-                        HudManager.Instance.KillButton.gameObject.SetActive(role.Abilities.HasFlag(PlayerAbilities.Kill));
+                        HudManager.Instance.KillButton.gameObject.SetActive(role.CanKill);
                     }
                 }
             }
@@ -106,7 +106,7 @@ namespace CrowdedRoles.Patches
                     BaseRole? role = __instance.__this.GetRole();
                     if (role != null)
                     {
-                        HudManager.Instance.KillButton.gameObject.SetActive(role.Abilities.HasFlag(PlayerAbilities.Kill));
+                        HudManager.Instance.KillButton.gameObject.SetActive(role.CanKill);
                     }
                 }
             }
@@ -116,7 +116,7 @@ namespace CrowdedRoles.Patches
             private static void UseButtonManager_SetTarget(UseButtonManager __instance, [HarmonyArgument(0)] IUsable? target)
             {
                 if (target == null && PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data != null &&
-                    (PlayerControl.LocalPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Sabotage) ?? false) &&
+                    (PlayerControl.LocalPlayer.GetRole()?.CanSabotage ?? false) &&
                     PlayerControl.LocalPlayer.CanMove)
                 {
                     __instance.UseButton.sprite = __instance.SabotageImage;
@@ -131,7 +131,7 @@ namespace CrowdedRoles.Patches
             {
                 if (__instance.isActiveAndEnabled && PlayerControl.LocalPlayer != null &&
                     PlayerControl.LocalPlayer.Data != null && __instance.currentTarget == null &&
-                    (PlayerControl.LocalPlayer.GetRole()?.Abilities.HasFlag(PlayerAbilities.Sabotage) ?? false))
+                    (PlayerControl.LocalPlayer.GetRole()?.CanSabotage ?? false))
                 {
                     HudManager.Instance.ShowMap((Action<MapBehaviour>)(m => m.ShowInfectedMap()));
                 }
@@ -146,7 +146,7 @@ namespace CrowdedRoles.Patches
                 ref float __result)
             {
                 PlayerControl pc = player.Object;
-                if (!(pc.GetRole()?.Abilities.HasFlag(PlayerAbilities.Vent) ?? false))
+                if (!(pc.GetRole()?.CanVent ?? false))
                 {
                     return true;
                 }

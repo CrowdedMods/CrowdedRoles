@@ -36,7 +36,7 @@ namespace CrowdedRoles.Rpc
 
         public override void Handle(ShipStatus obj, Data data)
         {
-            if (data.player.GetRole()?.Abilities.HasFlag(PlayerAbilities.Sabotage) ?? false)
+            if (data.player.GetRole()?.CanSabotage ?? false)
             {
                 obj.RepairSystem(SystemTypes.Sabotage, data.player, data.amount);
             }
