@@ -16,14 +16,11 @@ namespace CrowdedRoles.Extensions
 
         public static void InitRole(this PlayerControl player, BaseRole? role = null)
         {
-            if (role is null) return;
-            try
-            {
-                RoleManager.PlayerRoles.Add(player.PlayerId, role);
-            }
-            catch(ArgumentException)
-            {
-                RoleApiPlugin.Logger.LogWarning($"{role.Name} already exists in {nameof(RoleManager.PlayerRoles)}, redefining...");
+            if (role == null) return;
+            
+            if (!RoleManager.PlayerRoles.TryAdd(player.PlayerId, role))
+            { 
+                RoleApiPlugin.Logger.LogWarning($"{player.PlayerId} already has a role, redefining..."); 
                 RoleManager.PlayerRoles[player.PlayerId] = role;
             }
         }
@@ -144,7 +141,7 @@ namespace CrowdedRoles.Extensions
             }
 
             BaseRole? role = killer.GetRole();
-            if (target is null || role is null)
+            if (target == null || role == null)
             {
                 // ReSharper disable once Unity.NoNullPropagation
                 RoleApiPlugin.Logger.LogWarning($"Null kill ({killer.PlayerId} -> {target?.PlayerId ?? -1})");
