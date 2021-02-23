@@ -99,12 +99,21 @@ namespace CrowdedRoles.Patches
         {
             private static void Prefix([HarmonyArgument(0)] GameOverReason reason)
             {
-                RoleManager.PlayerRoles.Clear();
+                RoleManager.GameEnded();
                 
                 if (reason.IsCustom())
                 {
                     CustomGameOverReasonManager.myPlayerId = PlayerControl.LocalPlayer.PlayerId;
                 }
+            }
+        }
+
+        [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.Method_46))]
+        private static class InnerNetClient_OnDisconnected
+        {
+            private static void Postfix()
+            {
+                RoleManager.GameEnded();
             }
         }
         

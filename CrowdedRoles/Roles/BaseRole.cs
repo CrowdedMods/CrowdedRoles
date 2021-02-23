@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BepInEx;
 using BepInEx.IL2CPP;
 using CrowdedRoles.Extensions;
@@ -53,6 +54,12 @@ namespace CrowdedRoles.Roles
             return me.PlayerId != target.PlayerId &&
                    !target.IsDead &&
                    !me.IsTeamedWith(target.Object);
+        }
+
+        public virtual IEnumerable<GameData.PlayerInfo> SelectHolders(IEnumerable<GameData.PlayerInfo> unusedPlayers, byte limit)
+        {
+            var rand = new System.Random();
+            return unusedPlayers.OrderBy(_ => rand.Next()).Take(limit).ToList();
         }
 
         public static bool operator ==(BaseRole? me, BaseRole? other) => me?.Data == other?.Data;

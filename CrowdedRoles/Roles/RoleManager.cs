@@ -12,10 +12,17 @@ namespace CrowdedRoles.Roles
 
         public static readonly Dictionary<byte, BaseRole> PlayerRoles = new();
         public static readonly Dictionary<string, Dictionary<byte, BaseRole>> Roles = new();
+        public static bool rolesSet;
 
         public static BaseRole? GetRoleByData(RoleData data)
         {
             return Roles[data.pluginId]?[data.localId];
+        }
+
+        public static void GameEnded()
+        {
+            PlayerRoles.Clear();
+            rolesSet = false;
         }
     }
 }

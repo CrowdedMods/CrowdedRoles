@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
@@ -17,30 +16,28 @@ namespace CrowdedRoles.Patches
         {
             public static void Postfix()
             {
-                var goodPlayers = new List<byte>();
-                foreach(var p in GameData.Instance.AllPlayers)
+                if (RoleManager.rolesSet)
                 {
-                    if(!p.Disconnected && !p.IsImpostor)
-                    {
-                        goodPlayers.Add(p.PlayerId);
-                    }
+                    RoleApiPlugin.Logger.LogWarning("Trying to override roles");
+                    return;
                 }
+                var goodPlayers = GameData.Instance.AllPlayers.ToArray()
+                    .Where(p => !p.Disconnected && !p.IsImpostor && p.GetRole() == null)
+                    .ToList();
 
-                foreach((BaseRole role, byte limit) in RoleManager.Limits.Where(p => !p.Key.isDisabled)) // we just don't give people disabled roles
+                var holders = new Dictionary<RoleData, byte[]>();
+
+                foreach (var (role, limit) in RoleManager.Limits.Where(p => !p.Key.isDisabled))
                 {
-                    if (limit == 0) continue; // fast skip
-                    if (role.PatchFilterFlags.HasFlag(PatchFilter.SelectInfected)) continue;
-                    
-                    List<byte> shuffledPlayers = goodPlayers.OrderBy(_ => new Guid()).ToList();
-                    goodPlayers = shuffledPlayers.Skip(limit).ToList();
-                    
-                    Rpc<SelectCustomRole>.Instance.Send(
-                        new SelectCustomRole.Data {
-                            role = role.Data, 
-                            holders = shuffledPlayers.Take(limit).ToArray()
-                        }
-                    );
+                    if(limit == 0) continue;
+                    holders.Add(role.Data, role.SelectHolders(goodPlayers, limit).Select(p => p.PlayerId).ToArray());
+                    goodPlayers = GameData.Instance.AllPlayers.ToArray()
+                        .Where(p => !p.Disconnected && !p.IsImpostor  && p.GetRole() == null)
+                        .ToList();
                 }
+                
+                Rpc<SelectCustomRole>.Instance.Send(holders);
+                RoleManager.rolesSet = true;
             }
         }
 
@@ -71,7 +68,7 @@ namespace CrowdedRoles.Patches
                 {
                     GameData.PlayerInfo data = myTeam[i].Data;
                     int oddness = (i + 1) / 2;
-                    PoolablePlayer player = UnityEngine.Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
+                    PoolablePlayer player = Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
                     player.transform.localPosition = new Vector3(
                         0.8f* oddness * (i % 2 == 0 ? -1 : 1) * (1 - oddness * 0.08f),
                         __instance.BaseY - 0.25f + oddness * 0.1f,
@@ -118,9 +115,14 @@ namespace CrowdedRoles.Patches
             }
         }
 
+        [HarmonyPriority(Priority.First)]
         [HarmonyPatch(typeof(IntroCutscene.CoBegin__d), nameof(IntroCutscene.CoBegin__d.MoveNext))]
         private static class IntroCutScene_CoBegin
         {
+            private static bool Prefix(ref bool __result)
+            {
+                return RoleManager.rolesSet && (__result = true); // wait until we set our roles
+            }
             private static void Postfix(bool __result)
             {
                 if (!__result) // yield break

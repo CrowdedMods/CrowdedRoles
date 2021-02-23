@@ -1,53 +1,73 @@
 ﻿using CrowdedRoles.Extensions;
 using CrowdedRoles.Roles;
 using Hazel;
+using System.Collections.Generic;
+using System.Linq;
 using Reactor;
 
 namespace CrowdedRoles.Rpc
 {
     [RegisterCustomRpc]
-    public class SelectCustomRole : PlayerCustomRpc<RoleApiPlugin, SelectCustomRole.Data>
+    public class SelectCustomRole : PlayerCustomRpc<RoleApiPlugin, Dictionary<RoleData, byte[]>>
     {
-        public SelectCustomRole(RoleApiPlugin plugin) : base(plugin){}
-
-        public struct Data
+        public SelectCustomRole(RoleApiPlugin plugin) : base(plugin)
         {
-            public RoleData role;
-            public byte[] holders;
         }
         
         public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
 
-        public override void Write(MessageWriter writer, Data data)
+        public override void Write(MessageWriter writer, Dictionary<RoleData, byte[]> data)
         {
-            data.role.Serialize(writer);
-            writer.WriteBytesAndSize(data.holders);
+            foreach (var (role, holders) in data)
+            {
+                role.Serialize(writer);
+                writer.WriteBytesAndSize(holders);
+            }
         }
 
-        public override Data Read(MessageReader reader) => new()
+        public override Dictionary<RoleData, byte[]> Read(MessageReader reader)
+        {
+            var result = new Dictionary<RoleData, byte[]>();
+            while (reader.Position < reader.Length)
             {
-                role = RoleData.Deserialize(reader),
-                holders = reader.ReadBytesAndSize()
-            };
+                result.Add(
+                    RoleData.Deserialize(reader),
+                    reader.ReadBytesAndSize()
+                );
+            }
 
-        public override void Handle(PlayerControl innerNetObject, Data data)
+            return result;
+        }
+
+        public override void Handle(PlayerControl sender, Dictionary<RoleData, byte[]> data)
         {
             if (GameData.Instance == null)
             {
-                RoleApiPlugin.Logger.LogWarning($"{innerNetObject.NetId} sent {nameof(SelectCustomRole)} without the game going");
+                RoleApiPlugin.Logger.LogWarning($"{sender.NetId} sent {nameof(SelectCustomRole)} without the game going");
                 return;
             }
             
-            if (innerNetObject.PlayerId != GameData.Instance.GetHost().PlayerId)
+            if (sender.OwnerId != AmongUsClient.Instance.HostId)
             {
-                RoleApiPlugin.Logger.LogWarning($"{innerNetObject.NetId} sent {nameof(SelectCustomRole)} but was not a host");
+                RoleApiPlugin.Logger.LogWarning($"{sender.NetId} sent {nameof(SelectCustomRole)} but was not a host");
+                return;
+            }
+
+            if (RoleManager.rolesSet)
+            {
+                RoleApiPlugin.Logger.LogWarning($"{sender.NetId} tried to override roles");
                 return;
             }
             
-            foreach (var id in data.holders)
+            foreach (var (role, ids) in data)
             {
-                GameData.Instance.GetPlayerById(id)?.Object.InitRole(RoleManager.GetRoleByData(data.role));
+                foreach (byte id in ids)
+                {
+                    GameData.Instance.GetPlayerById(id)?.Object.InitRole(RoleManager.GetRoleByData(role));
+                }
             }
+
+            RoleManager.rolesSet = true;
         }
     }
 }
