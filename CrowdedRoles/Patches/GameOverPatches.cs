@@ -14,9 +14,9 @@ namespace CrowdedRoles.Patches
     {
         private static readonly int Color = Shader.PropertyToID("_Color");
 
-        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Method_128))]
-        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Method_106))]
-        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Method_97))]
+        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Method_128))] // honestly i don't remember ordering
+        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Method_106))] // but it's AddWinReason, AddLoseReason
+        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Method_97))]  // and AddDrawReason
         private static class StatsManagerFixes
         {
             private static bool Prefix([HarmonyArgument(0)] GameOverReason reason)
