@@ -18,8 +18,6 @@ namespace CrowdedRoles.Patches
             }
             
             BaseRole? role = __instance.GetRole();
-            
-            role?.PlayerControl_FixedUpdate(__instance);
 
             if (__instance.AmOwner && role != null) // probably will be reworked
             {
