@@ -30,6 +30,11 @@ namespace CrowdedRoles.Extensions
 
         public static BaseRole? GetRole(this PlayerControl player)
         {
+            return player.Data.GetRole();
+        }
+
+        public static BaseRole? GetRole(this GameData.PlayerInfo player)
+        {
             return RoleManager.PlayerRoles.GetValueOrDefault(player.PlayerId);
         }
 
@@ -38,7 +43,17 @@ namespace CrowdedRoles.Extensions
             return player.GetRole() as T;
         }
 
+        public static T? GetRole<T>(this GameData.PlayerInfo player) where T : BaseRole
+        {
+            return player.GetRole() as T;
+        }
+
         public static bool Is<T>(this PlayerControl player) where T : BaseRole
+        {
+            return player.GetRole<T>() != null;
+        }
+
+        public static bool Is<T>(this GameData.PlayerInfo player) where T : BaseRole
         {
             return player.GetRole<T>() != null;
         }
