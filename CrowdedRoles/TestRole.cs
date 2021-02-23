@@ -1,9 +1,13 @@
 ﻿#if DEBUG
+using System.Collections.Generic;
+using System.Linq;
 using BepInEx.IL2CPP;
 using CrowdedRoles.Attributes;
 using CrowdedRoles.Extensions;
+using CrowdedRoles.GameOverReasons;
 using CrowdedRoles.Options;
 using CrowdedRoles.Roles;
+using HarmonyLib;
 using UnityEngine;
 
 namespace CrowdedRoles
@@ -25,6 +29,43 @@ namespace CrowdedRoles
         {
             options |= CustomMurderOptions.NoAnimation | CustomMurderOptions.NoSnap;
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Method_21))] // HandleHud
+    internal class TestPatch
+    {
+        private static void Postfix()
+        {
+            if (Input.GetKeyDown(KeyCode.F6) && PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost)
+            {
+                PlayerControl.LocalPlayer.RpcCustomEndGame<TestRoleWon>();
+            }
+        }
+    }
+
+    [RegisterCustomGameOverReason]
+    public class TestRoleWon : CustomGameOverReason
+    {
+        public TestRoleWon(BasePlugin plugin) : base(plugin)
+        {
+        }
+
+        public override string Name { get; } = "TestRole won";
+        public override string WinText { get; } = "haha fools";
+        public override IEnumerable<GameData.PlayerInfo> GetWinners()
+        {
+            return GameData.Instance.AllPlayers.ToArray().Where(p => p.Is<TestRole>()).ToList();
+        }
+
+        public override Color GetWinTextColor(bool youWon)
+        {
+            return youWon ? Color.cyan : Color.red;
+        }
+
+        public override Color GetBackgroundColor(bool youWon)
+        {
+            return youWon ? Palette.CrewmateBlue : Palette.ImpostorRed;
         }
     }
 

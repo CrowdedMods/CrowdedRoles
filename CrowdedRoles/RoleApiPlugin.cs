@@ -26,6 +26,7 @@ namespace CrowdedRoles
 #if DEBUG
             RegisterCustomRoleAttribute.Register(this);
             MyCustomOptions.RegisterOptions(this);
+            RegisterCustomGameOverReasonAttribute.Register(this);
 #endif
             Harmony.PatchAll();
             Logger = Log;
