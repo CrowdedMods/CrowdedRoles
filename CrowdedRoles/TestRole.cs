@@ -53,10 +53,8 @@ namespace CrowdedRoles
 
         public override string Name { get; } = "TestRole won";
         public override string WinText { get; } = "haha fools";
-        public override IEnumerable<GameData.PlayerInfo> GetWinners()
-        {
-            return GameData.Instance.AllPlayers.ToArray().Where(p => p.Is<TestRole>()).ToList();
-        }
+        public override IEnumerable<GameData.PlayerInfo> Winners => 
+            GameData.Instance.AllPlayers.ToArray().Where(p => p.Is<TestRole>());
 
         public override Color GetWinTextColor(bool youWon)
         {

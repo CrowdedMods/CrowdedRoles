@@ -46,10 +46,10 @@ namespace CrowdedRoles.GameOverReasons
         
         public abstract string Name { get; } // no uses yet
         public abstract string WinText { get; }
-        public abstract IEnumerable<GameData.PlayerInfo> GetWinners();
+        public abstract IEnumerable<GameData.PlayerInfo> Winners { get; }
         public abstract Color GetWinTextColor(bool youWon);
         public abstract Color GetBackgroundColor(bool youWon);
-        public virtual IEnumerable<GameData.PlayerInfo> GetShownWinners() => GetWinners();
+        public virtual IEnumerable<GameData.PlayerInfo> ShownWinners => Winners;
 
         public virtual AudioClip? GetAudioClip(bool youWon) => null;
 

@@ -36,11 +36,11 @@ namespace CrowdedRoles.Patches
                 }
 
                 var reason = CustomGameOverReasonManager.EndReason;
-                var winners = reason.GetWinners().Select(w => new WinningPlayerData(w)
+                var winners = reason.Winners.Select(w => new WinningPlayerData(w)
                 {
                     IsYou = w.PlayerId == CustomGameOverReasonManager.myPlayerId // dirty fix due to LocalPlayer destroying on this scene
                 }).ToList();
-                var winnersToShow = reason.GetShownWinners().Select(w => new WinningPlayerData(w)
+                var winnersToShow = reason.ShownWinners.Select(w => new WinningPlayerData(w)
                 {
                     IsYou = w.PlayerId == CustomGameOverReasonManager.myPlayerId
                 }).OrderBy(w => !w.IsYou).ToList();
