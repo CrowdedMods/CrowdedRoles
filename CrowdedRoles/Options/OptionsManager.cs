@@ -44,6 +44,7 @@ namespace CrowdedRoles.Options
                 }
             };
             option.LoadValue(SaveOptionsFile, "Limits", $"{role.Name}:{guid}");
+            RoleManager.Limits[role] = (byte)option.Value;
             
             LimitOptions.Add(role, option);
         }
