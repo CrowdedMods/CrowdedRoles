@@ -4,6 +4,7 @@ using CrowdedRoles.GameOverReasons;
 using HarmonyLib;
 using Hazel;
 using System;
+using CrowdedRoles.Roles;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -98,6 +99,8 @@ namespace CrowdedRoles.Patches
         {
             private static void Prefix([HarmonyArgument(0)] GameOverReason reason)
             {
+                RoleManager.PlayerRoles.Clear();
+                
                 if (reason.IsCustom())
                 {
                     CustomGameOverReasonManager.myPlayerId = PlayerControl.LocalPlayer.PlayerId;

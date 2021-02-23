@@ -118,15 +118,6 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.Start))]
-        private static class EndGameManager_Start
-        {
-            private static void Postfix()
-            {
-                ShipStatus.Instance.GameEnded();
-            }
-        }
-
         [HarmonyPatch(typeof(IntroCutscene.CoBegin__d), nameof(IntroCutscene.CoBegin__d.MoveNext))]
         private static class IntroCutScene_CoBegin
         {
