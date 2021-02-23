@@ -36,7 +36,7 @@ namespace CrowdedRoles.Roles
             localRoles.Add((byte)localRoles.Count, this);
             RoleManager.Roles[guid] = localRoles;
             RoleManager.Limits.Add(this, 0);
-            OptionsManager.AddLimitOptionIfNecessary(this);
+            OptionsManager.AddLimitOptionIfNecessary(this, guid);
         }
         
         public virtual string FormatName(string name) => name;

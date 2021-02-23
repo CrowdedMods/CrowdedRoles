@@ -1,8 +1,10 @@
 ﻿using Reactor;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using BepInEx.Logging;
 using CrowdedRoles.Attributes;
+using CrowdedRoles.Options;
 using HarmonyLib;
 
 namespace CrowdedRoles
@@ -14,14 +16,15 @@ namespace CrowdedRoles
     {
         public const string Id = "xyz.crowdedmods.crowdedroles";
         private Harmony Harmony { get; } = new(Id);
-#pragma warning disable CS8618
-        public static ManualLogSource Logger { get; private set; }
-#pragma warning restore CS8618
+        public static ManualLogSource Logger { get; private set; } = null!;
 
         public override void Load()
         {
             RegisterCustomRpcAttribute.Register(this);
             RegisterInIl2CppAttribute.Register();
+            
+            BepInPlugin metadata = MetadataHelper.GetMetadata(this);
+            OptionsManager.SaveOptionsFile = new ConfigFile(Utility.CombinePaths(Paths.ConfigPath, Id + ".options.cfg"), false, metadata);
 
 #if DEBUG
             RegisterCustomRoleAttribute.Register(this);

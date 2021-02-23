@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using BepInEx.Configuration;
 using CrowdedRoles.Extensions;
 using HarmonyLib;
 using UnityEngine;
@@ -11,18 +12,27 @@ namespace CrowdedRoles.Options
         public CustomStringOption(string name, string[] values) : base(name)
         {
             Values = values;
-            ValueText = Values[Value];
         }
 
-        public int Value { get; private set; }
+        private int _value;
+        public int Value
+        {
+            get => _value;
+            private set
+            {
+                _value = value;
+                ValueText = Values[Mathf.Clamp(value, 0, Values.Length)];
+            }
+        }
         public string StringValue => Values[Value];
         public Action<int>? OnValueChanged { get; init; }
         public string[] Values { get; }
         private StringOption? Option;
+        private ConfigEntry<int> SavedValue = null!;
         
         private void OnValueChangedRaw(OptionBehaviour opt)
         {
-            UpdateValue(opt.GetInt());
+            UpdateValue(SavedValue.Value = opt.GetInt());
             PlayerControl.LocalPlayer.RpcSyncCustomSettings();
             OptionsManager.ValueChanged();
         }
@@ -30,7 +40,6 @@ namespace CrowdedRoles.Options
         private void UpdateValue(int index)
         {
             Value = index;
-            ValueText = Values[Mathf.Clamp(Value, 0, Values.Length)];
             OnValueChanged?.Invoke(Value);
             if(Option != null)
             {
@@ -62,6 +71,13 @@ namespace CrowdedRoles.Options
             Option.Values = Enumerable.Repeat<StringNames>(OptionsManager.CustomOptionStringName, Values.Length).ToArray();
             Option.ValueText.Text = ValueText;
             Option.OnValueChanged = (Action<OptionBehaviour>) OnValueChangedRaw;
+        }
+
+        internal override void LoadValue(ConfigFile file, string guid, string name = "")
+        {
+            SavedValue = file.Bind(guid, name == "" ? Name : name, 0);
+
+            Value = SavedValue.Value;
         }
     }
 

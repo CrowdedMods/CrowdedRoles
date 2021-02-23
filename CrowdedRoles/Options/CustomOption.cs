@@ -1,4 +1,5 @@
-﻿using BepInEx.IL2CPP;
+﻿using BepInEx.Configuration;
+using BepInEx.IL2CPP;
 
 namespace CrowdedRoles.Options
 {
@@ -26,5 +27,6 @@ namespace CrowdedRoles.Options
         internal abstract void ByteValueChanged(byte[] newValue);
 
         internal abstract void ImplementOption(ref OptionBehaviour baseOption);
+        internal abstract void LoadValue(ConfigFile file, string guid, string name = "");
     }
 }

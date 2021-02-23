@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using CrowdedRoles.Components;
 using CrowdedRoles.Roles;
@@ -13,6 +14,7 @@ namespace CrowdedRoles.Options
         internal static readonly CustomStringName CustomOptionStringName = CustomStringName.Register("You found a glitch!"); // should never appear
         internal static Dictionary<string, List<CustomOption>> CustomOptions { get; } = new();
         internal static Dictionary<BaseRole, CustomOption> LimitOptions { get; } = new();
+        internal static ConfigFile SaveOptionsFile = null!;
 
         public static void AddCustomOption<T>(BasePlugin plugin, T option) where T : CustomOption
         {
@@ -22,12 +24,14 @@ namespace CrowdedRoles.Options
                 options = new List<CustomOption>();
                 CustomOptions.Add(guid, options);
             }
+
+            option.LoadValue(SaveOptionsFile, guid);
             
             options.Add(option);
             CustomOptions[guid] = options;
         }
 
-        internal static void AddLimitOptionIfNecessary(BaseRole role)
+        internal static void AddLimitOptionIfNecessary(BaseRole role, string guid)
         {
             if (role.PatchFilterFlags.HasFlag(PatchFilter.AmountOption)) return;
             if (LimitOptions.ContainsKey(role)) return;
@@ -39,6 +43,7 @@ namespace CrowdedRoles.Options
                     RoleManager.Limits[role] = (byte)amount;
                 }
             };
+            option.LoadValue(SaveOptionsFile, "Limits", $"{role.Name}:{guid}");
             
             LimitOptions.Add(role, option);
         }

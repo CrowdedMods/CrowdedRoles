@@ -1,4 +1,5 @@
 ﻿using System;
+using BepInEx.Configuration;
 using CrowdedRoles.Extensions;
 
 namespace CrowdedRoles.Options
@@ -7,16 +8,27 @@ namespace CrowdedRoles.Options
     {
         public CustomToggleOption(string name) : base(name)
         {
-            ValueText = Value ? "On" : "Off";
         }
 
-        public bool Value { get; private set; }
+        private bool _value;
+
+        public bool Value
+        {
+            get => _value;
+            private set
+            {
+                _value = value;
+                ValueText = value ? "On" : "Off";
+            }
+        }
 
         public Action<bool>? OnValueChanged { get; init; }
 
+        private ConfigEntry<bool> SavedValue = null!;
+
         private void OnValueChangedRaw(OptionBehaviour opt)
         {
-            UpdateValue(opt.GetBool());
+            UpdateValue(SavedValue.Value = opt.GetBool());
             PlayerControl.LocalPlayer.RpcSyncCustomSettings();
             OptionsManager.ValueChanged();
         }
@@ -24,7 +36,6 @@ namespace CrowdedRoles.Options
         private void UpdateValue(bool newValue)
         {
             Value = newValue;
-            ValueText = Value ? "On" : "Off";
             OnValueChanged?.Invoke(Value);
         }
 
@@ -50,7 +61,13 @@ namespace CrowdedRoles.Options
             option.TitleText.Text = Name; // why the heck it's not in OptionBehaviour
             option.CheckMark.enabled = Value;
             option.OnValueChanged = (Action<OptionBehaviour>) OnValueChangedRaw;
-            RoleApiPlugin.Logger.LogDebug($"Added toggle option {Name}");
+        }
+
+        internal override void LoadValue(ConfigFile file, string guid, string name = "")
+        {
+            SavedValue = file.Bind(guid, name == "" ? Name : name, false);
+
+            Value = SavedValue.Value;
         }
     }
 }

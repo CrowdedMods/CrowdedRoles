@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using BepInEx.Configuration;
 using CrowdedRoles.Extensions;
 
 namespace CrowdedRoles.Options
@@ -7,9 +9,10 @@ namespace CrowdedRoles.Options
     {
         public CustomNumberOption(string name, FloatRange validRange) : base(name)
         {
-            Value = 0;
             ValidRange = validRange;
         }
+
+        private ConfigEntry<float> SavedValue = null!;
 
         public float Increment { get; init; } = 1f;
         private FloatRange ValidRange { get; }
@@ -26,11 +29,20 @@ namespace CrowdedRoles.Options
         }
         public Action<float>? OnValueChanged { get; init; }
 
-        public float Value { get; private set; }
+        private float _value;
+        public float Value
+        {
+            get => _value;
+            private set
+            {
+                _value = value;
+                ValueText = string.Format(ValueFormat, value);
+            } 
+        }
 
         private void OnValueChangedRaw(OptionBehaviour opt)
         {
-            UpdateValue(opt.GetFloat());
+            UpdateValue(SavedValue.Value = opt.GetFloat());
             PlayerControl.LocalPlayer.RpcSyncCustomSettings();
             OptionsManager.ValueChanged();
         }
@@ -38,7 +50,6 @@ namespace CrowdedRoles.Options
         private void UpdateValue(float newValue)
         {
             Value = newValue;
-            ValueText = string.Format(ValueFormat, Value);
             OnValueChanged?.Invoke(Value);
         }
 
@@ -68,6 +79,13 @@ namespace CrowdedRoles.Options
             option.ZeroIsInfinity = ZeroIsInfinity;
             option.Value = Value;
             option.OnValueChanged = (Action<OptionBehaviour>) OnValueChangedRaw;
+        }
+
+        internal override void LoadValue(ConfigFile file, string guid, string name = "")
+        {
+            SavedValue = file.Bind(guid, name == "" ? Name : name, ValidRange.min);
+
+            Value = SavedValue.Value;
         }
     }
 }
