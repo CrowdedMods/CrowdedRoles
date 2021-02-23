@@ -11,7 +11,6 @@ namespace CrowdedRoles.Roles
     public abstract class BaseRole
     {
         internal RoleData Data { get; }
-        internal bool isDisabled { get; set; }
         
         public abstract string Name { get; }
         public abstract Color Color { get; }

@@ -27,7 +27,7 @@ namespace CrowdedRoles.Patches
 
                 var holders = new Dictionary<RoleData, byte[]>();
 
-                foreach (var (role, limit) in RoleManager.Limits.Where(p => !p.Key.isDisabled))
+                foreach (var (role, limit) in RoleManager.Limits)
                 {
                     if(limit == 0) continue;
                     holders.Add(role.Data, role.SelectHolders(goodPlayers, limit).Select(p => p.PlayerId).ToArray());
