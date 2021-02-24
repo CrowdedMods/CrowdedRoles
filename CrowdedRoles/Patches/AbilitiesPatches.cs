@@ -2,6 +2,7 @@
 using CrowdedRoles.Roles;
 using HarmonyLib;
 using System;
+using System.Linq;
 using CrowdedRoles.Rpc;
 using Reactor;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace CrowdedRoles.Patches
             private static bool Prefix(ref KillButtonManager __instance)
             {
                 PlayerControl localPlayer = PlayerControl.LocalPlayer;
-                if (localPlayer.Data.IsImpostor || !(localPlayer.GetRole()?.CanKill ?? false))
+                if (localPlayer.Data.IsImpostor || !(localPlayer.GetRole()?.CanKill(null) ?? false))
                 {
                     return true;
                 }
@@ -38,7 +39,7 @@ namespace CrowdedRoles.Patches
             private static void Postfix()
             {
                 if (PlayerControl.LocalPlayer != null &&
-                    (PlayerControl.LocalPlayer.GetRole()?.CanKill ?? false)
+                    (PlayerControl.LocalPlayer.GetRole()?.CanKill(null) ?? false)
                     && Input.GetKeyDown(KeyCode.Q))
                 {
                     HudManager.Instance.KillButton.PerformKill();
@@ -54,7 +55,7 @@ namespace CrowdedRoles.Patches
             {
                 if (AmongUsClient.Instance.AmHost || type != SystemTypes.Sabotage ||
                     PlayerControl.LocalPlayer.Data.IsImpostor || 
-                    !(PlayerControl.LocalPlayer.GetRole()?.CanSabotage ?? false))
+                    !(PlayerControl.LocalPlayer.GetRole()?.CanSabotage(null) ?? false))
                 {
                     return true;
                 }
@@ -79,7 +80,7 @@ namespace CrowdedRoles.Patches
                 BaseRole? role = PlayerControl.LocalPlayer.GetRole();
                 if (role != null)
                 {
-                    __instance.KillButton.gameObject.SetActive(isActive && role.CanKill);
+                    __instance.KillButton.gameObject.SetActive(isActive && role.CanKill(null));
                 }
             }
 
@@ -92,7 +93,7 @@ namespace CrowdedRoles.Patches
                     BaseRole? role = __instance.GetRole();
                     if (role != null)
                     {
-                        HudManager.Instance.KillButton.gameObject.SetActive(role.CanKill);
+                        HudManager.Instance.KillButton.gameObject.SetActive(role.CanKill(null));
                     }
                 }
             }
@@ -106,7 +107,7 @@ namespace CrowdedRoles.Patches
                     BaseRole? role = __instance.__this.GetRole();
                     if (role != null)
                     {
-                        HudManager.Instance.KillButton.gameObject.SetActive(role.CanKill);
+                        HudManager.Instance.KillButton.gameObject.SetActive(role.CanKill(null));
                     }
                 }
             }
@@ -116,7 +117,7 @@ namespace CrowdedRoles.Patches
             private static void UseButtonManager_SetTarget(UseButtonManager __instance, [HarmonyArgument(0)] IUsable? target)
             {
                 if (target == null && PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data != null &&
-                    (PlayerControl.LocalPlayer.GetRole()?.CanSabotage ?? false) &&
+                    (PlayerControl.LocalPlayer.GetRole()?.CanSabotage(null) ?? false) &&
                     PlayerControl.LocalPlayer.CanMove)
                 {
                     __instance.UseButton.sprite = __instance.SabotageImage;
@@ -130,35 +131,48 @@ namespace CrowdedRoles.Patches
             private static void UseButtonManager_DoClick(UseButtonManager __instance)
             {
                 if (__instance.isActiveAndEnabled && PlayerControl.LocalPlayer != null &&
-                    PlayerControl.LocalPlayer.Data != null && __instance.currentTarget == null &&
-                    (PlayerControl.LocalPlayer.GetRole()?.CanSabotage ?? false))
+                    PlayerControl.LocalPlayer.Data != null && __instance.currentTarget == null)
                 {
-                    HudManager.Instance.ShowMap((Action<MapBehaviour>)(m => m.ShowInfectedMap()));
+                    var myRole = PlayerControl.LocalPlayer.GetRole();
+                    if (myRole == null || !myRole.CanSabotage(null))
+                    {
+                        return;
+                    }
+                    HudManager.Instance.ShowMap((Action<MapBehaviour>)(m =>
+                    {
+                        foreach (MapRoom mapRoom in m.infectedOverlay.rooms.ToArray().Where(r => !myRole.CanSabotage(r.room)))
+                        {
+                            mapRoom.gameObject.SetActive(false);
+                        }
+
+                        m.ShowInfectedMap();
+                    }));
                 }
             }
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(Vent), nameof(Vent.CanUse))]
-            private static bool Vent_CanUse(Vent __instance, 
-                [HarmonyArgument(0)] GameData.PlayerInfo player, 
+            private static bool Vent_CanUse(Vent __instance,
                 [HarmonyArgument(1)] ref bool canUse,
                 [HarmonyArgument(2)] ref bool couldUse,
                 ref float __result)
             {
-                PlayerControl pc = player.Object;
-                if (!(pc.GetRole()?.CanVent ?? false))
+                BaseRole? role = PlayerControl.LocalPlayer.GetRole();
+                if (role == null)
                 {
                     return true;
                 }
+
+                couldUse = canUse = role.CanVent(__instance);
                 __result = float.MaxValue;
-                canUse = couldUse = !player.IsDead && (pc.CanMove || pc.inVent);
+                
                 if (canUse)
                 {
-                    Vector3 myPos = pc.GetTruePosition();
+                    Vector2 myPos = PlayerControl.LocalPlayer.GetTruePosition();
                     Vector3 ventPos = __instance.transform.position;
                     __result = Vector2.Distance(myPos, ventPos);
-                    canUse = __result <= __instance.UsableDistance &&
-                             !PhysicsHelpers.AnythingBetween(myPos, ventPos, Constants.ShipOnlyMask, false);
+                    canUse &= __result <= __instance.UsableDistance &&
+                              !PhysicsHelpers.AnythingBetween(myPos, ventPos, Constants.ShipOnlyMask, false);
                 }
 
                 return false;

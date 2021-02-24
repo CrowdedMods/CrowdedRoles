@@ -19,9 +19,16 @@ namespace CrowdedRoles.Roles
         public virtual Visibility Visibility { get; } = Visibility.Myself;
         public virtual string Description { get; } = "Do nothing but [FF0000FF]kiss";
         public virtual PatchFilter PatchFilterFlags { get; } = PatchFilter.None;
-        public virtual bool CanKill => false;
-        public virtual bool CanVent => false;
-        public virtual bool CanSabotage => false;
+
+        public virtual bool CanKill(PlayerControl? target)
+        {
+            return target == null ||
+                   !target.AmOwner &&
+                   !target.Data.IsDead &&
+                   !PlayerControl.LocalPlayer.IsTeamedWith(target);
+        }
+        public virtual bool CanVent(Vent vent) => false;
+        public virtual bool CanSabotage(SystemTypes? sabotage) => false;
 
         protected BaseRole(BasePlugin plugin)
         {
@@ -46,13 +53,6 @@ namespace CrowdedRoles.Roles
         public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref CustomMurderOptions options)
         {
             return true;
-        }
-
-        public virtual bool KillFilter(PlayerControl me, GameData.PlayerInfo target)
-        {
-            return me.PlayerId != target.PlayerId &&
-                   !target.IsDead &&
-                   !me.IsTeamedWith(target.Object);
         }
 
         public virtual IEnumerable<GameData.PlayerInfo> SelectHolders(IEnumerable<GameData.PlayerInfo> unusedPlayers, byte limit)

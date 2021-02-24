@@ -199,7 +199,12 @@ namespace CrowdedRoles.Extensions
                 target.RpcSetScanner(false);
                 ImportantTextTask text = new GameObject("_Player").AddComponent<ImportantTextTask>();
                 text.transform.SetParent(killer.transform, false);
-                if (!PlayerControl.GameOptions.GhostsDoTasks)
+                if (target.Data.IsImpostor)
+                {
+                    target.Method_84(); // ClearTasks
+                    text.Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GhostImpostor, new (Array.Empty<Il2CppSystem.Object>()));
+                }
+                else if (!PlayerControl.GameOptions.GhostsDoTasks)
                 {
                     target.Method_84(); // ClearTasks
                     text.Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GhostIgnoreTasks, new(Array.Empty<Il2CppSystem.Object>()));
@@ -233,16 +238,15 @@ namespace CrowdedRoles.Extensions
             float lowestDistance =
                 GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, GameOptionsData.KillDistances.Length-1)];
             
-            foreach (GameData.PlayerInfo player in GameData.Instance.AllPlayers)
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
-                PlayerControl obj = player.Object;
-                if(obj == null || player.Disconnected || !role.KillFilter(me, player)) continue;
-                Vector2 vec = obj.GetTruePosition() - myPos;
+                if(player.Data == null || player.Data.Disconnected || !role.CanKill(player)) continue;
+                Vector2 vec = player.GetTruePosition() - myPos;
                 float magnitude = vec.magnitude;
                 if (magnitude <= lowestDistance && !PhysicsHelpers.AnyNonTriggersBetween(myPos, vec.normalized,
                     magnitude, Constants.ShipAndObjectsMask))
                 {
-                    result = obj;
+                    result = player;
                     lowestDistance = magnitude;
                 }
             }

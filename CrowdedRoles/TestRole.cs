@@ -23,9 +23,8 @@ namespace CrowdedRoles
         public override Color Color { get; } = Color.cyan;
         public override Visibility Visibility { get; } = Visibility.Team;
         public override string Description { get; } = "say meow pls";
-        public override bool CanKill => true;
-        public override bool CanSabotage => true;
-        public override bool CanVent => true;
+        public override bool CanSabotage(SystemTypes? sabotage) => sabotage != SystemTypes.LifeSupp;
+        public override bool CanVent(Vent _) => true;
         public override Side Side { get; } = Side.Impostor;
         public override bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref CustomMurderOptions options)
         {
