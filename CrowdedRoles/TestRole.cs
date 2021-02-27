@@ -30,7 +30,7 @@ namespace CrowdedRoles
             !PlayerControl.LocalPlayer.IsTeamedWith(target);
         public override bool CanSabotage(SystemTypes? sabotage) => sabotage != SystemTypes.LifeSupp;
         public override bool CanVent(Vent _) => true;
-        public override Side Side { get; } = Side.Impostor;
+        public override Team Team { get; } = Team.Impostor;
         public override bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref CustomMurderOptions options)
         {
             options |= CustomMurderOptions.NoAnimation | CustomMurderOptions.NoSnap;

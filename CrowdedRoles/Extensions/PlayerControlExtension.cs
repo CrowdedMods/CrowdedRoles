@@ -59,12 +59,12 @@ namespace CrowdedRoles.Extensions
         {
             BaseRole? role = me.GetRole();
             BaseRole? theirRole = other.GetRole();
-            return role?.Side switch
+            return role?.Team switch
             {
-                Side.Alone => me == other,
-                Side.Crewmate => !other.Data.IsImpostor,
-                Side.Impostor => other.Data.IsImpostor || theirRole?.Side == Side.Impostor,
-                Side.Team => role == theirRole,
+                Team.Alone => me == other,
+                Team.Crewmate => !other.Data.IsImpostor,
+                Team.Impostor => other.Data.IsImpostor || theirRole?.Team == Team.Impostor,
+                Team.SameRole => role == theirRole,
                 _ => theirRole == null
                     ? me.Data.IsImpostor == other.Data.IsImpostor
                     : other.IsTeamedWith(me) // there's no way it's gonna overflow
@@ -124,9 +124,9 @@ namespace CrowdedRoles.Extensions
             return role?.Visibility switch
             {
                 Visibility.Myself => me.PlayerId == whom.PlayerId,
-                Visibility.Team => whom.IsTeamedWith(me) || role.Side == (me.Data.IsImpostor ? Side.Impostor : Side.Crewmate) ,
+                Visibility.Team => whom.IsTeamedWith(me) || role.Team == (me.Data.IsImpostor ? Team.Impostor : Team.Crewmate) ,
                 Visibility.Everyone => true,
-                _ => me.GetRole()?.Side == (whom.Data.IsImpostor ? Side.Impostor : Side.Crewmate) 
+                _ => me.GetRole()?.Team == (whom.Data.IsImpostor ? Team.Impostor : Team.Crewmate) 
             };
         }
         

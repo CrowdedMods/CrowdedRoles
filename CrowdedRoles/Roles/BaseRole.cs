@@ -15,7 +15,7 @@ namespace CrowdedRoles.Roles
         public abstract string Name { get; }
         public abstract Color Color { get; }
         
-        public virtual Side Side { get; } = Side.Crewmate;
+        public virtual Team Team { get; } = Team.Crewmate;
         public virtual Visibility Visibility { get; } = Visibility.Myself;
         public virtual string Description { get; } = "Do nothing but [FF0000FF]kiss";
         public virtual PatchFilter PatchFilterFlags { get; } = PatchFilter.None;
