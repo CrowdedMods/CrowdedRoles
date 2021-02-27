@@ -55,7 +55,7 @@ namespace CrowdedRoles.Patches
                 }
 
                 List<PlayerControl> myTeam = PlayerControl.AllPlayerControls.ToArray()
-                    .Where(p => PlayerControl.LocalPlayer.CanSee(p))
+                    .Where(p => PlayerControl.LocalPlayer.IsVisibleTeammate(p))
                     .OrderBy(p => !p.AmOwner)
                     .ToList();
 

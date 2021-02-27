@@ -59,21 +59,21 @@ namespace CrowdedRoles.Extensions
         {
             BaseRole? role = me.GetRole();
             BaseRole? theirRole = other.GetRole();
-            if (role != null)
+            return role?.Side switch
             {
-                return role.Side switch
-                {
-                    Side.Alone => me == other,
-                    Side.Crewmate => !other.Data.IsImpostor,
-                    Side.Impostor => other.Data.IsImpostor || theirRole?.Side == Side.Impostor,
-                    Side.Team => role == theirRole,
-                    _ => false
-                };
-            }
+                Side.Alone => me == other,
+                Side.Crewmate => !other.Data.IsImpostor,
+                Side.Impostor => other.Data.IsImpostor || theirRole?.Side == Side.Impostor,
+                Side.Team => role == theirRole,
+                _ => theirRole == null
+                    ? me.Data.IsImpostor == other.Data.IsImpostor
+                    : other.IsTeamedWith(me) // there's no way it's gonna overflow
+            };
+        }
 
-            return theirRole == null
-                ? me.Data.IsImpostor == other.Data.IsImpostor
-                : other.IsTeamedWith(me); // there's no way it's gonna stack overflow
+        public static bool IsVisibleTeammate(this PlayerControl me, PlayerControl other)
+        {
+            return me.IsTeamedWith(other) && me.CanSee(other);
         }
         
         public static IEnumerable<PlayerControl> GetTeam(this PlayerControl player)
