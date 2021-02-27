@@ -23,6 +23,11 @@ namespace CrowdedRoles
         public override Color Color { get; } = Color.cyan;
         public override Visibility Visibility { get; } = Visibility.Team;
         public override string Description { get; } = "say meow pls";
+        public override bool CanKill(PlayerControl? target) =>
+            target == null ||
+            !target.AmOwner &&
+            !target.Data.IsDead &&
+            !PlayerControl.LocalPlayer.IsTeamedWith(target);
         public override bool CanSabotage(SystemTypes? sabotage) => sabotage != SystemTypes.LifeSupp;
         public override bool CanVent(Vent _) => true;
         public override Side Side { get; } = Side.Impostor;

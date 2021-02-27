@@ -20,13 +20,7 @@ namespace CrowdedRoles.Roles
         public virtual string Description { get; } = "Do nothing but [FF0000FF]kiss";
         public virtual PatchFilter PatchFilterFlags { get; } = PatchFilter.None;
 
-        public virtual bool CanKill(PlayerControl? target)
-        {
-            return target == null ||
-                   !target.AmOwner &&
-                   !target.Data.IsDead &&
-                   !PlayerControl.LocalPlayer.IsTeamedWith(target);
-        }
+        public virtual bool CanKill(PlayerControl? target) => false;
         public virtual bool CanVent(Vent vent) => false;
         public virtual bool CanSabotage(SystemTypes? sabotage) => false;
 
