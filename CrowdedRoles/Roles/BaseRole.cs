@@ -42,7 +42,7 @@ namespace CrowdedRoles.Roles
             OptionsManager.AddLimitOptionIfNecessary(this, guid);
         }
         
-        public virtual string FormatName(string name) => name;
+        public virtual string FormatName(GameData.PlayerInfo player) => player.PlayerName;
 
         public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref CustomMurderOptions options)
         {

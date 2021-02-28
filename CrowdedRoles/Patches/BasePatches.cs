@@ -81,7 +81,7 @@ namespace CrowdedRoles.Patches
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
                     float scale = (i == 0 ? 1.8f : 1.5f) - oddness * 0.18f;
                     player.transform.localScale = player.NameText.transform.localScale = new Vector3(scale, scale, scale);
-                    player.NameText.Text = myRole.FormatName(player.NameText.Text);
+                    player.NameText.Text = myRole.FormatName(data);
                     if (i > 0 && myRole.Visibility != Visibility.Everyone)
                     {
                         player.NameText.gameObject.SetActive(true);
@@ -98,7 +98,7 @@ namespace CrowdedRoles.Patches
         {
             static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
             {
-                BaseRole? role = data.Object.GetRole();
+                BaseRole? role = data.GetRole();
                 if (role?.PatchFilterFlags.HasFlag(PatchFilter.MeetingHud) ?? false)
                 {
                     return;
@@ -109,7 +109,7 @@ namespace CrowdedRoles.Patches
                     __result.NameText.Color = role?.Color ?? Palette.ImpostorRed;
                     if (role != null)
                     {
-                        __result.NameText.Text = role.FormatName(__result.NameText.Text);
+                        __result.NameText.Text = role.FormatName(data);
                     }
                 }
             }
@@ -121,7 +121,7 @@ namespace CrowdedRoles.Patches
         {
             private static bool Prefix(ref bool __result)
             {
-                return RoleManager.rolesSet && (__result = true); // wait until we set our roles
+                return RoleManager.rolesSet && (__result = true); // wait until we set our roles to prevent bugs
             }
             private static void Postfix(bool __result)
             {
@@ -135,7 +135,7 @@ namespace CrowdedRoles.Patches
                             player.nameText.Color = role?.Color ?? Palette.ImpostorRed;
                             if (role != null)
                             {
-                                player.nameText.Text = role.FormatName(player.nameText.Text);
+                                player.nameText.Text = role.FormatName(player.Data);
                             }
                         }
                     }
