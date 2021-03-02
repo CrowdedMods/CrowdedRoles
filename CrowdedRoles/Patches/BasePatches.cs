@@ -6,38 +6,53 @@ using CrowdedRoles.Extensions;
 using CrowdedRoles.Roles;
 using CrowdedRoles.Rpc;
 using Reactor;
+using UnhollowerBaseLib;
 
 namespace CrowdedRoles.Patches
 {
     internal static class BasePatches
     {
-        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.SelectInfected))]
-        private static class ShipStatus_SelectInfected
+        [HarmonyPriority(Priority.First)]
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSetInfected))]
+        private static class PlayerControl_RpcSetInfected
         {
-            public static void Postfix()
+            private static void Prefix([HarmonyArgument(0)] ref Il2CppReferenceArray<GameData.PlayerInfo> infected)
             {
                 if (RoleManager.rolesSet)
                 {
                     RoleApiPlugin.Logger.LogWarning("Trying to override roles");
                     return;
                 }
-                var goodPlayers = GameData.Instance.AllPlayers.ToArray()
-                    .Where(p => !p.Disconnected && !p.IsImpostor && p.GetRole() == null)
-                    .ToList();
-
-                var holders = new Dictionary<RoleData, byte[]>();
+                var goodPlayers = new RoleHolders(GameData.Instance.AllPlayers.ToArray(), infected.ToArray())
+                {
+                    CustomRoleHolders = GameData.Instance.AllPlayers
+                        .ToArray()
+                        .Where(p => p.GetRole() != null)
+                        .GroupBy(p => p.GetRole()!)
+                        .ToDictionary(p => p.Key, p => (IEnumerable<GameData.PlayerInfo>)p)
+                };
 
                 foreach (var (role, limit) in RoleManager.Limits)
                 {
-                    if(limit == 0) continue;
-                    holders.Add(role.Data, role.SelectHolders(goodPlayers, limit).Select(p => p.PlayerId).ToArray());
-                    goodPlayers = GameData.Instance.AllPlayers.ToArray()
-                        .Where(p => !p.Disconnected && !p.IsImpostor  && p.GetRole() == null)
-                        .ToList();
+                    var localHolders = role.SelectHolders(goodPlayers, limit);
+                    if (goodPlayers.CustomRoleHolders.ContainsKey(role))
+                    {
+                        goodPlayers.CustomRoleHolders[role] = goodPlayers.CustomRoleHolders[role].Concat(localHolders);
+                    }
+                    else
+                    {
+                        goodPlayers.CustomRoleHolders.Add(role, localHolders);
+                    }
                 }
-                
-                Rpc<SelectCustomRole>.Instance.Send(holders);
-                RoleManager.rolesSet = true;
+
+                infected = goodPlayers.Impostors.ToArray();
+
+                Rpc<SelectCustomRole>.Instance.Send(
+                    goodPlayers.CustomRoleHolders.ToDictionary(
+                        p => p.Key.Data, 
+                        p => p.Value.Select(player => player.PlayerId).ToArray()
+                    )
+                );
             }
         }
 
@@ -79,8 +94,10 @@ namespace CrowdedRoles.Patches
                     DestroyableSingleton<HatManager>.Instance.Method_4(player.SkinSlot, data.SkinId);
                     player.HatSlot.SetHat(data.HatId, data.ColorId);
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
-                    float scale = (i == 0 ? 1.8f : 1.5f) - oddness * 0.18f;
-                    player.transform.localScale = player.NameText.transform.localScale = new Vector3(scale, scale, scale);
+                    float scale = 1f - oddness * 0.075f;
+                    Vector3 scaleVec = new Vector3(scale, scale, scale) * 1.5f;
+                    player.transform.localScale = scaleVec;
+                    player.NameText.transform.localScale = global::Extensions.Inv(scaleVec);
                     player.NameText.Text = myRole.FormatName(data);
                     if (i > 0 && myRole.Visibility != Visibility.Everyone)
                     {

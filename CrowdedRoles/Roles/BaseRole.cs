@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using BepInEx;
 using BepInEx.IL2CPP;
@@ -8,9 +9,29 @@ using UnityEngine;
 
 namespace CrowdedRoles.Roles
 {
+    public class RoleHolders
+    {
+        public ReadOnlyCollection<GameData.PlayerInfo> AllPlayers { get; }
+        public List<GameData.PlayerInfo> Impostors { get; }
+
+        public IEnumerable<GameData.PlayerInfo> Crewmates =>
+            AllPlayers.Where(p => 
+                Impostors.All(pl => pl.PlayerId != p.PlayerId) && 
+                !CustomRoleHolders.Values.Any(h => h.Contains(p))
+            );
+
+        public Dictionary<BaseRole, IEnumerable<GameData.PlayerInfo>> CustomRoleHolders { get; init; } = new();
+
+        internal RoleHolders(IEnumerable<GameData.PlayerInfo> players, IEnumerable<GameData.PlayerInfo> impostors)
+        {
+            AllPlayers = players.ToList().AsReadOnly();
+            Impostors = impostors.ToList();
+        }
+    }
     public abstract class BaseRole
     {
         internal RoleData Data { get; }
+        public byte Limit => RoleManager.Limits.GetValueOrDefault(this);
         
         public abstract string Name { get; }
         public abstract Color Color { get; }
@@ -49,10 +70,10 @@ namespace CrowdedRoles.Roles
             return true;
         }
 
-        public virtual IEnumerable<GameData.PlayerInfo> SelectHolders(IEnumerable<GameData.PlayerInfo> unusedPlayers, byte limit)
+        public virtual IEnumerable<GameData.PlayerInfo> SelectHolders(RoleHolders holders, byte limit)
         {
             var rand = new System.Random();
-            return unusedPlayers.OrderBy(_ => rand.Next()).Take(limit).ToList();
+            return holders.Crewmates.OrderBy(_ => rand.Next()).Take(limit).ToList();
         }
 
         public static bool operator ==(BaseRole? me, BaseRole? other) => me?.Data == other?.Data;
