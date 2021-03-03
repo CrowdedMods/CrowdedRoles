@@ -44,6 +44,14 @@ namespace CrowdedRoles.Roles
         public virtual bool CanKill(PlayerControl? target) => false;
         public virtual bool CanVent(Vent vent) => false;
         public virtual bool CanSabotage(SystemTypes? sabotage) => false;
+        public virtual string FormatName(GameData.PlayerInfo player) => player.PlayerName;
+        public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref CustomMurderOptions options) => true;
+
+        public virtual IEnumerable<GameData.PlayerInfo> SelectHolders(RoleHolders holders, byte limit)
+        {
+            var rand = new System.Random();
+            return holders.Crewmates.OrderBy(_ => rand.Next()).Take(limit).ToList();
+        }
 
         protected BaseRole(BasePlugin plugin)
         {
@@ -61,19 +69,6 @@ namespace CrowdedRoles.Roles
             RoleManager.Roles[guid] = localRoles;
             RoleManager.Limits.Add(this, 0);
             OptionsManager.AddLimitOptionIfNecessary(this, guid);
-        }
-        
-        public virtual string FormatName(GameData.PlayerInfo player) => player.PlayerName;
-
-        public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref CustomMurderOptions options)
-        {
-            return true;
-        }
-
-        public virtual IEnumerable<GameData.PlayerInfo> SelectHolders(RoleHolders holders, byte limit)
-        {
-            var rand = new System.Random();
-            return holders.Crewmates.OrderBy(_ => rand.Next()).Take(limit).ToList();
         }
 
         public static bool operator ==(BaseRole? me, BaseRole? other) => me?.Data == other?.Data;
