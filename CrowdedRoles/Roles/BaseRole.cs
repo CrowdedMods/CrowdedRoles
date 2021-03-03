@@ -47,6 +47,11 @@ namespace CrowdedRoles.Roles
         public virtual string FormatName(GameData.PlayerInfo player) => player.PlayerName;
         public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref CustomMurderOptions options) => true;
 
+        public virtual void AssignTasks(PlayerTaskList taskList, List<NormalPlayerTask> defaultTasks)
+        {
+            taskList.AddNormalTasks(defaultTasks);
+        }
+        
         public virtual IEnumerable<GameData.PlayerInfo> SelectHolders(RoleHolders holders, byte limit)
         {
             var rand = new System.Random();

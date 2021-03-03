@@ -7,6 +7,7 @@ using CrowdedRoles.Rpc;
 using Reactor;
 using Reactor.Extensions;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CrowdedRoles.Extensions
 {
@@ -83,6 +84,87 @@ namespace CrowdedRoles.Extensions
                 .Where(p => !p.Disconnected && p.Object != null && p.Object.IsTeamedWith(player))
                 .Select(p => p.Object)
                 .ToList();
+        }
+
+        public static TaskCompletion GetTaskCompletion(this GameData.PlayerInfo player)
+        {
+            if (!RoleManager.TaskCompletions.TryGetValue(player.PlayerId, out TaskCompletion result))
+            {
+                result = player.IsImpostor ? TaskCompletion.Fake :
+                    player.IsDead && !PlayerControl.GameOptions.GhostsDoTasks ? TaskCompletion.Optional : TaskCompletion.Required;
+            }
+
+            return result;
+        }
+        
+        public static TaskCompletion GetTaskCompletion(this PlayerControl player)
+            => player.Data.GetTaskCompletion();
+
+        public static void CustomSetTasks(this PlayerControl player, PlayerTaskList tasks)
+        {
+            BaseRole? role = player.GetRole();
+            if (player.AmOwner)
+            {
+                HudManager.Instance.TaskStuff.SetActive(true);
+                StatsManager.Instance.GamesStarted += 1;
+                if (player.Data.IsImpostor)
+                {
+                    StatsManager.Instance.TimesImpostor += 1;
+                    StatsManager.Instance.CrewmateStreak = 0;
+                    HudManager.Instance.KillButton.gameObject.SetActive(true);
+                } else if (role == null)
+                {
+                    StatsManager.Instance.TimesCrewmate += 1;
+                    StatsManager.Instance.CrewmateStreak += 1;
+                    HudManager.Instance.KillButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    StatsManager.Instance.CrewmateStreak = 0;
+                    HudManager.Instance.KillButton.gameObject.SetActive(role.CanKill(null));
+                }
+            }
+            
+            global::Extensions.Method_2(player.myTasks.Cast<Il2CppSystem.Collections.Generic.IList<PlayerTask>>()); // DestroyAll
+            player.myTasks = new Il2CppSystem.Collections.Generic.List<PlayerTask>(tasks.NormalTasks.Count + tasks.StringTasks.Count);
+            for (int i = 0; i < player.myTasks.Capacity; i++)
+            {
+                player.myTasks.Add(null);
+            }
+
+            if (!RoleManager.TaskCompletions.TryAdd(player.PlayerId, tasks.TaskCompletion))
+            {
+                RoleManager.TaskCompletions[player.PlayerId] = tasks.TaskCompletion;
+            }
+
+            var gameObject = new GameObject("_Player");
+            if (player.Data.IsImpostor)
+            {
+                ImportantTextTask task = gameObject.AddComponent<ImportantTextTask>();
+                task.transform.SetParent(player.transform, false);
+                task.Text = TranslationController.Instance.GetString(StringNames.ImpostorTask, Array.Empty<Il2CppSystem.Object>()) +
+                            "\n[FFFFFFFF]" +
+                            TranslationController.Instance.GetString(StringNames.FakeTasks, Array.Empty<Il2CppSystem.Object>());
+                player.myTasks.Insert(0, task);
+            }
+
+            byte k = 0;
+            foreach (var (id, task) in tasks.NormalTasks)
+            {
+                var normalTask = Object.Instantiate(task, player.transform);
+                normalTask.Id = k++;
+                normalTask.Owner = player;
+                normalTask.Initialize();
+                player.myTasks[id] = normalTask;
+            }
+
+            foreach (var (id, text) in tasks.StringTasks)
+            {
+                ImportantTextTask task = gameObject.AddComponent<ImportantTextTask>();
+                task.transform.SetParent(player.transform, false);
+                task.Text = "[FFFFFFFF]" + text; // haha funny   
+                player.myTasks[id] = task;
+            }
         }
 
         public static void RpcCustomMurderPlayer(this PlayerControl me, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)

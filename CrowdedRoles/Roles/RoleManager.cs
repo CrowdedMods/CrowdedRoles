@@ -12,6 +12,7 @@ namespace CrowdedRoles.Roles
 
         public static readonly Dictionary<byte, BaseRole> PlayerRoles = new();
         public static readonly Dictionary<string, Dictionary<byte, BaseRole>> Roles = new();
+        public static readonly Dictionary<byte, TaskCompletion> TaskCompletions = new ();
         public static bool rolesSet;
 
         public static BaseRole? GetRoleByData(RoleData data)
@@ -22,6 +23,7 @@ namespace CrowdedRoles.Roles
         public static void GameEnded()
         {
             PlayerRoles.Clear();
+            TaskCompletions.Clear();
             rolesSet = false;
         }
     }

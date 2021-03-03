@@ -36,6 +36,13 @@ namespace CrowdedRoles
             options |= CustomMurderOptions.NoAnimation | CustomMurderOptions.NoSnap;
             return true;
         }
+
+        public override void AssignTasks(PlayerTaskList taskList, List<NormalPlayerTask> defaultTasks)
+        {
+            taskList.AddStringTask("I love you kitty");
+            taskList.AddNormalTasks(defaultTasks);
+            taskList.TaskCompletion = TaskCompletion.Required;
+        }
     }
 
     [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Method_21))] // HandleHud
