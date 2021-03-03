@@ -82,7 +82,7 @@ namespace CrowdedRoles.Rpc
 
         public override void Handle(PlayerControl host, Data data)
         {
-            if (host == null || GameData.Instance == null)
+            if (host == null)
             {
                 RoleApiPlugin.Logger.LogWarning($"Invalid sender of {nameof(SyncCustomSettings)}");
                 return;

@@ -41,12 +41,6 @@ namespace CrowdedRoles.Rpc
 
         public override void Handle(PlayerControl sender, Dictionary<RoleData, byte[]> data)
         {
-            if (GameData.Instance == null)
-            {
-                RoleApiPlugin.Logger.LogWarning($"{sender.NetId} sent {nameof(SelectCustomRole)} without the game going");
-                return;
-            }
-            
             if (sender.OwnerId != AmongUsClient.Instance.HostId)
             {
                 RoleApiPlugin.Logger.LogWarning($"{sender.NetId} sent {nameof(SelectCustomRole)} but was not a host");
