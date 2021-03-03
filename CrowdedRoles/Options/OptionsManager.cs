@@ -14,7 +14,7 @@ namespace CrowdedRoles.Options
         internal static readonly CustomStringName CustomOptionStringName = CustomStringName.Register("You found a glitch!"); // should never appear
         internal static Dictionary<string, List<CustomOption>> CustomOptions { get; } = new();
         internal static Dictionary<BaseRole, CustomOption> LimitOptions { get; } = new();
-        internal static ConfigFile SaveOptionsFile = null!;
+        internal static ConfigFile SaveOptionsFile { get; set; } = null!;
 
         public static void AddCustomOption<T>(BasePlugin plugin, T option) where T : CustomOption
         {

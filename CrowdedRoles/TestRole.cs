@@ -82,18 +82,18 @@ namespace CrowdedRoles
 
     public static class MyCustomOptions
     {
-        public static readonly CustomToggleOption ToggleMe = new ("Super cool toggle option")
+        public static CustomToggleOption ToggleMe { get; } = new ("Super cool toggle option")
         { 
             OnValueChanged = v => RoleApiPlugin.Logger.LogDebug($"new test bool: {v}")
         };
 
-        public static readonly CustomNumberOption IncrementMe = new ("Fake cooldown", new FloatRange(10, 100))
+        public static CustomNumberOption IncrementMe { get; } = new ("Fake cooldown", new FloatRange(10, 100))
         {
             Increment = 0.25f,
             ValueFormat = "{0}s"
         };
 
-        public static readonly CustomStringOption FixMe = new ("Omg still no arrows", new[] {"Everyone", "AOU", "No one"});
+        public static CustomStringOption FixMe { get; } = new ("Omg still no arrows", new[] {"Everyone", "AOU", "No one"});
 
         public static void RegisterOptions(BasePlugin plugin)
         {

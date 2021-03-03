@@ -10,9 +10,9 @@ namespace CrowdedRoles.Roles
             Limits.Where(r => !r.Key.PatchFilterFlags.HasFlag(PatchFilter.AmountOption))
                 .ToDictionary(i => i.Key, i => i.Value);
 
-        public static readonly Dictionary<byte, BaseRole> PlayerRoles = new();
-        public static readonly Dictionary<string, Dictionary<byte, BaseRole>> Roles = new();
-        public static readonly Dictionary<byte, TaskCompletion> TaskCompletions = new ();
+        public static Dictionary<byte, BaseRole> PlayerRoles { get; } = new();
+        public static Dictionary<string, Dictionary<byte, BaseRole>> Roles { get; } = new();
+        public static Dictionary<byte, TaskCompletion> TaskCompletions { get; } = new ();
         public static bool rolesSet;
 
         public static BaseRole? GetRoleByData(RoleData data)

@@ -9,8 +9,8 @@ namespace CrowdedRoles.GameOverReasons
     public static class CustomGameOverReasonManager
     {
         public const GameOverReason CustomReasonId = (GameOverReason)(-1);
-        private static readonly Dictionary<string, List<CustomGameOverReason>> CustomReasons = new();
-        internal static CustomGameOverReason EndReason = null!; // Among Us style
+        private static Dictionary<string, List<CustomGameOverReason>> CustomReasons { get; } = new();
+        internal static CustomGameOverReason EndReason { get; set; } = null!; // Among Us style
         internal static byte myPlayerId;
 
         public static void RegisterCustomGameOverReason(CustomGameOverReason reason, BasePlugin plugin)
