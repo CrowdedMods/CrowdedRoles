@@ -28,6 +28,14 @@ namespace CrowdedRoles.Roles
             Impostors = impostors.ToList();
         }
     }
+
+    public enum RevealRole
+    {
+        Never,
+        Default,
+        Always
+    }
+    
     public abstract class BaseRole
     {
         internal RoleData Data { get; }
@@ -40,6 +48,7 @@ namespace CrowdedRoles.Roles
         public virtual Visibility Visibility { get; } = Visibility.Myself;
         public virtual string Description { get; } = "Do nothing but [FF0000FF]kiss";
         public virtual PatchFilter PatchFilterFlags { get; } = PatchFilter.None;
+        public virtual RevealRole RevealExiledRole { get; } = RevealRole.Default;
 
         public virtual bool CanKill(PlayerControl? target) => false;
         public virtual bool CanVent(Vent vent) => false;

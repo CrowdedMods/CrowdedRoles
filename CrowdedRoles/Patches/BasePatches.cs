@@ -159,5 +159,23 @@ namespace CrowdedRoles.Patches
                 }
             }
         }
+
+        [HarmonyPriority(Priority.Last)]
+        [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
+        private static class ExileController_Animate
+        {
+            private static void Postfix(ExileController __instance)
+            {
+                var role = __instance.exiled.GetRole();
+                if (role == null) return;
+                var revealRole = role.RevealExiledRole;
+                if (revealRole != RevealRole.Never && (revealRole == RevealRole.Always || 
+                                                       revealRole == RevealRole.Default &&
+                                                       PlayerControl.GameOptions.ConfirmImpostor))
+                { 
+                    __instance.completeString = $"{__instance.exiled.PlayerName} was {(role.Name.ToLower().StartsWith("the") ? "" : "The ")}{role.Name}.";
+                }
+            }
+        }
     }
 }
