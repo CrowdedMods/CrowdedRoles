@@ -80,7 +80,7 @@ namespace CrowdedRoles.Patches
                 BaseRole? role = PlayerControl.LocalPlayer.GetRole();
                 if (role != null)
                 {
-                    __instance.KillButton.gameObject.SetActive(isActive && role.CanKill(null));
+                    __instance.KillButton.gameObject.SetActive(isActive && !PlayerControl.LocalPlayer.Data.IsDead && role.CanKill(null));
                 }
             }
 
