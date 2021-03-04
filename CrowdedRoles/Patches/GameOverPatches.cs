@@ -21,7 +21,7 @@ namespace CrowdedRoles.Patches
         {
             private static bool Prefix([HarmonyArgument(0)] GameOverReason reason)
             {
-                return reason != CustomGameOverReasonManager.CustomReasonId;
+                return !reason.IsCustom();
             }
         }
 
@@ -37,15 +37,7 @@ namespace CrowdedRoles.Patches
                 }
 
                 var reason = CustomGameOverReasonManager.EndReason;
-                var winners = reason.Winners.Select(w => new WinningPlayerData(w)
-                {
-                    IsYou = w.PlayerId == CustomGameOverReasonManager.myPlayerId // dirty fix due to LocalPlayer destroying on this scene
-                }).ToList();
-                var winnersToShow = reason.ShownWinners.Select(w => new WinningPlayerData(w)
-                {
-                    IsYou = w.PlayerId == CustomGameOverReasonManager.myPlayerId
-                }).OrderBy(w => !w.IsYou).ToList();
-                bool youWon = winners.Any(w => w.IsYou);
+                bool youWon = CustomGameOverReasonManager.Winners.Any(w => w.IsYou);
 
                 __instance.WinText.Text = reason.WinText;
                 __instance.WinText.Color = reason.GetWinTextColor(youWon);
@@ -59,9 +51,9 @@ namespace CrowdedRoles.Patches
                     (DynamicSound.GetDynamicsFunction) __instance.Method_44 // GetStingerVol
                 );
 
-                for (int i = 0; i < winnersToShow.Count; i++)
+                for (int i = 0; i < CustomGameOverReasonManager.ShownWinners.Count; i++)
                 {
-                    var winner = winnersToShow[i];
+                    var winner = CustomGameOverReasonManager.ShownWinners[i];
                     int oddness = (i + 1) / 2;
                     PoolablePlayer player = Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
                     player.transform.localPosition = new Vector3(
@@ -92,6 +84,27 @@ namespace CrowdedRoles.Patches
 
                 return false;
             }
+
+            private static void Postfix(EndGameManager __instance)
+            {
+                if (!TempData.EndReason.IsCustom())
+                {
+                    var allPlayers = GameData.Instance.AllPlayers.ToArray();
+                    foreach (var player in __instance.GetComponentsInChildren<PoolablePlayer>())
+                    {
+                        var pl = allPlayers.FirstOrDefault(p => p.PlayerName == player.NameText.Text); // yes idk what to do else
+                        if(pl == null) continue;
+                        var role = pl.GetRole();
+                        if (role != null)
+                        {
+                            player.NameText.Color = role.Color;
+                            player.NameText.Text = role.FormatName(pl);
+                        }
+                    }
+                }
+                    
+                RoleManager.GameEnded();
+            }
         }
 
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameEnd))]
@@ -99,11 +112,34 @@ namespace CrowdedRoles.Patches
         {
             private static void Prefix([HarmonyArgument(0)] GameOverReason reason)
             {
-                RoleManager.GameEnded();
-                
                 if (reason.IsCustom())
                 {
-                    CustomGameOverReasonManager.myPlayerId = PlayerControl.LocalPlayer.PlayerId;
+                    CustomGameOverReasonManager.Winners = CustomGameOverReasonManager.EndReason.Winners.Select(p => new WinningPlayerData(p)).ToList();
+                    CustomGameOverReasonManager.ShownWinners = CustomGameOverReasonManager.EndReason.ShownWinners.Select(p => new WinningPlayerData(p)).ToList();
+                }
+            }
+        }
+
+        [HarmonyPriority(Priority.Last)]
+        [HarmonyPatch(typeof(AmongUsClient.CoEndGame__d), nameof(AmongUsClient.CoEndGame__d.MoveNext))]
+        private static class AmongUsClient_CoEndGame
+        {
+            private static void Prefix(AmongUsClient.CoEndGame__d __instance)
+            {
+                if (__instance.__state == 0 && !TempData.EndReason.IsCustom())
+                {
+                    bool flag = TempData.DidHumansWin(TempData.EndReason);
+                    TempData.winners.Clear();
+                    foreach (var player in GameData.Instance.AllPlayers
+                        .ToArray()
+                        .Where(p => p != null && 
+                                    (TempData.EndReason == GameOverReason.HumansDisconnect || 
+                                     TempData.EndReason == GameOverReason.ImpostorDisconnect || 
+                                     p.IsImpostor != flag ||
+                                     p.GetRole()?.Team == (flag ? Team.Crewmate : Team.Impostor))))
+                    {
+                        TempData.winners.Add(new WinningPlayerData(player));
+                    }
                 }
             }
         }
