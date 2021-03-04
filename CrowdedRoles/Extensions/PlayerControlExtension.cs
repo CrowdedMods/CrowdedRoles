@@ -27,34 +27,34 @@ namespace CrowdedRoles.Extensions
         }
 
         public static BaseRole? GetRole(this PlayerControl player)
-        {
-            return player.Data.GetRole();
-        }
+            => player.Data.GetRole();
 
         public static BaseRole? GetRole(this GameData.PlayerInfo player)
-        {
-            return RoleManager.PlayerRoles.GetValueOrDefault(player.PlayerId);
-        }
+            => RoleManager.PlayerRoles.GetValueOrDefault(player.PlayerId);
 
         public static T? GetRole<T>(this PlayerControl player) where T : BaseRole
-        {
-            return player.GetRole() as T;
-        }
+            => player.GetRole() as T;
 
         public static T? GetRole<T>(this GameData.PlayerInfo player) where T : BaseRole
-        {
-            return player.GetRole() as T;
-        }
+            => player.GetRole() as T;
 
         public static bool Is<T>(this PlayerControl player) where T : BaseRole
-        {
-            return player.GetRole<T>() != null;
-        }
+            => player.GetRole<T>() != null;
 
         public static bool Is<T>(this GameData.PlayerInfo player) where T : BaseRole
-        {
-            return player.GetRole<T>() != null;
-        }
+            => player.GetRole<T>() != null;
+
+        public static bool HasCustomRole(this GameData.PlayerInfo player)
+            => player.GetRole() != null;
+        
+        public static bool HasCustomRole(this PlayerControl player)
+            => player.GetRole() != null;
+
+        public static bool HasRole(this GameData.PlayerInfo player)
+            => player.HasCustomRole() || player.IsImpostor;
+
+        public static bool HasRole(this PlayerControl player)
+            => player.Data.HasRole();
 
         public static bool IsTeamedWith(this PlayerControl me, PlayerControl other)
         {
@@ -63,12 +63,22 @@ namespace CrowdedRoles.Extensions
             return role?.Team switch
             {
                 Team.Alone => me == other,
-                Team.Crewmate => !other.Data.IsImpostor,
+                Team.Crewmate => true,
                 Team.Impostor => other.Data.IsImpostor || theirRole?.Team == Team.Impostor,
                 Team.SameRole => role == theirRole,
                 _ => theirRole == null
                     ? me.Data.IsImpostor == other.Data.IsImpostor
                     : other.IsTeamedWith(me) // there's no way it's gonna overflow
+            };
+        }
+
+        public static bool IsTeamedWithNonCrew(this PlayerControl me, PlayerControl other)
+        {
+            var myRole = me.GetRole();
+            return myRole?.Team switch
+            {
+                Team.Crewmate => myRole == other.GetRole(),
+                _ => me.IsTeamedWith(other)
             };
         }
 
@@ -206,9 +216,9 @@ namespace CrowdedRoles.Extensions
             return role?.Visibility switch
             {
                 Visibility.Myself => me.PlayerId == whom.PlayerId,
-                Visibility.Team => whom.IsTeamedWith(me) || role.Team == (me.Data.IsImpostor ? Team.Impostor : Team.Crewmate) ,
+                Visibility.Team => whom.IsTeamedWith(me),
                 Visibility.Everyone => true,
-                _ => me.GetRole()?.Team == (whom.Data.IsImpostor ? Team.Impostor : Team.Crewmate) 
+                _ =>  !whom.Data.IsImpostor || me.GetRole()?.Team == Team.Impostor
             };
         }
         

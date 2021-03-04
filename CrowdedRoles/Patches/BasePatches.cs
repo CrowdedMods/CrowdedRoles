@@ -70,7 +70,7 @@ namespace CrowdedRoles.Patches
                 }
 
                 List<PlayerControl> myTeam = PlayerControl.AllPlayerControls.ToArray()
-                    .Where(p => PlayerControl.LocalPlayer.IsVisibleTeammate(p))
+                    .Where(p => PlayerControl.LocalPlayer.IsTeamedWithNonCrew(p))
                     .OrderBy(p => !p.AmOwner)
                     .ToList();
 
@@ -121,7 +121,7 @@ namespace CrowdedRoles.Patches
                     return;
                 }
                 
-                if(PlayerControl.LocalPlayer.CanSee(data.Object))
+                if(PlayerControl.LocalPlayer.CanSee(data.Object) && data.HasRole())
                 {
                     __result.NameText.Color = role?.Color ?? Palette.ImpostorRed;
                     if (role != null)
@@ -147,7 +147,7 @@ namespace CrowdedRoles.Patches
                     foreach (var player in PlayerControl.AllPlayerControls)
                     {
                         BaseRole? role = player.GetRole();
-                        if (PlayerControl.LocalPlayer.CanSee(player))
+                        if (PlayerControl.LocalPlayer.CanSee(player) && player.HasRole())
                         {
                             player.nameText.Color = role?.Color ?? Palette.ImpostorRed;
                             if (role != null)
