@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
@@ -15,6 +16,12 @@ namespace CrowdedRoles.Options
         internal static Dictionary<string, List<CustomOption>> CustomOptions { get; } = new();
         internal static Dictionary<BaseRole, CustomOption> LimitOptions { get; } = new();
         internal static ConfigFile SaveOptionsFile { get; set; } = null!;
+        private static readonly char[] invalidConfigChars = { '=', '\n', '\t', '\\', '"', '\'', '[', ']' };
+
+        public static string MakeSaveNameValid(string name)
+        {
+            return invalidConfigChars.Aggregate(name, (current, configChar) => current.Replace(configChar, '_'));
+        }
 
         public static void AddCustomOption<T>(BasePlugin plugin, T option) where T : CustomOption
         {

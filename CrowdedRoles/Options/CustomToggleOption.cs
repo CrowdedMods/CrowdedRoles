@@ -65,7 +65,7 @@ namespace CrowdedRoles.Options
 
         internal override void LoadValue(ConfigFile file, string guid, string name = "")
         {
-            SavedValue = file.Bind(guid, name == "" ? Name : name, false);
+            SavedValue = file.Bind(guid, OptionsManager.MakeSaveNameValid(name == "" ? Name : name), false);
 
             Value = SavedValue.Value;
         }
