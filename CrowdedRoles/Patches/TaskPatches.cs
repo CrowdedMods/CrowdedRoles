@@ -18,7 +18,7 @@ namespace CrowdedRoles.Patches
         [HarmonyPatch(typeof(GameData), nameof(GameData.RpcSetTasks))]
         public static class GameData_RpcSetTasks
         {
-            public static bool Prefix(
+            public static void Postfix(
                 GameData __instance,
                 [HarmonyArgument(0)] byte playerId, 
                 [HarmonyArgument(1)] ref Il2CppStructArray<byte> tasks
@@ -26,17 +26,12 @@ namespace CrowdedRoles.Patches
             {
                 var player = __instance.GetPlayerById(playerId);
                 var role = player.GetRole();
-                if (role == null)
-                {
-                    return true;
-                }
+                if (role == null) return;
 
                 var list = new PlayerTaskList(player);
                 role.AssignTasks(list, tasks.ToList().ConvertAll(i => ShipStatus.Instance.GetTaskById(i)));
                 
                 Rpc<CustomSelectTasks>.Instance.Send(GameData.Instance, list);
-
-                return false;
             }
         }
 
