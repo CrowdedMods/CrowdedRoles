@@ -51,7 +51,7 @@ namespace CrowdedRoles.Patches
 
                 foreach (var task in __instance.AllPlayers
                     .ToArray()
-                    .Where(p => !p.Disconnected && p.GetTaskCompletion() == TaskCompletion.Required)
+                    .Where(p => !p.Disconnected && p.Tasks != null && p.Object != null && p.GetTaskCompletion() == TaskCompletion.Required)
                     .SelectMany(p => p.Tasks.ToArray()))
                 {
                     __instance.TotalTasks++;
