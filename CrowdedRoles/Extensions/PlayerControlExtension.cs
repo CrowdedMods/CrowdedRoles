@@ -56,10 +56,10 @@ namespace CrowdedRoles.Extensions
         public static bool HasRole(this PlayerControl player)
             => player.Data.HasRole();
 
-        public static bool CanKill(this GameData.PlayerInfo player, PlayerControl target)
-            => player.GetRole()?.CanKill(target) ?? player.IsImpostor && !player.Object.IsTeamedWith(target);
+        public static bool CanKill(this GameData.PlayerInfo player, PlayerControl? target)
+            => player.GetRole()?.CanKill(target) ?? player.IsImpostor && (target == null || target.GetTeam() != Team.Impostor);
 
-        public static bool CanKill(this PlayerControl player, PlayerControl target)
+        public static bool CanKill(this PlayerControl player, PlayerControl? target)
             => player.Data.CanKill(target);
         
         public static bool IsTeamedWith(this PlayerControl me, PlayerControl other)
@@ -93,7 +93,7 @@ namespace CrowdedRoles.Extensions
             return me.IsTeamedWith(other) && me.CanSee(other);
         }
         
-        public static IEnumerable<PlayerControl> GetTeam(this PlayerControl player)
+        public static IEnumerable<PlayerControl> GetTeammates(this PlayerControl player)
         {
             return GameData.Instance.AllPlayers
                 .ToArray()
@@ -101,6 +101,11 @@ namespace CrowdedRoles.Extensions
                 .Select(p => p.Object)
                 .ToList();
         }
+
+        public static Team GetTeam(this PlayerControl player) => player.Data.GetTeam();
+
+        public static Team GetTeam(this GameData.PlayerInfo player)
+            => player.GetRole()?.Team ?? (player.IsImpostor ? Team.Impostor : Team.Crewmate);
 
         public static TaskCompletion GetTaskCompletion(this GameData.PlayerInfo player)
         {
