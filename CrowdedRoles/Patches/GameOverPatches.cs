@@ -46,7 +46,7 @@ namespace CrowdedRoles.Patches
                 AudioClip? sound = reason.GetAudioClip(youWon);
                 SoundManager.Instance.PlayDynamicSound(
                     "Stinger",
-                    sound == null ? youWon ? __instance.CrewStinger : __instance.ImpostorStinger : sound,
+                    sound == null ? __instance.ImpostorStinger : sound,
                     false,
                     (DynamicSound.GetDynamicsFunction) __instance.Method_44 // GetStingerVol
                 );
@@ -135,7 +135,7 @@ namespace CrowdedRoles.Patches
                         .Where(p => p != null && 
                                     (TempData.EndReason == GameOverReason.HumansDisconnect || 
                                      TempData.EndReason == GameOverReason.ImpostorDisconnect || 
-                                     p.IsImpostor != flag ||
+                                     !flag && p.IsImpostor ||
                                      p.GetRole()?.Team == (flag ? Team.Crewmate : Team.Impostor))))
                     {
                         TempData.winners.Add(new WinningPlayerData(player));

@@ -84,6 +84,18 @@ namespace CrowdedRoles.Patches
                 }
             }
 
+            // added to make game look nice
+            [HarmonyPostfix]
+            [HarmonyPriority(Priority.First)]
+            [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
+            private static void PlayerControl_Die(PlayerControl __instance)
+            {
+                if (__instance.AmOwner)
+                {
+                    HudManager.Instance.KillButton.gameObject.SetActive(false);
+                }
+            }
+
             [HarmonyPostfix]
             [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Revive))]
             private static void PlayerControl_Revive(PlayerControl __instance)

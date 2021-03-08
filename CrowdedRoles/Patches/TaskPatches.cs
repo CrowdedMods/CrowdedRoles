@@ -107,12 +107,13 @@ namespace CrowdedRoles.Patches
         public static class Console_CanUse
         {
             public static void Postfix(
+                Console __instance,
                 [HarmonyArgument(0)] GameData.PlayerInfo pc,
                 [HarmonyArgument(1)] ref bool canUse, 
                 [HarmonyArgument(2)] ref bool couldUse
             )
             {
-                canUse &= couldUse &= pc.GetTaskCompletion() != TaskCompletion.Fake;
+                canUse &= couldUse &= __instance.AllowImpostor || pc.GetTaskCompletion() != TaskCompletion.Fake;
             }
         }
     }
