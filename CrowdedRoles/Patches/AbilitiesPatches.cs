@@ -69,6 +69,18 @@ namespace CrowdedRoles.Patches
             }
         }
 
+        [HarmonyPriority(Priority.First)]
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcMurderPlayer))]
+        private static class PlayerControl_RpcMurderPlayer
+        {
+            private static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
+            {
+                __instance.RpcCustomMurderPlayer(target);
+                
+                return false;
+            }
+        }
+
         // Patches all (i hope) methods disabling special buttons
         [HarmonyPatch]
         internal static class ButtonsSetActivePatches

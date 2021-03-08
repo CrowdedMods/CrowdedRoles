@@ -56,6 +56,12 @@ namespace CrowdedRoles.Extensions
         public static bool HasRole(this PlayerControl player)
             => player.Data.HasRole();
 
+        public static bool CanKill(this GameData.PlayerInfo player, PlayerControl target)
+            => player.GetRole()?.CanKill(target) ?? player.IsImpostor && !player.Object.IsTeamedWith(target);
+
+        public static bool CanKill(this PlayerControl player, PlayerControl target)
+            => player.Data.CanKill(target);
+        
         public static bool IsTeamedWith(this PlayerControl me, PlayerControl other)
         {
             BaseRole? role = me.GetRole();
@@ -179,15 +185,15 @@ namespace CrowdedRoles.Extensions
 
         public static void RpcCustomMurderPlayer(this PlayerControl me, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
         {
-            if (!options.HasFlag(CustomMurderOptions.Force) && !me.GetRole()!.PreKill(ref me, ref target, ref options))
+            if (!options.HasFlag(CustomMurderOptions.Force) && !(me.GetRole()?.PreKill(ref me, ref target, ref options) ?? true)) 
             {
                 RoleApiPlugin.Logger.LogDebug($"Custom kill ({me.PlayerId} -> {target.PlayerId}) is cancelled by a plugin");
                 return;
             }
             
-            Rpc<CustomKill>.Instance.Send(new CustomKill.Data
+            Rpc<CmdCustomKill>.Instance.SendTo(AmongUsClient.Instance.HostId, new CmdCustomKill.Data
             {
-                target = target.PlayerId,
+                target = target,
                 options = options
             });
         }
@@ -222,47 +228,13 @@ namespace CrowdedRoles.Extensions
             };
         }
         
-        public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl? target, CustomMurderOptions options = CustomMurderOptions.None)
+        public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
         {
-            #region Checks
-
-            if (AmongUsClient.Instance.IsGameOver)
-            {
-                RoleApiPlugin.Logger.LogWarning($"{killer.PlayerId} tried to kill when game is over");
-                return;
-            }
-
-            BaseRole? role = killer.GetRole();
-            if (target == null || role == null)
-            {
-                // ReSharper disable once Unity.NoNullPropagation
-                RoleApiPlugin.Logger.LogWarning($"Null kill ({killer.PlayerId} -> {target?.PlayerId ?? -1})");
-                return;
-            }
-            
-            if(killer.Data.IsDead || killer.Data.Disconnected )
-            {
-                if (!options.HasFlag(CustomMurderOptions.Force))
-                {
-                    RoleApiPlugin.Logger.LogWarning($"Not allowed kill ({killer.PlayerId} -> {target.PlayerId})");
-                    return;
-                }
-                RoleApiPlugin.Logger.LogDebug($"Forced bad kill ({killer.PlayerId} -> {target.PlayerId})");
-            }
-
-            if (target.Data is null || target.Data.IsDead)
-            {
-                RoleApiPlugin.Logger.LogWarning($"{killer.PlayerId} tried to kill {target.PlayerId}, but they are already dead");
-                return;
-            }
-
             if (killer.AmOwner && Constants.Method_3()) // ShouldPlaySfx
             {
                 SoundManager.Instance.PlaySound(killer.KillSfx, false, 0.8f);
                 killer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
             }
-
-            #endregion
             
             DestroyableSingleton<Telemetry>.Instance.WriteMurder();
             target.gameObject.layer = LayerMask.NameToLayer("Ghost");
@@ -309,7 +281,6 @@ namespace CrowdedRoles.Extensions
             }
 
             Coroutines.Start(killer.KillAnimations.Random().CoPerformCustomKill(killer, target, options));
-            //killer.MyPhysics.StartCoroutine(killer.KillAnimations.Random().CoPerformKill(killer, target));
         }
 
         public static PlayerControl? CustomFindClosetTarget(this PlayerControl me)
