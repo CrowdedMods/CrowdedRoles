@@ -68,6 +68,9 @@ namespace CrowdedRoles.Patches
                 {
                     return true;
                 }
+                
+                PlayerControl.LocalPlayer.SetKillTimer(10f);
+                HudManager.Instance.KillButton.gameObject.SetActive(myRole.CanKill(null));
 
                 List<PlayerControl> myTeam = PlayerControl.AllPlayerControls.ToArray()
                     .Where(p => PlayerControl.LocalPlayer.IsTeamedWithNonCrew(p))
