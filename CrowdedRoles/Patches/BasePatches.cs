@@ -169,6 +169,7 @@ namespace CrowdedRoles.Patches
         {
             private static void Postfix(ExileController __instance)
             {
+                if (__instance.exiled == null) return;
                 var role = __instance.exiled.GetRole();
                 if (role == null) return;
                 var revealRole = role.RevealExiledRole;
