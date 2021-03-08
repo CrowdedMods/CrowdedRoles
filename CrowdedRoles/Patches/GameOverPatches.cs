@@ -4,7 +4,9 @@ using CrowdedRoles.GameOverReasons;
 using HarmonyLib;
 using Hazel;
 using System;
+using System.Reflection;
 using CrowdedRoles.Roles;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -14,11 +16,15 @@ namespace CrowdedRoles.Patches
     {
         private static readonly int Color = Shader.PropertyToID("_Color");
 
-        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Method_128))] // honestly i don't remember ordering
-        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Method_106))] // but it's AddWinReason, AddLoseReason
-        [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.Method_97))]  // and AddDrawReason
+        [HarmonyPatch] 
         private static class StatsManagerFixes
         {
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                yield return typeof(StatsManager).GetMethod("COGMMPAODAC")!; // honestly i don't remember ordering
+                yield return typeof(StatsManager).GetMethod("IAPEPIDFBGL")!; // but it's AddWinReason, AddLoseReason
+                yield return typeof(StatsManager).GetMethod("IAPEPIDFBGL")!; // and AddDrawReason
+            }
             private static bool Prefix([HarmonyArgument(0)] GameOverReason reason)
             {
                 return !reason.IsCustom();
