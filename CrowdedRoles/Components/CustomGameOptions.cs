@@ -22,7 +22,7 @@ namespace CrowdedRoles.Components
         {
             text = gameObject.AddTextRenderer();
             text.RightAligned = true;
-            text.scale = HudManager.Instance.GameSettings.scale;
+            text.scale = 0.6f;
             
             var myAspect = gameObject.AddComponent<AspectPosition>();
             myAspect.Alignment = AspectPosition.EdgeAlignments.RightTop;
