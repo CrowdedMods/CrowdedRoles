@@ -75,9 +75,14 @@ namespace CrowdedRoles.Patches
         {
             private static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
             {
-                __instance.RpcCustomMurderPlayer(target);
+                if (AmongUsClient.Instance.GameMode != GameModes.FreePlay)
+                {
+                    __instance.RpcCustomMurderPlayer(target);
                 
-                return false;
+                    return false;
+                }
+
+                return true;
             }
         }
 
