@@ -10,6 +10,8 @@ using CrowdedRoles.Roles;
 using HarmonyLib;
 using UnityEngine;
 
+using SuffixType = JIFICKIEJAK;
+
 namespace CrowdedRoles
 {
     [RegisterCustomRole]
@@ -90,7 +92,7 @@ namespace CrowdedRoles
         public static CustomNumberOption IncrementMe { get; } = new ("Fake cooldown", new FloatRange(10, 100))
         {
             Increment = 0.25f,
-            ValueFormat = "{0}s"
+            SuffixType = SuffixType.Seconds
         };
 
         public static CustomStringOption FixMe { get; } = new ("Omg still no arrows", new[] {"Everyone", "AOU", "No one"});

@@ -18,7 +18,7 @@ namespace CrowdedRoles.Options
         public int Value
         {
             get => _value;
-            private set
+            set
             {
                 _value = value;
                 ValueText = Values[Mathf.Clamp(value, 0, Values.Length)];

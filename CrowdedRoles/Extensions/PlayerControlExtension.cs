@@ -232,6 +232,16 @@ namespace CrowdedRoles.Extensions
                 _ =>  !whom.Data.IsImpostor || me.GetRole()?.Team == Team.Impostor
             };
         }
+
+        private static void ClearTasksWorkaround(this PlayerControl me) // Reimplemented because obfuscated one is too hard to find
+        {
+            foreach (var task in me.myTasks)
+            {
+                task.OnRemove();
+                task.gameObject.Destroy();
+            }
+            me.myTasks.Clear();
+        }
         
         public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
         {
@@ -241,7 +251,6 @@ namespace CrowdedRoles.Extensions
                 killer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
             }
             
-            DestroyableSingleton<Telemetry>.Instance.WriteMurder();
             target.gameObject.layer = LayerMask.NameToLayer("Ghost");
 
             if (target.AmOwner)
@@ -270,12 +279,12 @@ namespace CrowdedRoles.Extensions
                 text.transform.SetParent(killer.transform, false);
                 if (target.Data.IsImpostor)
                 {
-                    target.Method_84(); // ClearTasks
+                    target.ClearTasksWorkaround(); // ClearTasks
                     text.Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GhostImpostor, new (Array.Empty<Il2CppSystem.Object>()));
                 }
                 else if (!PlayerControl.GameOptions.GhostsDoTasks)
                 {
-                    target.Method_84(); // ClearTasks
+                    target.ClearTasksWorkaround(); // ClearTasks
                     text.Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GhostIgnoreTasks, new(Array.Empty<Il2CppSystem.Object>()));
                 }
                 else

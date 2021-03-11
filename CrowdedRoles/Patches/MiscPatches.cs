@@ -6,8 +6,8 @@ namespace CrowdedRoles.Patches
 {
     internal static class MiscPatches
     {
-        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.Method_123))]
-        public static class AmongUsClient_SpawnPlayer
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
+        public static class AmongUsClient_CreatePlayer
         {
             public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData data)
             {

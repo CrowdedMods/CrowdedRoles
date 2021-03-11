@@ -33,6 +33,14 @@ namespace CrowdedRoles.Components
             );
             myAspect.AdjustPosition();
 
+            foreach (var option in OptionsManager.CustomOptions.SelectMany(p => p.Value))
+            {
+                if (option is CustomNumberOption opt)
+                {
+                    opt.Value = opt.Value; // update ValueText if TranslationController has changed its language
+                }
+            }
+
             UpdateText();
         }
 

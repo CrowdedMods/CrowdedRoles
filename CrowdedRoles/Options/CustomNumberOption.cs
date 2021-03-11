@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Globalization;
 using BepInEx.Configuration;
 using CrowdedRoles.Extensions;
+using SuffixType = JIFICKIEJAK;
 
 namespace CrowdedRoles.Options
 {
@@ -17,14 +17,15 @@ namespace CrowdedRoles.Options
         public float Increment { get; init; } = 1f;
         private FloatRange ValidRange { get; }
         public bool ZeroIsInfinity { get; init; } = false;
-        private readonly string _valueFormat = "{0}";
+        public SuffixType SuffixType { get; init; } = SuffixType.None;
+        private readonly string _valueFormat = "G";
         public string ValueFormat
         {
             get => _valueFormat;
             init
             {
                 _valueFormat = value;
-                ValueText = string.Format(value, Value);
+                ValueText = Value.ToString(value);
             }
         }
         public Action<float>? OnValueChanged { get; init; }
@@ -33,10 +34,20 @@ namespace CrowdedRoles.Options
         public float Value
         {
             get => _value;
-            private set
+            set
             {
                 _value = value;
-                ValueText = string.Format(ValueFormat, value);
+                if (SuffixType != SuffixType.None && TranslationController.InstanceExists)
+                {
+                    ValueText = string.Format(SuffixType == SuffixType.Seconds
+                        ? TranslationController.Instance.GetString(StringNames.GameSecondsAbbrev, 
+                            Array.Empty<Il2CppSystem.Object>())
+                        : "{0}x", value);
+                }
+                else
+                {
+                    ValueText = value.ToString(ValueFormat);
+                }
             } 
         }
 
@@ -79,6 +90,7 @@ namespace CrowdedRoles.Options
             option.ZeroIsInfinity = ZeroIsInfinity;
             option.Value = Value;
             option.OnValueChanged = (Action<OptionBehaviour>) OnValueChangedRaw;
+            option.SuffixType = SuffixType;
         }
 
         internal override void LoadValue(ConfigFile file, string guid, string name = "")

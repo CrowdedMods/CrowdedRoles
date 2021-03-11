@@ -33,7 +33,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Method_21))] // HandleHud
+        [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Method_97))] // HandleHud
         private static class KeyboardJoystick_HandleHud
         {
             private static void Postfix()
@@ -128,8 +128,8 @@ namespace CrowdedRoles.Patches
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(PlayerControl.CoSetTasks__d), nameof(PlayerControl.CoSetTasks__d.MoveNext))]
-            private static void PlayerControl_CoSetTasks(PlayerControl.CoSetTasks__d __instance)
+            [HarmonyPatch(typeof(PlayerControl.Nested_6), nameof(PlayerControl.Nested_6.MoveNext))]
+            private static void PlayerControl_CoSetTasks(PlayerControl.Nested_6 __instance)
             {
                 if (__instance.__this.AmOwner)
                 {
@@ -149,9 +149,9 @@ namespace CrowdedRoles.Patches
                     (PlayerControl.LocalPlayer.GetRole()?.CanSabotage(null) ?? false) &&
                     PlayerControl.LocalPlayer.CanMove)
                 {
-                    __instance.UseButton.sprite = __instance.SabotageImage;
+                    __instance.UseButton.sprite = TranslationController.Instance.GetImage(ImageNames.SabotageButton);
                     CooldownHelpers.SetCooldownNormalizedUvs(__instance.UseButton);
-                    __instance.UseButton.color = UseButtonManager.EnabledColor;
+                    __instance.UseButton.color = UseButtonManager.Field_1; // EnabledColor
                 }
             }
 
@@ -160,7 +160,7 @@ namespace CrowdedRoles.Patches
             private static void UseButtonManager_DoClick(UseButtonManager __instance)
             {
                 if (__instance.isActiveAndEnabled && PlayerControl.LocalPlayer != null &&
-                    PlayerControl.LocalPlayer.Data != null && __instance.currentTarget == null)
+                    PlayerControl.LocalPlayer.Data != null && __instance.Field_3 == null) // currentTarget
                 {
                     var myRole = PlayerControl.LocalPlayer.GetRole();
                     if (myRole == null || !myRole.CanSabotage(null))

@@ -7,6 +7,7 @@ using System;
 using System.Reflection;
 using CrowdedRoles.Roles;
 using System.Collections.Generic;
+using InnerNet;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -21,9 +22,9 @@ namespace CrowdedRoles.Patches
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(StatsManager).GetMethod("COGMMPAODAC")!; // honestly i don't remember ordering
-                yield return typeof(StatsManager).GetMethod("IAPEPIDFBGL")!; // but it's AddWinReason, AddLoseReason
-                yield return typeof(StatsManager).GetMethod("IAPEPIDFBGL")!; // and AddDrawReason
+                yield return typeof(StatsManager).GetMethod("EOAFLEMOMGI")!; // AddDrawReason
+                yield return typeof(StatsManager).GetMethod("PGNIBFCEGEH")!; // AddWinReason
+                yield return typeof(StatsManager).GetMethod("PAHEDCNAGLH")!; // AddLoseReason
             }
             private static bool Prefix([HarmonyArgument(0)] GameOverReason reason)
             {
@@ -54,7 +55,7 @@ namespace CrowdedRoles.Patches
                     "Stinger",
                     sound == null ? __instance.ImpostorStinger : sound,
                     false,
-                    (DynamicSound.GetDynamicsFunction) __instance.Method_44 // GetStingerVol
+                    (DynamicSound.GetDynamicsFunction) __instance.Method_58 // GetStingerVol
                 );
 
                 for (int i = 0; i < CustomGameOverReasonManager.ShownWinners.Count; i++)
@@ -79,7 +80,7 @@ namespace CrowdedRoles.Patches
                     else
                     {
                         player.SetFlipX(i % 2 == 0);
-                        DestroyableSingleton<HatManager>.Instance.Method_4(player.SkinSlot, winner.SkinId); // SetSkin
+                        DestroyableSingleton<HatManager>.Instance.Method_60(player.SkinSlot, winner.SkinId); // SetSkin
                     }
                     PlayerControl.SetPlayerMaterialColors(winner.ColorId, player.Body);
                     player.HatSlot.SetHat(winner.HatId, winner.ColorId);
@@ -127,10 +128,10 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPriority(Priority.Last)]
-        [HarmonyPatch(typeof(AmongUsClient.CoEndGame__d), nameof(AmongUsClient.CoEndGame__d.MoveNext))]
+        [HarmonyPatch(typeof(AmongUsClient.Nested_1), nameof(AmongUsClient.Nested_1.MoveNext))]
         private static class AmongUsClient_CoEndGame
         {
-            private static void Prefix(AmongUsClient.CoEndGame__d __instance)
+            private static void Prefix(AmongUsClient.Nested_1 __instance)
             {
                 if (__instance.__state == 0 && !TempData.EndReason.IsCustom())
                 {
@@ -150,7 +151,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.Method_46))]
+        [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.Method_48))]
         private static class InnerNetClient_OnDisconnected
         {
             private static void Postfix()

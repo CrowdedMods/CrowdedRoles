@@ -15,7 +15,7 @@ namespace CrowdedRoles.Options
         public bool Value
         {
             get => _value;
-            private set
+            set
             {
                 _value = value;
                 ValueText = value ? "On" : "Off";

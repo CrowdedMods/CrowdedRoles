@@ -94,7 +94,7 @@ namespace CrowdedRoles.Patches
                     ) * 1.5f;
                     player.SetFlipX(i % 2 == 0);
                     PlayerControl.SetPlayerMaterialColors(data.ColorId, player.Body);
-                    DestroyableSingleton<HatManager>.Instance.Method_4(player.SkinSlot, data.SkinId);
+                    DestroyableSingleton<HatManager>.Instance.Method_60(player.SkinSlot, data.SkinId); // SetSkin
                     player.HatSlot.SetHat(data.HatId, data.ColorId);
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
                     float scale = 1f - oddness * 0.075f;
@@ -112,7 +112,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Method_7))]
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Method_129))]
         [HarmonyPatch(new[] { typeof(GameData.PlayerInfo) })]
         static class MeetingHud_CreateButton
         {
