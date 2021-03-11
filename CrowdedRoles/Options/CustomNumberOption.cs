@@ -37,7 +37,11 @@ namespace CrowdedRoles.Options
             set
             {
                 _value = value;
-                if (SuffixType != SuffixType.None && TranslationController.InstanceExists)
+                if (ZeroIsInfinity && Value == 0)
+                {
+                    ValueText = string.Format(ValueFormat, "∞");
+                }
+                else if (SuffixType != SuffixType.None && TranslationController.InstanceExists)
                 {
                     ValueText = string.Format(SuffixType == SuffixType.Seconds
                         ? TranslationController.Instance.GetString(StringNames.GameSecondsAbbrev, 
