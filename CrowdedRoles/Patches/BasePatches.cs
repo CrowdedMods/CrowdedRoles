@@ -73,7 +73,7 @@ namespace CrowdedRoles.Patches
                 HudManager.Instance.KillButton.gameObject.SetActive(myRole.CanKill(null));
 
                 List<PlayerControl> myTeam = PlayerControl.AllPlayerControls.ToArray()
-                    .Where(p => PlayerControl.LocalPlayer.IsTeamedWithNonCrew(p))
+                    .Where(p => PlayerControl.LocalPlayer.CanSeeSpecial(p))
                     .OrderBy(p => !p.AmOwner)
                     .ToList();
 

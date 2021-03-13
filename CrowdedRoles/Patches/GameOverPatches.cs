@@ -143,7 +143,7 @@ namespace CrowdedRoles.Patches
                                     (TempData.EndReason == GameOverReason.HumansDisconnect || 
                                      TempData.EndReason == GameOverReason.ImpostorDisconnect || 
                                      !flag && p.IsImpostor ||
-                                     p.GetRole()?.Team == (flag ? Team.Crewmate : Team.Impostor))))
+                                     p.GetTeam() == (flag ? Team.Crewmate : Team.Impostor))))
                     {
                         TempData.winners.Add(new WinningPlayerData(player));
                     }

@@ -226,10 +226,19 @@ namespace CrowdedRoles.Extensions
             BaseRole? role = whom.GetRole();
             return role?.Visibility switch
             {
-                Visibility.Myself => me.PlayerId == whom.PlayerId,
+                Visibility.Myself => me == whom,
                 Visibility.Team => whom.IsTeamedWith(me),
                 Visibility.Everyone => true,
                 _ =>  !whom.Data.IsImpostor || me.GetRole()?.Team == Team.Impostor
+            };
+        }
+
+        public static bool CanSeeSpecial(this PlayerControl me, PlayerControl whom)
+        {
+            return whom.GetRole()?.Visibility switch
+            {
+                Visibility.Team => whom.IsTeamedWithNonCrew(me),
+                _ => me == whom
             };
         }
 
