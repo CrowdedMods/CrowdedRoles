@@ -17,5 +17,17 @@ namespace CrowdedRoles.Patches
                 }
             }
         }
+
+        [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ResetAnim))]
+        public static class PlayerPhysics_ResetAnim
+        {
+            public static void Postfix(PlayerPhysics __instance)
+            {
+                if (__instance.myPlayer && __instance.myPlayer.Data.IsDead)
+                {
+                    __instance.myPlayer.Visible = PlayerControl.LocalPlayer.Data.IsDead;
+                }
+            }
+        }
     }
 }
