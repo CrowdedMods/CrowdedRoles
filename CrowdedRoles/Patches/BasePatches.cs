@@ -124,7 +124,7 @@ namespace CrowdedRoles.Patches
                     return;
                 }
                 
-                if(PlayerControl.LocalPlayer.CanSee(data.Object) && data.HasRole())
+                if(PlayerControl.LocalPlayer.Data.CanSee(data) && data.HasRole())
                 {
                     __result.NameText.Color = role?.Color ?? Palette.ImpostorRed;
                     if (role != null)

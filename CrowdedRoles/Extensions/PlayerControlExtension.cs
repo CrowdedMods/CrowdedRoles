@@ -78,7 +78,26 @@ namespace CrowdedRoles.Extensions
             };
         }
 
-        public static bool IsTeamedWithNonCrew(this PlayerControl me, PlayerControl other)
+        public static bool IsTeamedWith(this GameData.PlayerInfo me, GameData.PlayerInfo other)
+        {
+            BaseRole? role = me.GetRole();
+            BaseRole? theirRole = other.GetRole();
+            return role?.Team switch
+            {
+                Team.Alone => me.PlayerId == other.PlayerId,
+                Team.Crewmate => true,
+                Team.Impostor => other.IsImpostor || theirRole?.Team == Team.Impostor,
+                Team.SameRole => role == theirRole,
+                _ => theirRole == null
+                    ? me.IsImpostor == other.IsImpostor
+                    : other.IsTeamedWith(me)
+            };
+        }
+
+        public static bool IsTeamedWith(this PlayerControl me, GameData.PlayerInfo other)
+            => me.Data.IsTeamedWith(other);
+
+        public static bool IsTeamedWithNonCrew(this GameData.PlayerInfo me, GameData.PlayerInfo other)
         {
             var myRole = me.GetRole();
             return myRole?.Team switch
@@ -88,10 +107,8 @@ namespace CrowdedRoles.Extensions
             };
         }
 
-        public static bool IsVisibleTeammate(this PlayerControl me, PlayerControl other)
-        {
-            return me.IsTeamedWith(other) && me.CanSee(other);
-        }
+        public static bool IsTeamedWithNonCrew(this PlayerControl me, GameData.PlayerInfo other)
+            => me.Data.IsTeamedWithNonCrew(other);
         
         public static IEnumerable<PlayerControl> GetTeammates(this PlayerControl player)
         {
@@ -221,26 +238,40 @@ namespace CrowdedRoles.Extensions
             }
         }
 
-        public static bool CanSee(this PlayerControl me, PlayerControl whom)
-        {
-            BaseRole? role = whom.GetRole();
-            return role?.Visibility switch
-            {
-                Visibility.Myself => me == whom,
-                Visibility.Team => whom.IsTeamedWith(me),
-                Visibility.Everyone => true,
-                _ =>  !whom.Data.IsImpostor || me.GetRole()?.Team == Team.Impostor
-            };
-        }
-
-        public static bool CanSeeSpecial(this PlayerControl me, PlayerControl whom)
+        public static bool CanSee(this GameData.PlayerInfo me, GameData.PlayerInfo whom)
         {
             return whom.GetRole()?.Visibility switch
             {
-                Visibility.Team => whom.IsTeamedWithNonCrew(me),
-                _ => me == whom
+                Visibility.Myself => me.PlayerId == whom.PlayerId,
+                Visibility.Team => whom.IsTeamedWith(me),
+                Visibility.Everyone => true,
+                _ =>  !whom.IsImpostor || me.GetRole()?.Team == Team.Impostor
             };
         }
+
+        public static bool CanSee(this PlayerControl me, PlayerControl other)
+        {
+            BaseRole? role = other.GetRole();
+            return role?.Visibility switch
+            {
+                Visibility.Myself => me == other,
+                Visibility.Team => other.IsTeamedWith(me),
+                Visibility.Everyone => true,
+                _ =>  !other.Data.IsImpostor || me.GetRole()?.Team == Team.Impostor
+            };
+        }
+
+        public static bool CanSeeSpecial(this GameData.PlayerInfo me, GameData.PlayerInfo other)
+        {
+            return other.GetRole()?.Visibility switch
+            {
+                Visibility.Team => other.IsTeamedWithNonCrew(me),
+                _ => me.PlayerId == other.PlayerId
+            };
+        }
+
+        public static bool CanSeeSpecial(this PlayerControl me, PlayerControl other)
+            => me.Data.CanSeeSpecial(other.Data);
 
         private static void ClearTasksWorkaround(this PlayerControl me) // Reimplemented because obfuscated one is too hard to find
         {
@@ -259,7 +290,7 @@ namespace CrowdedRoles.Extensions
                 SoundManager.Instance.PlaySound(killer.KillSfx, false, 0.8f);
                 killer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
             }
-            
+
             target.gameObject.layer = LayerMask.NameToLayer("Ghost");
 
             if (target.AmOwner)
