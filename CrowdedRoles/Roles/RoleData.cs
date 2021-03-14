@@ -3,7 +3,7 @@ using Hazel;
 
 namespace CrowdedRoles.Roles
 {
-    public class RoleData
+    internal class RoleData
     {
         public readonly string pluginId;
         public readonly byte localId;

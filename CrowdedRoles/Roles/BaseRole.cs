@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace CrowdedRoles.Roles
 {
+    /// <summary>
+    /// Wrapper for role selecting
+    /// </summary>
     public class RoleHolders
     {
         public ReadOnlyCollection<GameData.PlayerInfo> AllPlayers { get; }
@@ -29,9 +32,15 @@ namespace CrowdedRoles.Roles
         }
     }
 
+    /// <summary>
+    /// Reveal role if exiled
+    /// </summary>
     public enum RevealRole
     {
         Never,
+        /// <summary>
+        /// Depends on <see cref="GameOptionsData.ConfirmImpostor"/>
+        /// </summary>
         Default,
         Always
     }
@@ -42,25 +51,52 @@ namespace CrowdedRoles.Roles
         public byte Limit => RoleManager.Limits.GetValueOrDefault(this);
         
         public abstract string Name { get; }
+        /// <summary>
+        /// Color used in nicknames, cutscenes etc
+        /// </summary>
         public abstract Color Color { get; }
         
         public virtual Team Team { get; } = Team.Crewmate;
         public virtual Visibility Visibility { get; } = Visibility.Myself;
-        public virtual string Description { get; } = "Do nothing but [FF0000FF]kiss";
+        public virtual string Description { get; } = ""; // R.I.P. "do nothing but [FF0000FF]kiss" meme :C
         public virtual PatchFilter PatchFilterFlags { get; } = PatchFilter.None;
         public virtual RevealRole RevealExiledRole { get; } = RevealRole.Default;
 
+        /// <summary>
+        /// Can role holder kill or not. If <see cref="target"/> is null, api asks you, can this person kill in general (to enable kill button for example), so you should return true if <see cref="target"/> is null <br/>
+        /// Be careful comparing it with local player, Host calls <c>CanKill(null)</c> on host-requested kill
+        /// </summary>
         public virtual bool CanKill(PlayerControl? target) => false;
         public virtual bool CanVent(Vent vent) => false;
+        /// <summary>
+        /// Can role holder sabotage or not. If <see cref="sabotage"/> is null, api asks you, can this person sabotage in general (to enable sabotage button for example), so you should return true if <see cref="sabotage"/> is null
+        /// </summary>
         public virtual bool CanSabotage(SystemTypes? sabotage) => false;
+        /// <summary>
+        /// Name formatting. Not tested and not fully implemented
+        /// </summary>
         public virtual string FormatName(GameData.PlayerInfo player) => player.PlayerName;
+        /// <summary>
+        /// "Prefix" when role holder tries to kill. Obsolete and gonna be removed with event system
+        /// </summary>
         public virtual bool PreKill(ref PlayerControl killer, ref PlayerControl target, ref CustomMurderOptions options) => true;
 
-        public virtual void AssignTasks(PlayerTaskList taskList, List<NormalPlayerTask> defaultTasks)
+        /// <summary>
+        /// Custom task selecting at game start. Not being called on death yet
+        /// </summary>
+        /// <param name="taskList">Task list you should change with its methods</param>
+        /// <param name="defaultTasks">Tasks that were assigned by host with default game rules</param>
+        public virtual void AssignTasks(PlayerTaskList taskList, IEnumerable<NormalPlayerTask> defaultTasks)
         {
             taskList.AddNormalTasks(defaultTasks);
         }
         
+        /// <summary>
+        /// Custom role selecting, random by default.
+        /// </summary>
+        /// <param name="holders">Info about all players and their roles. Compare this with <see cref="RoleHolders.Impostors"/> to know if player is an impostor, because <see cref="GameData.PlayerInfo.IsImpostor"/> is not set at this moment</param>
+        /// <param name="limit">Not important, just a value set in game settings or wherever else</param>
+        /// <returns></returns>
         public virtual IEnumerable<GameData.PlayerInfo> SelectHolders(RoleHolders holders, byte limit)
         {
             var rand = new System.Random();

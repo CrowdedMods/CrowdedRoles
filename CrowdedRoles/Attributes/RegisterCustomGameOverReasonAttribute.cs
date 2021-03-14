@@ -2,7 +2,6 @@
 using System.Reflection;
 using BepInEx.IL2CPP;
 using CrowdedRoles.GameOverReasons;
-using CrowdedRoles.Roles;
 using HarmonyLib;
 
 namespace CrowdedRoles.Attributes

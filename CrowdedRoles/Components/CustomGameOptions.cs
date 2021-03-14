@@ -16,13 +16,13 @@ namespace CrowdedRoles.Components
         {
         }
         
-        public TextRenderer text = new();
+        public TextRenderer Text { get; private set; } = null!;
 
         public void Start()
         {
-            text = gameObject.AddTextRenderer();
-            text.RightAligned = true;
-            text.scale = 0.6f;
+            Text = gameObject.AddTextRenderer();
+            Text.RightAligned = true;
+            Text.scale = 0.6f;
             
             var myAspect = gameObject.AddComponent<AspectPosition>();
             myAspect.Alignment = AspectPosition.EdgeAlignments.RightTop;
@@ -61,7 +61,7 @@ namespace CrowdedRoles.Components
                 builder.AppendLine($"{option.Name}: {option.ValueText}");
             }
 
-            text.Text = builder.ToString();
+            Text.Text = builder.ToString();
         }
     }
 }

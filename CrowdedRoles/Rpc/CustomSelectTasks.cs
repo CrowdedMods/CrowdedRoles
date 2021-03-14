@@ -8,7 +8,7 @@ using Reactor;
 namespace CrowdedRoles.Rpc
 {
     [RegisterCustomRpc]
-    public class CustomSelectTasks : CustomRpc<RoleApiPlugin, GameData, PlayerTaskList>
+    internal class CustomSelectTasks : CustomRpc<RoleApiPlugin, GameData, PlayerTaskList>
     {
         public CustomSelectTasks(RoleApiPlugin plugin) : base(plugin)
         {

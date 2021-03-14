@@ -13,9 +13,9 @@ namespace CrowdedRoles.Patches
     {
         [HarmonyPatch(typeof(KillButtonManager), nameof(KillButtonManager.PerformKill))]
         [HarmonyPriority(Priority.First)]
-        private static class KillButtonManager_PerformKill
+        public static class KillButtonManager_PerformKill
         {
-            private static bool Prefix(ref KillButtonManager __instance)
+            public static bool Prefix(ref KillButtonManager __instance)
             {
                 PlayerControl localPlayer = PlayerControl.LocalPlayer;
                 if (localPlayer.Data.IsImpostor || !(localPlayer.GetRole()?.CanKill(null) ?? false))
@@ -34,9 +34,9 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Method_97))] // HandleHud
-        private static class KeyboardJoystick_HandleHud
+        public static class KeyboardJoystick_HandleHud
         {
-            private static void Postfix()
+            public static void Postfix()
             {
                 if (PlayerControl.LocalPlayer != null &&
                     (PlayerControl.LocalPlayer.GetRole()?.CanKill(null) ?? false)
@@ -49,9 +49,9 @@ namespace CrowdedRoles.Patches
 
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.RpcRepairSystem))]
         [HarmonyPriority(Priority.First)]
-        private static class ShipStatus_RpcRepairSystem
+        public static class ShipStatus_RpcRepairSystem
         {
-            private static bool Prefix(ShipStatus __instance, [HarmonyArgument(0)] SystemTypes type, [HarmonyArgument(1)] int someEnumProbably)
+            public static bool Prefix(ShipStatus __instance, [HarmonyArgument(0)] SystemTypes type, [HarmonyArgument(1)] int someEnumProbably)
             {
                 if (AmongUsClient.Instance.AmHost || type != SystemTypes.Sabotage ||
                     PlayerControl.LocalPlayer.Data.IsImpostor || 
@@ -71,9 +71,9 @@ namespace CrowdedRoles.Patches
 
         [HarmonyPriority(Priority.First)]
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcMurderPlayer))]
-        private static class PlayerControl_RpcMurderPlayer
+        public static class PlayerControl_RpcMurderPlayer
         {
-            private static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
+            public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
             {
                 if (AmongUsClient.Instance.GameMode != GameModes.FreePlay)
                 {
@@ -92,7 +92,7 @@ namespace CrowdedRoles.Patches
         {
             [HarmonyPostfix]
             [HarmonyPatch(typeof(HudManager), nameof(HudManager.SetHudActive))]
-            private static void HudManager_SetHudActive(HudManager __instance, [HarmonyArgument(0)] bool isActive)
+            public static void HudManager_SetHudActive(HudManager __instance, [HarmonyArgument(0)] bool isActive)
             {
                 BaseRole? role = PlayerControl.LocalPlayer.GetRole();
                 if (role != null)
@@ -105,7 +105,7 @@ namespace CrowdedRoles.Patches
             [HarmonyPostfix]
             [HarmonyPriority(Priority.First)]
             [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
-            private static void PlayerControl_Die(PlayerControl __instance)
+            public static void PlayerControl_Die(PlayerControl __instance)
             {
                 if (__instance.AmOwner)
                 {
@@ -115,7 +115,7 @@ namespace CrowdedRoles.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Revive))]
-            private static void PlayerControl_Revive(PlayerControl __instance)
+            public static void PlayerControl_Revive(PlayerControl __instance)
             {
                 if (__instance.AmOwner)
                 {
@@ -129,7 +129,7 @@ namespace CrowdedRoles.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(PlayerControl.Nested_6), nameof(PlayerControl.Nested_6.MoveNext))]
-            private static void PlayerControl_CoSetTasks(PlayerControl.Nested_6 __instance)
+            public static void PlayerControl_CoSetTasks(PlayerControl.Nested_6 __instance)
             {
                 if (__instance.__this.AmOwner)
                 {
@@ -143,7 +143,7 @@ namespace CrowdedRoles.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(UseButtonManager), nameof(UseButtonManager.SetTarget))]
-            private static void UseButtonManager_SetTarget(UseButtonManager __instance, [HarmonyArgument(0)] IUsable? target)
+            public static void UseButtonManager_SetTarget(UseButtonManager __instance, [HarmonyArgument(0)] IUsable? target)
             {
                 if (target == null && PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data != null &&
                     (PlayerControl.LocalPlayer.GetRole()?.CanSabotage(null) ?? false) &&
@@ -157,7 +157,7 @@ namespace CrowdedRoles.Patches
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(UseButtonManager), nameof(UseButtonManager.DoClick))]
-            private static void UseButtonManager_DoClick(UseButtonManager __instance)
+            public static void UseButtonManager_DoClick(UseButtonManager __instance)
             {
                 if (__instance.isActiveAndEnabled && PlayerControl.LocalPlayer != null &&
                     PlayerControl.LocalPlayer.Data != null && __instance.Field_3 == null) // currentTarget
@@ -181,7 +181,7 @@ namespace CrowdedRoles.Patches
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(Vent), nameof(Vent.CanUse))]
-            private static bool Vent_CanUse(Vent __instance,
+            public static bool Vent_CanUse(Vent __instance,
                 [HarmonyArgument(1)] ref bool canUse,
                 [HarmonyArgument(2)] ref bool couldUse,
                 ref float __result)

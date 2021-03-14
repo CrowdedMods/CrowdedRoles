@@ -14,7 +14,6 @@ namespace CrowdedRoles.Patches
         private static readonly int Buckets = Shader.PropertyToID("_Buckets");
         private static readonly int FullBuckets = Shader.PropertyToID("_FullBuckets");
 
-        [HarmonyPriority(Priority.First)]
         [HarmonyPatch(typeof(GameData), nameof(GameData.RpcSetTasks))]
         public static class GameData_RpcSetTasks
         {
@@ -32,6 +31,7 @@ namespace CrowdedRoles.Patches
                 role.AssignTasks(list, tasks.ToList().ConvertAll(i => ShipStatus.Instance.GetTaskById(i)));
                 
                 Rpc<CustomSelectTasks>.Instance.Send(GameData.Instance, list);
+                // we do not prevent setting default tasks to not break things like Impostor server
             }
         }
 
@@ -60,6 +60,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
+        [HarmonyPriority(Priority.First)]
         [HarmonyPatch(typeof(ProgressTracker), nameof(ProgressTracker.FixedUpdate))]
         public static class ProgressTracker_FixedUpdate
         {

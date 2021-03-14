@@ -3,7 +3,9 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using BepInEx.Logging;
+#if DEBUG
 using CrowdedRoles.Attributes;
+#endif
 using CrowdedRoles.Options;
 using HarmonyLib;
 

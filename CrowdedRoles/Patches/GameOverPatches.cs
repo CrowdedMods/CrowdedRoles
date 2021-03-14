@@ -50,7 +50,7 @@ namespace CrowdedRoles.Patches
                 __instance.WinText.Color = reason.GetWinTextColor(youWon);
                 __instance.BackgroundBar.material.SetColor(Color, reason.GetBackgroundColor(youWon));
                 
-                AudioClip? sound = reason.GetAudioClip(youWon);
+                AudioClip? sound = reason.Stinger;
                 SoundManager.Instance.PlayDynamicSound(
                     "Stinger",
                     sound == null ? __instance.ImpostorStinger : sound,

@@ -10,7 +10,7 @@ namespace CrowdedRoles.Patches
     {
         [HarmonyPostfix]
         [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
-        static void FixedUpdate_Postfix(ref PlayerControl __instance)
+        public static void FixedUpdate_Postfix(ref PlayerControl __instance)
         {
             if (GameData.Instance == null || __instance.Data == null)
             {
@@ -31,22 +31,6 @@ namespace CrowdedRoles.Patches
                     HudManager.Instance.KillButton.SetTarget(null);
                 }
             }
-        }
-        
-        [HarmonyPrefix]
-        [HarmonyPatch(nameof(PlayerControl.SetKillTimer))]
-        static bool KillCooldownFlickFix(ref PlayerControl __instance, [HarmonyArgument(0)] float time) // https://gist.github.com/Galster-dev/5ff8fcc48dfb566817565bddb1a99e4f
-        {
-            __instance.killTimer = time;
-            if (__instance.AmOwner)
-            {
-                HudManager.Instance.KillButton.SetCoolDown(
-                    PlayerControl.GameOptions.KillCooldown > 0 ? time : 0,
-                    PlayerControl.GameOptions.KillCooldown
-                );
-            }
-
-            return false;
         }
     }
 }

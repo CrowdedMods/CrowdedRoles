@@ -17,8 +17,14 @@ namespace CrowdedRoles.Options
         public float Increment { get; init; } = 1f;
         private FloatRange ValidRange { get; }
         public bool ZeroIsInfinity { get; init; } = false;
+        /// <summary>
+        /// New thing added in 2021.3.5 with translation support (only for <see cref="JIFICKIEJAK.Seconds"/> for now)
+        /// </summary>
         public SuffixType SuffixType { get; init; } = SuffixType.None;
         private readonly string _valueFormat = "G";
+        /// <summary>
+        /// Value format https://docs.microsoft.com/en-us/dotnet/api/system.single.tostring
+        /// </summary>
         public string ValueFormat
         {
             get => _valueFormat;

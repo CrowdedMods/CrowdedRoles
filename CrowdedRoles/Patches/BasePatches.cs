@@ -14,9 +14,9 @@ namespace CrowdedRoles.Patches
     {
         [HarmonyPriority(Priority.First)]
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSetInfected))]
-        private static class PlayerControl_RpcSetInfected
+        public static class PlayerControl_RpcSetInfected
         {
-            private static void Prefix([HarmonyArgument(0)] ref Il2CppReferenceArray<GameData.PlayerInfo> infected)
+            public static void Prefix([HarmonyArgument(0)] ref Il2CppReferenceArray<GameData.PlayerInfo> infected)
             {
                 if (RoleManager.rolesSet)
                 {
@@ -57,11 +57,11 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
-        private static class IntroCutScene_BeginCrewmate
+        public static class IntroCutScene_BeginCrewmate
         {
-            private static readonly int Color = Shader.PropertyToID("_Color");
+            public static readonly int Color = Shader.PropertyToID("_Color");
 
-            private static bool Prefix(ref IntroCutscene __instance)
+            public static bool Prefix(ref IntroCutscene __instance)
             {
                 BaseRole? myRole = PlayerControl.LocalPlayer.GetRole();
                 if (myRole == null || myRole.PatchFilterFlags.HasFlag(PatchFilter.IntroCutScene))
@@ -89,7 +89,7 @@ namespace CrowdedRoles.Patches
                     PoolablePlayer player = Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
                     player.transform.localPosition = new Vector3(
                         0.8f* oddness * (i % 2 == 0 ? -1 : 1) * (1 - oddness * 0.08f),
-                        __instance.BaseY - 0.25f + oddness * 0.1f,
+                        __instance.BaseY - 0.25f + oddness * 0.15f,
                         (i == 0 ? -8 : -1) + oddness * 0.01f
                     ) * 1.5f;
                     player.SetFlipX(i % 2 == 0);
@@ -114,9 +114,9 @@ namespace CrowdedRoles.Patches
 
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Method_129))]
         [HarmonyPatch(new[] { typeof(GameData.PlayerInfo) })]
-        static class MeetingHud_CreateButton
+        public static class MeetingHud_CreateButton
         {
-            static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
+            public static void Postfix([HarmonyArgument(0)] ref GameData.PlayerInfo data, ref PlayerVoteArea __result)
             {
                 BaseRole? role = data.GetRole();
                 if (role?.PatchFilterFlags.HasFlag(PatchFilter.MeetingHud) ?? false)
@@ -137,13 +137,13 @@ namespace CrowdedRoles.Patches
 
         [HarmonyPriority(Priority.First)]
         [HarmonyPatch(typeof(IntroCutscene.CoBegin__d), nameof(IntroCutscene.CoBegin__d.MoveNext))]
-        private static class IntroCutScene_CoBegin
+        public static class IntroCutScene_CoBegin
         {
-            private static bool Prefix(ref bool __result)
+            public static bool Prefix(ref bool __result)
             {
                 return RoleManager.rolesSet && (__result = true); // wait until we set our roles to prevent bugs
             }
-            private static void Postfix(bool __result)
+            public static void Postfix(bool __result)
             {
                 if (!__result) // yield break
                 {
@@ -165,9 +165,9 @@ namespace CrowdedRoles.Patches
 
         [HarmonyPriority(Priority.Last)]
         [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
-        private static class ExileController_Animate
+        public static class ExileController_Animate
         {
-            private static void Postfix(ExileController __instance)
+            public static void Postfix(ExileController __instance)
             {
                 if (__instance.exiled == null) return;
                 var role = __instance.exiled.GetRole();

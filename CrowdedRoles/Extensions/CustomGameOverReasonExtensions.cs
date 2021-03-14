@@ -10,6 +10,12 @@ namespace CrowdedRoles.Extensions
             return reason == CustomGameOverReasonManager.CustomReasonId;
         }
 
+        /// <summary>
+        /// Send EndGame with custom registered (!) <see cref="CustomGameOverReason"/><br/>
+        /// Can be done only by host
+        /// </summary>
+        /// <param name="sender">LocalPlayer who is a host</param>
+        /// <typeparam name="T"><see cref="CustomGameOverReason"/></typeparam>
         public static void RpcCustomEndGame<T>(this PlayerControl sender) where T : CustomGameOverReason
         {
             var reason = CustomGameOverReasonManager.ReasonFromType<T>();
@@ -20,7 +26,13 @@ namespace CrowdedRoles.Extensions
             }
             sender.RpcCustomEndGame(reason);
         }
-        
+
+        /// <summary>
+        /// Send EndGame with custom registered (!) <see cref="CustomGameOverReason"/><br/>
+        /// Can be done only by host
+        /// </summary>
+        /// <param name="sender">LocalPlayer who is a host</param>
+        /// <param name="reason">Game over reason</param>
         public static void RpcCustomEndGame(this PlayerControl sender, CustomGameOverReason reason)
         {
             if (sender.OwnerId != AmongUsClient.Instance.HostId)

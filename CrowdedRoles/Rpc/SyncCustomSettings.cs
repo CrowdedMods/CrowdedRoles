@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using BepInEx;
 using CrowdedRoles.Options;
 using CrowdedRoles.Roles;
 using Hazel;
@@ -9,7 +8,7 @@ using Reactor;
 namespace CrowdedRoles.Rpc
 {
     [RegisterCustomRpc]
-    public class SyncCustomSettings : PlayerCustomRpc<RoleApiPlugin, SyncCustomSettings.Data>
+    internal class SyncCustomSettings : PlayerCustomRpc<RoleApiPlugin, SyncCustomSettings.Data>
     {
         public SyncCustomSettings(RoleApiPlugin plugin) : base(plugin)
         {

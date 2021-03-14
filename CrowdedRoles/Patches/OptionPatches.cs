@@ -15,9 +15,9 @@ namespace CrowdedRoles.Patches
         
         [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
         [HarmonyPriority(Priority.First)]
-        static class GameOptionsMenu_Start
+        public static class GameOptionsMenu_Start
         {
-            static void Postfix(ref GameOptionsMenu __instance)
+            public static void Postfix(ref GameOptionsMenu __instance)
             {
                 float lowestY = __instance.GetComponentsInChildren<OptionBehaviour>().Min(o => o.transform.position.y) - 0.2f;
                 ToggleOption togglePrefab = __instance.Children.Where(o => o.TryCast<ToggleOption>() != null).First(o => o.Title != StringNames.GameRecommendedSettings).Cast<ToggleOption>(); // GameRecommendedSettings has a specific design
@@ -56,9 +56,9 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
-        private static class LobbyBehaviour_Start
+        public static class LobbyBehaviour_Start
         {
-            private static void Postfix()
+            public static void Postfix()
             {
                 CustomGameOptionsObject = new GameObject("CustomRoleOptions");
                 CustomGameOptionsObject.transform.SetParent(HudManager.Instance.transform);
@@ -67,9 +67,9 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Start))]
-        private static class ShipStatus_Start
+        public static class ShipStatus_Start
         {
-            private static void Postfix()
+            public static void Postfix()
             {
                 CustomGameOptionsObject.Destroy();
             }

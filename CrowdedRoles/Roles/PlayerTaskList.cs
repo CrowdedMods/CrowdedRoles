@@ -6,15 +6,30 @@ namespace CrowdedRoles.Roles
 {
     public enum TaskCompletion : byte
     {
+        /// <summary>
+        /// Required to win by tasks
+        /// </summary>
         Required = 0,
+        /// <summary>
+        /// Player can do a task, but it's not required to win
+        /// </summary>
         Optional = 1,
+        /// <summary>
+        /// Impostor-like faking
+        /// </summary>
         Fake = 2
     }
     public class PlayerTaskList
     {
+        /// <summary>
+        /// Tasks holder
+        /// </summary>
         public GameData.PlayerInfo Player { get; }
         private byte Id;
         internal Dictionary<byte, string> StringTasks { get; } = new();
+        /// <summary>
+        /// Tasks in dictionary id -> Task
+        /// </summary>
         public Dictionary<byte, NormalPlayerTask> NormalTasks { get; } = new();
         public TaskCompletion TaskCompletion { get; set; } = TaskCompletion.Required;
 
@@ -75,11 +90,17 @@ namespace CrowdedRoles.Roles
             Player = player;
         }
 
+        /// <summary>
+        /// Add a text in a task list
+        /// </summary>
         public void AddStringTask(string task)
         {
             StringTasks.Add(Id++, task);
         }
 
+        /// <summary>
+        /// Add a few strings in a task list
+        /// </summary>
         public void AddStringTasks(IEnumerable<string> tasks)
         {
             foreach (string task in tasks)
@@ -88,11 +109,17 @@ namespace CrowdedRoles.Roles
             }
         }
 
+        /// <summary>
+        /// Add an in-game task
+        /// </summary>
         public void AddNormalTask(NormalPlayerTask task)
         {
             NormalTasks.Add(Id++, task);
         }
 
+        /// <summary>
+        /// Add a few in-game tasks
+        /// </summary>
         public void AddNormalTasks(IEnumerable<NormalPlayerTask> tasks)
         {
             foreach (NormalPlayerTask task in tasks)

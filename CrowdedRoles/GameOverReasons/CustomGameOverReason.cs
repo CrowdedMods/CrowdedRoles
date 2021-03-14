@@ -14,7 +14,7 @@ namespace CrowdedRoles.GameOverReasons
             public int localId = -1;
         }
 
-        protected CustomGameOverReason(BasePlugin plugin)
+        protected internal CustomGameOverReason(BasePlugin plugin)
         {
             CustomGameOverReasonManager.RegisterCustomGameOverReason(this, plugin);
         }
@@ -44,14 +44,23 @@ namespace CrowdedRoles.GameOverReasons
 
         }
         
-        public abstract string Name { get; } // no uses yet
+        /// <summary>
+        /// Not used yet.
+        /// </summary>
+        public abstract string Name { get; }
         public abstract string WinText { get; }
+        /// <summary>
+        /// Players who will actually win
+        /// </summary>
         public abstract IEnumerable<GameData.PlayerInfo> Winners { get; }
         public abstract Color GetWinTextColor(bool youWon);
         public abstract Color GetBackgroundColor(bool youWon);
+        
+        /// <summary>
+        /// Players who will be showed on end screen
+        /// </summary>
         public virtual IEnumerable<GameData.PlayerInfo> ShownWinners => Winners;
-
-        public virtual AudioClip? GetAudioClip(bool youWon) => null;
+        public virtual AudioClip? Stinger => null;
 
         public static implicit operator GameOverReason(CustomGameOverReason _) => CustomGameOverReasonManager.CustomReasonId;
     }

@@ -6,6 +6,10 @@ namespace CrowdedRoles.Extensions
 {
     public static class KillAnimationExtensions
     {
+        /// <summary>
+        /// Api's reimplementation of <see cref="KillAnimation.CoPerformKill"/><br/>
+        /// Shouldn't be used in regular code
+        /// </summary>
         public static IEnumerator CoPerformCustomKill(this KillAnimation anim, PlayerControl source, PlayerControl target, CustomMurderOptions options)
         {
             FollowerCamera camera = Camera.main!.GetComponent<FollowerCamera>();

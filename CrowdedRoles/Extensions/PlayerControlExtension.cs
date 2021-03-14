@@ -11,11 +11,14 @@ using Object = UnityEngine.Object;
 
 namespace CrowdedRoles.Extensions
 {
+    /// <summary>
+    /// Extensions for <see cref="PlayerControl"/> and <see cref="GameData.PlayerInfo"/>
+    /// </summary>
     public static class PlayerControlExtension
     {
         private static readonly int Mask = Shader.PropertyToID("_Mask");
 
-        public static void InitRole(this PlayerControl player, BaseRole? role = null)
+        internal static void InitRole(this PlayerControl player, BaseRole? role = null)
         {
             if (role == null) return;
             
@@ -32,9 +35,15 @@ namespace CrowdedRoles.Extensions
         public static BaseRole? GetRole(this GameData.PlayerInfo player)
             => RoleManager.PlayerRoles.GetValueOrDefault(player.PlayerId);
 
+        /// <summary>
+        /// Get a specific role if player has it, otherwise null
+        /// </summary>
         public static T? GetRole<T>(this PlayerControl player) where T : BaseRole
             => player.GetRole() as T;
 
+        /// <summary>
+        /// Get a specific role if player has it, otherwise null
+        /// </summary>
         public static T? GetRole<T>(this GameData.PlayerInfo player) where T : BaseRole
             => player.GetRole() as T;
 
@@ -50,34 +59,50 @@ namespace CrowdedRoles.Extensions
         public static bool HasCustomRole(this PlayerControl player)
             => player.GetRole() != null;
 
+        /// <summary>
+        /// True if <see cref="player"/> has custom role or an Impostor
+        /// </summary>
         public static bool HasRole(this GameData.PlayerInfo player)
             => player.HasCustomRole() || player.IsImpostor;
 
+        /// <summary>
+        /// True if <see cref="player"/> has custom role or an Impostor
+        /// </summary>
         public static bool HasRole(this PlayerControl player)
             => player.Data.HasRole();
 
+        /// <summary>
+        /// True if <see cref="player"/> has permissions to kill <see cref="target"/><br/>
+        /// or <see cref="player"/> is an Impostor and <see cref="target"/> is not
+        /// </summary>
         public static bool CanKill(this GameData.PlayerInfo player, PlayerControl? target)
             => player.GetRole()?.CanKill(target) ?? player.IsImpostor && (target == null || target.GetTeam() != Team.Impostor);
 
+        /// <summary>
+        /// True if <see cref="player"/> has permissions to kill <see cref="target"/><br/>
+        /// or <see cref="player"/> is an Impostor and <see cref="target"/> is not
+        /// </summary>
         public static bool CanKill(this PlayerControl player, PlayerControl? target)
             => player.Data.CanKill(target);
-        
-        public static bool IsTeamedWith(this PlayerControl me, PlayerControl other)
-        {
-            BaseRole? role = me.GetRole();
-            BaseRole? theirRole = other.GetRole();
-            return role?.Team switch
-            {
-                Team.Alone => me == other,
-                Team.Crewmate => true,
-                Team.Impostor => other.Data.IsImpostor || theirRole?.Team == Team.Impostor,
-                Team.SameRole => role == theirRole,
-                _ => theirRole == null
-                    ? me.Data.IsImpostor == other.Data.IsImpostor
-                    : other.IsTeamedWith(me) // there's no way it's gonna overflow
-            };
-        }
 
+        /// <summary>
+        /// Works both for custom roles and impostors. Complicated.<br/>
+        /// May be replaced with <see cref="IsTeamedWithNonCrew(PlayerControl,GameData.PlayerInfo)"/> in future
+        /// </summary>
+        public static bool IsTeamedWith(this PlayerControl me, PlayerControl other)
+            => me.IsTeamedWith(other.Data);
+
+        /// <summary>
+        /// Works both for custom roles and impostors. Complicated.<br/>
+        /// May be replaced with <see cref="IsTeamedWithNonCrew(PlayerControl,GameData.PlayerInfo)"/> in future
+        /// </summary>
+        public static bool IsTeamedWith(this PlayerControl me, GameData.PlayerInfo other)
+            => me.Data.IsTeamedWith(other);
+
+        /// <summary>
+        /// Works both for custom roles and impostors. Complicated.<br/>
+        /// May be replaced with <see cref="IsTeamedWithNonCrew(GameData.PlayerInfo,GameData.PlayerInfo)"/> in future
+        /// </summary>
         public static bool IsTeamedWith(this GameData.PlayerInfo me, GameData.PlayerInfo other)
         {
             BaseRole? role = me.GetRole();
@@ -94,9 +119,9 @@ namespace CrowdedRoles.Extensions
             };
         }
 
-        public static bool IsTeamedWith(this PlayerControl me, GameData.PlayerInfo other)
-            => me.Data.IsTeamedWith(other);
-
+        /// <summary>
+        /// Checks if players are teamed, but returns false if <see cref="other"/> is a crewmate. Complicated and needs reworking
+        /// </summary>
         public static bool IsTeamedWithNonCrew(this GameData.PlayerInfo me, GameData.PlayerInfo other)
         {
             var myRole = me.GetRole();
@@ -107,6 +132,9 @@ namespace CrowdedRoles.Extensions
             };
         }
 
+        /// <summary>
+        /// Checks if players are teamed, but returns false if <see cref="other"/> is a crewmate. Complicated and needs reworking
+        /// </summary>
         public static bool IsTeamedWithNonCrew(this PlayerControl me, GameData.PlayerInfo other)
             => me.Data.IsTeamedWithNonCrew(other);
         
@@ -119,8 +147,14 @@ namespace CrowdedRoles.Extensions
                 .ToList();
         }
 
+        /// <summary>
+        /// Gets <see cref="player"/>'s <see cref="Team"/> even if they don't have a role
+        /// </summary>
         public static Team GetTeam(this PlayerControl player) => player.Data.GetTeam();
 
+        /// <summary>
+        /// Gets <see cref="player"/>'s <see cref="Team"/> even if they don't have a role
+        /// </summary>
         public static Team GetTeam(this GameData.PlayerInfo player)
             => player.GetRole()?.Team ?? (player.IsImpostor ? Team.Impostor : Team.Crewmate);
 
@@ -138,7 +172,7 @@ namespace CrowdedRoles.Extensions
         public static TaskCompletion GetTaskCompletion(this PlayerControl player)
             => player.Data.GetTaskCompletion();
 
-        public static void CustomSetTasks(this PlayerControl player, PlayerTaskList tasks)
+        internal static void CustomSetTasks(this PlayerControl player, PlayerTaskList tasks)
         {
             BaseRole? role = player.GetRole();
             if (player.AmOwner)
@@ -205,6 +239,11 @@ namespace CrowdedRoles.Extensions
             }
         }
 
+        /// <summary>
+        /// Sends a host-requested kill with <see cref="CustomMurderPlayer"/><br/>
+        /// To avoid desync we've implemented host-requested kills:<br/>
+        /// Every player sends a request to a host when presses kill button. Host checks if you're able to kill, not dead etc and then executes it
+        /// </summary>
         public static void RpcCustomMurderPlayer(this PlayerControl me, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
         {
             if (!options.HasFlag(CustomMurderOptions.Force) && !(me.GetRole()?.PreKill(ref me, ref target, ref options) ?? true)) 
@@ -220,6 +259,11 @@ namespace CrowdedRoles.Extensions
             });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_">host</param>
+        /// <param name="target">target's <see cref="InnerNet.InnerNetObject.OwnerId"/> to send an rpc to, -1 if to everyone</param>
         public static void RpcSyncCustomSettings(this PlayerControl _, int target = -1)
         {
             var data = new SyncCustomSettings.Data
@@ -238,17 +282,25 @@ namespace CrowdedRoles.Extensions
             }
         }
 
-        public static bool CanSee(this GameData.PlayerInfo me, GameData.PlayerInfo whom)
+        /// <summary>
+        /// True if <see cref="me"/> can see <see cref="other"/>'s role. Complicated.
+        /// May be replaced with <see cref="CanSeeSpecial(GameData.PlayerInfo,GameData.PlayerInfo)"/> in future
+        /// </summary>
+        public static bool CanSee(this GameData.PlayerInfo me, GameData.PlayerInfo other)
         {
-            return whom.GetRole()?.Visibility switch
+            return other.GetRole()?.Visibility switch
             {
-                Visibility.Myself => me.PlayerId == whom.PlayerId,
-                Visibility.Team => whom.IsTeamedWith(me),
+                Visibility.Myself => me.PlayerId == other.PlayerId,
+                Visibility.Team => other.IsTeamedWith(me),
                 Visibility.Everyone => true,
-                _ =>  !whom.IsImpostor || me.GetRole()?.Team == Team.Impostor
+                _ =>  !other.IsImpostor || me.GetRole()?.Team == Team.Impostor
             };
         }
 
+        /// <summary>
+        /// True if <see cref="me"/> can see <see cref="other"/>'s role. Complicated.
+        /// May be replaced with <see cref="CanSeeSpecial(PlayerControl,PlayerControl)"/> in future
+        /// </summary>
         public static bool CanSee(this PlayerControl me, PlayerControl other)
         {
             BaseRole? role = other.GetRole();
@@ -261,15 +313,22 @@ namespace CrowdedRoles.Extensions
             };
         }
 
+        /// <summary>
+        /// True if <see cref="other"/> has a special role and <see cref="me"/> can see it
+        /// </summary>
         public static bool CanSeeSpecial(this GameData.PlayerInfo me, GameData.PlayerInfo other)
         {
-            return other.GetRole()?.Visibility switch
+            BaseRole? theirRole = other.GetRole();
+            return theirRole?.Visibility switch
             {
                 Visibility.Team => other.IsTeamedWithNonCrew(me),
-                _ => me.PlayerId == other.PlayerId
+                _ => me.GetRole() == theirRole
             };
         }
 
+        /// <summary>
+        /// True if <see cref="other"/> has a special role and <see cref="me"/> can see it
+        /// </summary>
         public static bool CanSeeSpecial(this PlayerControl me, PlayerControl other)
             => me.Data.CanSeeSpecial(other.Data);
 
@@ -283,6 +342,10 @@ namespace CrowdedRoles.Extensions
             me.myTasks.Clear();
         }
         
+        /// <summary>
+        /// Api's reimplementation of <see cref="PlayerControl.MurderPlayer"/><br/>
+        /// Gets called by <see cref="CrowdedRoles.Rpc.CustomKill"/>, so shouldn't be used in regular code
+        /// </summary>
         public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
         {
             if (killer.AmOwner && Constants.Method_3()) // ShouldPlaySfx
@@ -337,6 +400,10 @@ namespace CrowdedRoles.Extensions
             Coroutines.Start(killer.KillAnimations.Random().CoPerformCustomKill(killer, target, options));
         }
 
+        /// <summary>
+        /// Api's reimplementation of <see cref="PlayerControl.FindClosestTarget"/><br/>
+        /// Gets called in <see cref="PlayerControl.FixedUpdate"/>, so shouldn't be used in regular code
+        /// </summary>
         public static PlayerControl? CustomFindClosetTarget(this PlayerControl me)
         {
             if (!ShipStatus.Instance)

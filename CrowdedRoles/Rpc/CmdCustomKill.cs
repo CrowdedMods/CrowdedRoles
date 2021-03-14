@@ -1,5 +1,4 @@
 ﻿using CrowdedRoles.Extensions;
-using CrowdedRoles.Roles;
 using Hazel;
 using Reactor;
 
