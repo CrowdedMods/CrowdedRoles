@@ -39,7 +39,7 @@ namespace CrowdedRoles
             return true;
         }
 
-        public override void AssignTasks(PlayerTaskList taskList, List<NormalPlayerTask> defaultTasks)
+        public override void AssignTasks(PlayerTaskList taskList, IEnumerable<NormalPlayerTask> defaultTasks)
         {
             taskList.AddStringTask("I love you kitty");
             taskList.AddNormalTasks(defaultTasks);
