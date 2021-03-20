@@ -7,6 +7,7 @@ using CrowdedRoles.Extensions;
 using CrowdedRoles.GameOverReasons;
 using CrowdedRoles.Options;
 using CrowdedRoles.Roles;
+using CrowdedRoles.UI;
 using HarmonyLib;
 using UnityEngine;
 
@@ -80,6 +81,30 @@ namespace CrowdedRoles
         {
             return youWon ? Palette.CrewmateBlue : Palette.ImpostorRed;
         }
+    }
+
+    [RegisterCustomButton]
+    public class TestButton : CooldownButton
+    {
+        public override float MaxTimer => 5f;
+        public override float EffectDuration => 3f;
+        public override Sprite DefaultSprite => TranslationController.Instance.GetImage(ImageNames.ReportButton);
+
+        public override bool OnClick()
+        {
+            if (Activated)
+            {
+                Sprite = TranslationController.Instance.GetImage(ImageNames.VentButton);
+                PlayerControl.LocalPlayer.RpcMurderPlayer(PlayerControl.LocalPlayer);
+                return true;
+            }
+            
+            Activated = true;
+            Sprite = TranslationController.Instance.GetImage(ImageNames.ReportButton);
+            return false;
+        }
+
+        public override bool CanUse() => true;
     }
 
     public static class MyCustomOptions

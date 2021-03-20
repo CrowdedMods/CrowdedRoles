@@ -32,6 +32,7 @@ namespace CrowdedRoles
             RegisterCustomRoleAttribute.Register(this);
             MyCustomOptions.RegisterOptions(this);
             RegisterCustomGameOverReasonAttribute.Register(this);
+            RegisterCustomButtonAttribute.Register();
 #endif
             Harmony.PatchAll();
             Logger = Log;
