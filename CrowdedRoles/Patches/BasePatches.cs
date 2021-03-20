@@ -1,12 +1,13 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using HarmonyLib;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
 using CrowdedRoles.Extensions;
 using CrowdedRoles.Roles;
 using CrowdedRoles.Rpc;
+using HarmonyLib;
 using Reactor;
 using UnhollowerBaseLib;
+using UnityEngine;
+using Random = System.Random;
 
 namespace CrowdedRoles.Patches
 {
@@ -32,7 +33,7 @@ namespace CrowdedRoles.Patches
                         .ToDictionary(p => p.Key, p => (IEnumerable<GameData.PlayerInfo>)p)
                 };
 
-                var random = new System.Random();
+                var random = new Random();
                 foreach (var (role, limit) in RoleManager.Limits.OrderBy(_ => random.Next()))
                 {
                     var localHolders = role.SelectHolders(goodPlayers, limit);
@@ -90,7 +91,7 @@ namespace CrowdedRoles.Patches
                     PoolablePlayer player = Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
                     player.transform.localPosition = new Vector3(
                         0.8f* oddness * (i % 2 == 0 ? -1 : 1) * (1 - oddness * 0.08f),
-                        __instance.BaseY - 0.25f + oddness * 0.15f,
+                        __instance.BaseY + oddness * 0.15f,
                         (i == 0 ? -8 : -1) + oddness * 0.01f
                     ) * 1.5f;
                     player.SetFlipX(i % 2 == 0);
@@ -140,24 +141,34 @@ namespace CrowdedRoles.Patches
         [HarmonyPatch(typeof(IntroCutscene.CoBegin__d), nameof(IntroCutscene.CoBegin__d.MoveNext))]
         public static class IntroCutScene_CoBegin
         {
-            public static bool Prefix(ref bool __result)
+            public static bool Prefix(ref bool __result, IntroCutscene.CoBegin__d __instance)
             {
-                return RoleManager.rolesSet && (__result = true); // wait until we set our roles to prevent bugs
+                // wait until we set our roles to prevent bugs
+                if (!RoleManager.rolesSet)
+                {
+                    return false;
+                }
+
+                if (!PlayerControl.LocalPlayer.HasCustomRole() && PlayerControl.LocalPlayer.Data.IsImpostor)
+                {
+                    foreach (var player in PlayerControl.AllPlayerControls.ToArray().Where(p => PlayerControl.LocalPlayer.CanSeeSpecial(p)).ToArray())
+                    {
+                        __instance.yourTeam.Add(player);
+                    }
+                }
+                return __result = true;
             }
             public static void Postfix(bool __result)
             {
                 if (!__result) // yield break
                 {
-                    foreach (var player in PlayerControl.AllPlayerControls)
+                    foreach (var player in PlayerControl.AllPlayerControls.ToArray().Where(p => PlayerControl.LocalPlayer.CanSeeSpecial(p)))
                     {
                         BaseRole? role = player.GetRole();
-                        if (PlayerControl.LocalPlayer.CanSee(player) && player.HasRole())
-                        {
-                            player.nameText.Color = role?.Color ?? Palette.ImpostorRed;
-                            if (role != null)
-                            {
-                                player.nameText.Text = role.FormatName(player.Data);
-                            }
+                        player.nameText.Color = role?.Color ?? Palette.ImpostorRed;
+                        if (role != null)
+                        { 
+                            player.nameText.Text = role.FormatName(player.Data);
                         }
                     }
                 }

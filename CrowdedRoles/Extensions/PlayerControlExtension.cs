@@ -111,7 +111,7 @@ namespace CrowdedRoles.Extensions
             {
                 Team.Alone => me.PlayerId == other.PlayerId,
                 Team.Crewmate => true,
-                Team.Impostor => other.IsImpostor || theirRole?.Team == Team.Impostor,
+                Team.Impostor => other.GetTeam() == Team.Impostor,
                 Team.SameRole => role == theirRole,
                 _ => theirRole == null
                     ? me.IsImpostor == other.IsImpostor
@@ -322,6 +322,7 @@ namespace CrowdedRoles.Extensions
             return theirRole?.Visibility switch
             {
                 Visibility.Team => other.IsTeamedWithNonCrew(me),
+                null => me.GetRole() != null && other.CanSeeSpecial(me),
                 _ => me.GetRole() == theirRole
             };
         }
