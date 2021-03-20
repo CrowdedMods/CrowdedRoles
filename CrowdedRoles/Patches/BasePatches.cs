@@ -32,7 +32,8 @@ namespace CrowdedRoles.Patches
                         .ToDictionary(p => p.Key, p => (IEnumerable<GameData.PlayerInfo>)p)
                 };
 
-                foreach (var (role, limit) in RoleManager.Limits)
+                var random = new System.Random();
+                foreach (var (role, limit) in RoleManager.Limits.OrderBy(_ => random.Next()))
                 {
                     var localHolders = role.SelectHolders(goodPlayers, limit);
                     if (goodPlayers.CustomRoleHolders.ContainsKey(role))
