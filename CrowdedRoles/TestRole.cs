@@ -88,7 +88,8 @@ namespace CrowdedRoles
     {
         public override float MaxTimer => 5f;
         public override float EffectDuration => 3f;
-        public override Sprite DefaultSprite => TranslationController.Instance.GetImage(ImageNames.ReportButton);
+        protected override Sprite DefaultSprite => TranslationController.Instance.GetImage(ImageNames.ReportButton);
+        public override IPosition Position { get; } = new AutomaticPosition();
 
         public override bool OnClick()
         {
@@ -103,6 +104,19 @@ namespace CrowdedRoles
             Sprite = TranslationController.Instance.GetImage(ImageNames.ReportButton);
             return false;
         }
+
+        public override bool CanUse() => true;
+    }
+
+    [RegisterCustomButton]
+    public class UselessButton : CooldownButton
+    {
+        public override float MaxTimer => 5f;
+        public override float EffectDuration => 3f;
+        protected override Sprite DefaultSprite => TranslationController.Instance.GetImage(ImageNames.KillButton);
+        public override IPosition Position { get; } = new AutomaticPosition();
+
+        public override bool OnClick() => true;
 
         public override bool CanUse() => true;
     }

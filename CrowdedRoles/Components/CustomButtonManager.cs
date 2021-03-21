@@ -15,6 +15,7 @@ namespace CrowdedRoles.Components
 
         public SpriteRenderer Renderer { get; private set; } = null!;
         public TextRenderer TimerText { get; internal set; } = null!;
+        public AspectPosition? AspectPosition { get; private set; }
 
         private float _timer;
         private bool _executedCooldownEnd;
@@ -79,10 +80,7 @@ namespace CrowdedRoles.Components
 
         public void OnEnable()
         {
-            var transform1 = transform;
-            var pos = transform1.localPosition;
-            pos.x -= 1.3f;
-            transform1.localPosition = pos;
+            Button.Position.AdjustPosition(gameObject);
         }
 
         public void Start()

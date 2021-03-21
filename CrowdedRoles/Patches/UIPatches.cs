@@ -65,7 +65,7 @@ namespace CrowdedRoles.Patches
                 
                 foreach (CooldownButton button in ButtonManager.ActiveButtons)
                 {
-                    button.Visible = button.ShouldSetActive(false, SetActiveReason.Die);
+                    button.Visible = button.ShouldSetActive(false, SetActiveReason.Death);
                 }
             }
 
@@ -77,7 +77,7 @@ namespace CrowdedRoles.Patches
                 
                 foreach (CooldownButton button in ButtonManager.ActiveButtons)
                 {
-                    button.Visible = button.ShouldSetActive(true, SetActiveReason.Revive);
+                    button.Visible = button.ShouldSetActive(true, SetActiveReason.Revival);
                 }
             }
         }

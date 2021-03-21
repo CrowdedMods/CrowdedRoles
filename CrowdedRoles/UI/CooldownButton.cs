@@ -6,13 +6,15 @@ namespace CrowdedRoles.UI
     public enum SetActiveReason : byte
     {
         Hud = 0,
-        Die = 1,
-        Revive = 2
+        Death = 1,
+        Revival = 2
     }
     public abstract class CooldownButton
     {
         public abstract float MaxTimer { get; }
-        public abstract Sprite DefaultSprite { get; }
+        protected abstract Sprite DefaultSprite { get; }
+        public abstract IPosition Position { get; }
+        internal int alignIndex = -1;
 
         public float Timer
         {

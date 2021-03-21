@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CrowdedRoles.UI;
 
 namespace CrowdedRoles.Roles
 {
@@ -25,6 +26,7 @@ namespace CrowdedRoles.Roles
             PlayerRoles.Clear();
             TaskCompletions.Clear();
             rolesSet = false;
+            ButtonManager.ResetButtons();
         }
     }
 }
