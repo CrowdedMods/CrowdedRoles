@@ -12,8 +12,16 @@ namespace CrowdedRoles.UI
     public abstract class CooldownButton
     {
         public abstract float MaxTimer { get; }
-        protected abstract Sprite DefaultSprite { get; }
+        /// <summary>
+        /// Sprite being assigned on button sprite. Gets called once in <see cref="Components.CustomButtonManager.Start"/>
+        /// </summary>
+        public abstract Sprite DefaultSprite { get; }
+        /// <summary>
+        /// Position behaviour
+        /// </summary>
         public abstract IPosition Position { get; }
+
+        public GameObject gameObject => CustomButtonManager.gameObject;
         internal int alignIndex = -1;
 
         public float Timer
@@ -39,6 +47,9 @@ namespace CrowdedRoles.UI
         private static readonly int Desat = Shader.PropertyToID("_Desat");
         private bool _activated;
 
+        /// <summary>
+        /// <see cref="GameObject.SetActive"/>
+        /// </summary>
         public bool Activated
         {
             get => _activated;
@@ -74,10 +85,7 @@ namespace CrowdedRoles.UI
         public virtual void OnEffectEnd() {}
         public virtual void OnCooldownEnd() {}
 
-        public virtual void OnStart()
-        {
-            Sprite = DefaultSprite;
-        }
+        public virtual void OnStart() {}
         public virtual void OnFixedUpdate() {}
     }
 }

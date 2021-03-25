@@ -14,9 +14,11 @@ namespace CrowdedRoles.Patches
         {
             public static void Postfix(HudManager __instance)
             {
+                int i = 0;
                 foreach (var button in ButtonManager.RegisteredButtons)
                 {
                     GameObject copiedObject = Object.Instantiate(__instance.KillButton.gameObject, __instance.transform);
+                    copiedObject.name = "CustomButton_" + i++;
                     var customManager = copiedObject.AddComponent<CustomButtonManager>();
                     var killButtonManager = copiedObject.GetComponent<KillButtonManager>();
                     customManager.TimerText = killButtonManager.TimerText; // It works very weird, but works

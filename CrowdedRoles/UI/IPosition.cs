@@ -3,15 +3,25 @@ using UnityEngine;
 
 namespace CrowdedRoles.UI
 {
+    /// <summary>
+    /// Interface declaring button position behaviour 
+    /// </summary>
     public interface IPosition
     {
+        /// <summary>
+        /// Method updating button position. Gets called in <see cref="CustomButtonManager.OnEnable"/>
+        /// </summary>
+        /// <param name="gameObject">button object</param>
         public void AdjustPosition(GameObject gameObject);
     }
 
+    /// <summary>
+    /// Absolute position by <see cref="Vector3"/>
+    /// </summary>
     public class AbsolutePosition : IPosition
     {
-        public Vector2 Position { get; }
-        public AbsolutePosition(Vector2 position)
+        public Vector3 Position { get; }
+        public AbsolutePosition(Vector3 position)
         {
             Position = position;
         }
@@ -22,6 +32,9 @@ namespace CrowdedRoles.UI
         }
     }
 
+    /// <summary>
+    /// Adaptive position using <see cref="AspectPosition"/>
+    /// </summary>
     public class AdaptivePosition : IPosition
     {
         public Vector2 Position { get; }
@@ -46,6 +59,9 @@ namespace CrowdedRoles.UI
         }
     }
 
+    /// <summary>
+    /// Managed by api button alignment to left corner (the best)
+    /// </summary>
     public class AutomaticPosition : IPosition
     {
         public void AdjustPosition(GameObject gameObject)

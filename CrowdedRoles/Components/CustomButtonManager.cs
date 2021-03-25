@@ -15,7 +15,6 @@ namespace CrowdedRoles.Components
 
         public SpriteRenderer Renderer { get; private set; } = null!;
         public TextRenderer TimerText { get; internal set; } = null!;
-        public AspectPosition? AspectPosition { get; private set; }
 
         private float _timer;
         private bool _executedCooldownEnd;
@@ -94,6 +93,7 @@ namespace CrowdedRoles.Components
             button.OnClick.AddListener((Action)OnClick);
             
             CooldownHelpers.SetCooldownNormalizedUvs(Renderer);
+            Button.Sprite = Button.DefaultSprite;
             Button.OnStart();
         }
 
