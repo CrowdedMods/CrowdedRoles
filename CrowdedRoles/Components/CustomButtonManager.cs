@@ -44,7 +44,7 @@ namespace CrowdedRoles.Components
                     }
                     else
                     {
-                        Renderer.material.SetFloat(Percent, Mathf.Min(_timer / max, 1f));
+                        Renderer.material.SetFloat(Percent, Mathf.Clamp(_timer / max, 0f, 1f));
                     }
                 }
 
@@ -92,16 +92,15 @@ namespace CrowdedRoles.Components
             button.OnClick.RemoveAllListeners();
             button.OnClick.AddListener((Action)OnClick);
             
-            CooldownHelpers.SetCooldownNormalizedUvs(Renderer);
             Button.Sprite = Button.DefaultSprite;
             Button.OnStart();
         }
 
-        public void FixedUpdate()
+        public void Update()
         {
             if (Button.IsCoolingDown && Button.ShouldCooldown())
             {
-                Timer -= Time.fixedDeltaTime;
+                Timer -= Time.deltaTime;
             } 
             if (!Button.IsCoolingDown && !_executedCooldownEnd)
             {
@@ -118,7 +117,7 @@ namespace CrowdedRoles.Components
                     Button.OnCooldownEnd();
                 }
             }
-            Button.OnFixedUpdate();
+            Button.OnUpdate();
         }
     }
 }

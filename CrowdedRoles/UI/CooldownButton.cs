@@ -30,10 +30,17 @@ namespace CrowdedRoles.UI
             set => CustomButtonManager.Timer = value;
         }
         
+        /// <summary>
+        /// Changes button sprite. Use this instead of renderer
+        /// </summary>
         public Sprite Sprite
         {
             get => CustomButtonManager.Renderer.sprite;
-            set => CustomButtonManager.Renderer.sprite = value;
+            set
+            {
+                CustomButtonManager.Renderer.sprite = value;
+                CooldownHelpers.SetCooldownNormalizedUvs(CustomButtonManager.Renderer);
+            } 
         }
 
         public bool Visible
@@ -86,6 +93,6 @@ namespace CrowdedRoles.UI
         public virtual void OnCooldownEnd() {}
 
         public virtual void OnStart() {}
-        public virtual void OnFixedUpdate() {}
+        public virtual void OnUpdate() {}
     }
 }
