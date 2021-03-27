@@ -206,6 +206,32 @@ namespace CrowdedRoles.Patches
 
                 return false;
             }
-        }      
+        }
+
+        [HarmonyPriority(Priority.Last)]
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FindClosestTarget))]
+        public static class PlayerControl_FindClosestTarget
+        {
+            private static bool Prefix(PlayerControl __instance, out PlayerControl __result)
+            {
+                __result = null!;
+                if (!ShipStatus.Instance) return true;
+
+                float lowestDistance = GameOptionsData.KillDistances[PlayerControl.GameOptions.KillDistance];
+                var myPos = __instance.GetTruePosition();
+                foreach (var player in PlayerControl.AllPlayerControls.ToArray().Where(p => !p.Data.IsDead && p.GetTeam() != Team.Impostor))
+                {
+                    var delta = player.GetTruePosition() - myPos;
+                    if (delta.magnitude <= lowestDistance && !PhysicsHelpers.AnyNonTriggersBetween(myPos,
+                        delta.normalized, delta.magnitude, Constants.ShipAndObjectsMask))
+                    {
+                        __result = player;
+                        lowestDistance = delta.magnitude;
+                    }
+                }
+                
+                return false;
+            }
+        }
     }
 }

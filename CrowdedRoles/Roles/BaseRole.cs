@@ -90,6 +90,13 @@ namespace CrowdedRoles.Roles
         {
             taskList.AddNormalTasks(defaultTasks);
         }
+
+        /// <summary>
+        /// Called when LocalPlayer gets this role
+        /// </summary>
+        public virtual void OnRoleAssign()
+        {
+        }
         
         /// <summary>
         /// Custom role selecting, random by default.

@@ -48,13 +48,16 @@ namespace CrowdedRoles.Components
         {
             var builder = new StringBuilder();
 
-            builder.AppendLine("Limits:");
-            foreach ((var role, byte limit) in RoleManager.EditableLimits)
+            if (RoleManager.EditableLimits.Count > 0)
             {
-                builder.AppendLine($"{role.Name}: {limit}");
-            }
+                builder.AppendLine("Limits:");
+                foreach ((var role, byte limit) in RoleManager.EditableLimits)
+                {
+                    builder.AppendLine($"{role.Name}: {limit}");
+                }
             
-            builder.AppendLine();
+                builder.AppendLine();
+            }
 
             foreach (var option in OptionsManager.CustomOptions.SelectMany(p => p.Value))
             {
