@@ -70,6 +70,19 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPriority(Priority.First)]
+        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CalculateLightRadius))]
+        public static class ShipStatus_CalculateLightRadius
+        {
+            public static void Postfix(ShipStatus __instance, [HarmonyArgument(0)] GameData.PlayerInfo? player, ref float __result)
+            {
+                if (player != null && !player.IsDead && player.GetRole()?.Team == Team.Impostor)
+                {
+                    __result = __instance.MaxLightRadius * PlayerControl.GameOptions.ImpostorLightMod;
+                }
+            }
+        }
+
+        [HarmonyPriority(Priority.First)]
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcMurderPlayer))]
         public static class PlayerControl_RpcMurderPlayer
         {
