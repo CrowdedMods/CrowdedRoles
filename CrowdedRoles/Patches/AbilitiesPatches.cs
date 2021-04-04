@@ -168,9 +168,9 @@ namespace CrowdedRoles.Patches
                 }
             }
 
-            [HarmonyPostfix]
+            [HarmonyPrefix]
             [HarmonyPatch(typeof(UseButtonManager), nameof(UseButtonManager.DoClick))]
-            public static void UseButtonManager_DoClick(UseButtonManager __instance)
+            public static bool UseButtonManager_DoClick(UseButtonManager __instance)
             {
                 if (__instance.isActiveAndEnabled && PlayerControl.LocalPlayer != null &&
                     PlayerControl.LocalPlayer.Data != null && __instance.currentTarget == null) // currentTarget
@@ -178,7 +178,7 @@ namespace CrowdedRoles.Patches
                     var myRole = PlayerControl.LocalPlayer.GetRole();
                     if (myRole == null || !myRole.CanSabotage(null))
                     {
-                        return;
+                        return true;
                     }
                     HudManager.Instance.ShowMap((Action<MapBehaviour>)(m =>
                     {
@@ -189,7 +189,11 @@ namespace CrowdedRoles.Patches
 
                         m.ShowInfectedMap();
                     }));
+
+                    return false;
                 }
+
+                return true;
             }
 
             [HarmonyPrefix]
