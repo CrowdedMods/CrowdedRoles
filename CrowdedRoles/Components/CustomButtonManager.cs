@@ -72,7 +72,7 @@ namespace CrowdedRoles.Components
                 _executedCooldownEnd = false; // workaround to prevent bugs if EffectDuration is 0
                 Timer = Button.EffectDuration;
                 IsEffectEnabled = true;
-                Button.Activated = false;
+                Button.Active = false;
                 Button.OnEffectStart();
             }
         }
@@ -86,7 +86,7 @@ namespace CrowdedRoles.Components
         {
             Renderer = gameObject.GetComponent<SpriteRenderer>();
             Timer = Button.MaxTimer;
-            Button.Activated = false;
+            Button.Active = false;
 
             var button = gameObject.GetComponent<PassiveButton>();
             button.OnClick.RemoveAllListeners();

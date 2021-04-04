@@ -43,6 +43,9 @@ namespace CrowdedRoles.UI
             } 
         }
 
+        /// <summary>
+        /// <see cref="GameObject.SetActive"/>
+        /// </summary>
         public bool Visible
         {
             get => CustomButtonManager.gameObject.active;
@@ -52,17 +55,17 @@ namespace CrowdedRoles.UI
         // ReSharper disable once IdentifierTypo
         // ReSharper disable once StringLiteralTypo
         private static readonly int Desat = Shader.PropertyToID("_Desat");
-        private bool _activated;
+        private bool _active;
 
         /// <summary>
-        /// <see cref="GameObject.SetActive"/>
+        /// Changes sprite color (like kill button when it has a target)
         /// </summary>
-        public bool Activated
+        public bool Active
         {
-            get => _activated;
+            get => _active;
             set
             {
-                _activated = value;
+                _active = value;
                 if (value)
                 {
                     CustomButtonManager.Renderer.color = Palette.EnabledColor;
