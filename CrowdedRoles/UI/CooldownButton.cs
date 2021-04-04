@@ -73,7 +73,7 @@ namespace CrowdedRoles.UI
                 }
                 else
                 {
-                    CustomButtonManager.Renderer.color = Palette.DisabledGrey;
+                    CustomButtonManager.Renderer.color = Palette.DisabledClear;
                     CustomButtonManager.Renderer.material.SetFloat(Desat, 1f);
                 }
             }
