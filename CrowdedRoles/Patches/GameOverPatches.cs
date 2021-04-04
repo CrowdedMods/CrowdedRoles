@@ -22,9 +22,9 @@ namespace CrowdedRoles.Patches
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(StatsManager).GetMethod("EOAFLEMOMGI")!; // AddDrawReason
-                yield return typeof(StatsManager).GetMethod("PGNIBFCEGEH")!; // AddWinReason
-                yield return typeof(StatsManager).GetMethod("PAHEDCNAGLH")!; // AddLoseReason
+                yield return typeof(StatsManager).GetMethod("OFEDNBOFMPB")!; // AddDrawReason
+                yield return typeof(StatsManager).GetMethod("HBHHDAEMAPG")!; // AddWinReason
+                yield return typeof(StatsManager).GetMethod("GKEDMKCGFGK")!; // AddLoseReason
             }
             private static bool Prefix([HarmonyArgument(0)] GameOverReason reason)
             {

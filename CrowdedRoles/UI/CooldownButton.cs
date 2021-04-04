@@ -39,7 +39,7 @@ namespace CrowdedRoles.UI
             set
             {
                 CustomButtonManager.Renderer.sprite = value;
-                CustomButtonManager.Renderer.SetCooldownNormalizedUvs();
+                CooldownHelpers.SetCooldownNormalizedUvs(CustomButtonManager.Renderer); // CustomButtonManager.Renderer.SetCooldownNormalizedUvs();
             } 
         }
 

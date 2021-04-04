@@ -28,7 +28,7 @@ namespace CrowdedRoles.Patches
                 if (role == null) return;
 
                 var list = new PlayerTaskList(player);
-                role.AssignTasks(list, tasks.ToList().ConvertAll(i => ShipStatus.Instance.GetTaskById(i)));
+                role.AssignTasks(list, tasks.ToList().ConvertAll(i => new GameData.TaskInfo(i, 0)));
                 
                 Rpc<CustomSelectTasks>.Instance.Send(GameData.Instance, list);
                 // we do not prevent setting default tasks to not break things like Impostor server

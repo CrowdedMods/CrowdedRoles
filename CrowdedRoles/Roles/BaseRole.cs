@@ -86,7 +86,7 @@ namespace CrowdedRoles.Roles
         /// </summary>
         /// <param name="taskList">Task list you should change with its methods</param>
         /// <param name="defaultTasks">Tasks that were assigned by host with default game rules</param>
-        public virtual void AssignTasks(PlayerTaskList taskList, IEnumerable<NormalPlayerTask> defaultTasks)
+        public virtual void AssignTasks(PlayerTaskList taskList, IEnumerable<GameData.TaskInfo> defaultTasks)
         {
             taskList.AddNormalTasks(defaultTasks);
         }

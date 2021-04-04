@@ -11,8 +11,6 @@ using CrowdedRoles.UI;
 using HarmonyLib;
 using UnityEngine;
 
-using SuffixType = JIFICKIEJAK;
-
 namespace CrowdedRoles
 {
     [RegisterCustomRole]
@@ -40,7 +38,7 @@ namespace CrowdedRoles
             return true;
         }
 
-        public override void AssignTasks(PlayerTaskList taskList, IEnumerable<NormalPlayerTask> defaultTasks)
+        public override void AssignTasks(PlayerTaskList taskList, IEnumerable<GameData.TaskInfo> defaultTasks)
         {
             taskList.AddStringTask("I love you kitty");
             taskList.AddNormalTasks(defaultTasks);
@@ -48,7 +46,7 @@ namespace CrowdedRoles
         }
     }
 
-    [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Method_21))] // HandleHud
+    [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.KEKFAGHHAKA))] // HandleHud
     internal class TestPatch
     {
         private static void Postfix()
@@ -88,19 +86,19 @@ namespace CrowdedRoles
     {
         public override float MaxTimer => 5f;
         public override float EffectDuration => 3f;
-        protected override Sprite DefaultSprite => TranslationController.Instance.GetImage(ImageNames.ReportButton);
+        public override Sprite DefaultSprite => TranslationController.Instance.GetImage(ImageNames.ReportButton);
         public override IPosition Position { get; } = new AutomaticPosition();
 
         public override bool OnClick()
         {
-            if (Activated)
+            if (Active)
             {
                 Sprite = TranslationController.Instance.GetImage(ImageNames.VentButton);
                 PlayerControl.LocalPlayer.RpcMurderPlayer(PlayerControl.LocalPlayer);
                 return true;
             }
             
-            Activated = true;
+            Active = true;
             Sprite = TranslationController.Instance.GetImage(ImageNames.ReportButton);
             return false;
         }
@@ -113,7 +111,7 @@ namespace CrowdedRoles
     {
         public override float MaxTimer => 5f;
         public override float EffectDuration => 3f;
-        protected override Sprite DefaultSprite => TranslationController.Instance.GetImage(ImageNames.KillButton);
+        public override Sprite DefaultSprite => TranslationController.Instance.GetImage(ImageNames.KillButton);
         public override IPosition Position { get; } = new AutomaticPosition();
 
         public override bool OnClick() => true;
@@ -131,7 +129,7 @@ namespace CrowdedRoles
         public static CustomNumberOption IncrementMe { get; } = new ("Fake cooldown", new FloatRange(10, 100))
         {
             Increment = 0.25f,
-            SuffixType = SuffixType.Seconds
+            SuffixType = NumberSuffixes.Seconds
         };
 
         public static CustomStringOption FixMe { get; } = new ("Omg still no arrows", new[] {"Everyone", "AOU", "No one"});

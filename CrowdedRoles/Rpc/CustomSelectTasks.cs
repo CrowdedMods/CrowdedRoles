@@ -34,10 +34,10 @@ namespace CrowdedRoles.Rpc
             data.Player.Tasks = new List<GameData.TaskInfo>(data.NormalTasks.Count);
             for (var i = 0; i < data.NormalTasks.Count; i++)
             {
-                data.Player.Tasks.Add(new GameData.TaskInfo((byte)data.NormalTasks.Values.ElementAt(i).Index, (uint)i));
+                data.Player.Tasks.Add(new GameData.TaskInfo(data.NormalTasks.ElementAt(i).TypeId, (uint)i));
                 data.Player.Tasks[(Index) i].Cast<GameData.TaskInfo>().Id = (uint)i;
             }
-            data.Player.Object.CustomSetTasks(data);
+            Coroutines.Start(data.Player.Object.CustomSetTasks(data));
             sender.SetDirtyBit(1u << data.Player.PlayerId);
         }
     }

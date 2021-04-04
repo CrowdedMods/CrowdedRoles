@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Hazel;
+using Reactor;
 
 namespace CrowdedRoles.Roles
 {
@@ -30,7 +31,7 @@ namespace CrowdedRoles.Roles
         /// <summary>
         /// Tasks in dictionary id -> Task
         /// </summary>
-        public Dictionary<byte, NormalPlayerTask> NormalTasks { get; } = new();
+        public List<GameData.TaskInfo> NormalTasks { get; } = new();
         public TaskCompletion TaskCompletion { get; set; } = TaskCompletion.Required;
 
         internal static PlayerTaskList Deserialize(MessageReader reader)
@@ -58,7 +59,7 @@ namespace CrowdedRoles.Roles
                 int count = reader.ReadPackedInt32();
                 for (int i = 0; i < count; i++)
                 {
-                    list.NormalTasks.Add(reader.ReadByte(), ShipStatus.Instance.GetTaskById(reader.ReadByte()));
+                    list.NormalTasks.Add(new GameData.TaskInfo(reader.ReadByte(), reader.ReadByte()));
                 }
             }
 
@@ -78,10 +79,10 @@ namespace CrowdedRoles.Roles
             }
             
             writer.WritePacked(NormalTasks.Count);
-            foreach (var (id, normalTask) in NormalTasks)
+            foreach (var task in NormalTasks)
             {
-                writer.Write(id);
-                writer.Write((byte)normalTask.Index);
+                writer.Write(task.TypeId);
+                writer.Write((byte)task.Id);
             }
         }
 
@@ -110,19 +111,20 @@ namespace CrowdedRoles.Roles
         }
 
         /// <summary>
-        /// Add an in-game task
+        /// Add an in-game task (Id is being set by API)
         /// </summary>
-        public void AddNormalTask(NormalPlayerTask task)
+        public void AddNormalTask(GameData.TaskInfo task)
         {
-            NormalTasks.Add(Id++, task);
+            task.Id = Id++;
+            NormalTasks.Add(task);
         }
 
         /// <summary>
         /// Add a few in-game tasks
         /// </summary>
-        public void AddNormalTasks(IEnumerable<NormalPlayerTask> tasks)
+        public void AddNormalTasks(IEnumerable<GameData.TaskInfo> tasks)
         {
-            foreach (NormalPlayerTask task in tasks)
+            foreach (var task in tasks)
             {
                 AddNormalTask(task);
             }

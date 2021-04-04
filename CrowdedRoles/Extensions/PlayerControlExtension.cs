@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CrowdedRoles.Options;
@@ -173,8 +174,12 @@ namespace CrowdedRoles.Extensions
         public static TaskCompletion GetTaskCompletion(this PlayerControl player)
             => player.Data.GetTaskCompletion();
 
-        internal static void CustomSetTasks(this PlayerControl player, PlayerTaskList tasks)
+        internal static IEnumerator CustomSetTasks(this PlayerControl player, PlayerTaskList tasks)
         {
+            while (!ShipStatus.Instance)
+            {
+                yield return null;
+            }
             BaseRole? role = player.GetRole();
             if (player.AmOwner)
             {
@@ -198,7 +203,7 @@ namespace CrowdedRoles.Extensions
                 }
             }
             
-            player.myTasks.Cast<Il2CppSystem.Collections.Generic.IList<PlayerTask>>().LCBABMOODEH(); // DestroyAll
+            global::Extensions.LCBABMOODEH(player.myTasks.Cast<Il2CppSystem.Collections.Generic.IList<PlayerTask>>()); //player.myTasks.Cast<Il2CppSystem.Collections.Generic.IList<PlayerTask>>().LCBABMOODEH(); // DestroyAll
             player.myTasks = new Il2CppSystem.Collections.Generic.List<PlayerTask>(tasks.NormalTasks.Count + tasks.StringTasks.Count);
             for (int i = 0; i < player.myTasks.Capacity; i++)
             {
@@ -210,9 +215,10 @@ namespace CrowdedRoles.Extensions
                 RoleManager.TaskCompletions[player.PlayerId] = tasks.TaskCompletion;
             }
 
-            var gameObject = new GameObject("_Player");
             if (player.Data.IsImpostor)
             {
+                var gameObject = new GameObject("_Player");
+                gameObject.transform.SetParent(player.transform, false);
                 ImportantTextTask task = gameObject.AddComponent<ImportantTextTask>();
                 task.transform.SetParent(player.transform, false);
                 task.Text = TranslationController.Instance.GetString(StringNames.ImpostorTask, Array.Empty<Il2CppSystem.Object>()) +
@@ -222,19 +228,21 @@ namespace CrowdedRoles.Extensions
             }
 
             byte k = 0;
-            foreach (var (id, task) in tasks.NormalTasks)
+            foreach (var task in tasks.NormalTasks)
             {
-                var normalTask = Object.Instantiate(task, player.transform);
+                var normalTask = Object.Instantiate(ShipStatus.Instance.GetTaskById(task.TypeId), player.transform);
                 normalTask.Id = k++;
                 normalTask.Owner = player;
                 normalTask.Initialize();
-                player.myTasks[(Index) id] = normalTask;
+                player.myTasks[(Index) (int)task.Id] = normalTask;
             }
 
             foreach (var (id, text) in tasks.StringTasks)
             {
+                Logger<RoleApiPlugin>.Message($"{id}:{text}");
+                var gameObject = new GameObject($"CustomStringTask_{id}");
+                gameObject.transform.SetParent(player.transform, false);
                 ImportantTextTask task = gameObject.AddComponent<ImportantTextTask>();
-                task.transform.SetParent(player.transform, false);
                 task.Text = "[FFFFFFFF]" + text; // haha funny   
                 player.myTasks[(Index) id] = task;
             }
