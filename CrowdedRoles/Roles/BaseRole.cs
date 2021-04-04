@@ -92,9 +92,9 @@ namespace CrowdedRoles.Roles
         }
 
         /// <summary>
-        /// Called when LocalPlayer gets this role
+        /// Called when <see cref="player"/> gets this role
         /// </summary>
-        public virtual void OnRoleAssign()
+        public virtual void OnRoleAssign(PlayerControl player)
         {
         }
         

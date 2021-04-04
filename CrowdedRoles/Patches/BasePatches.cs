@@ -171,7 +171,11 @@ namespace CrowdedRoles.Patches
                             player.nameText.Text = role.FormatName(player.Data);
                         }
                     }
-                    PlayerControl.LocalPlayer.GetRole()?.OnRoleAssign(); // called here because before RpcSetInfected PlayerControls are not set yet
+
+                    foreach (var player in PlayerControl.AllPlayerControls)
+                    {
+                        player.GetRole()?.OnRoleAssign(player); // called here because before RpcSetInfected PlayerControls are not set yet
+                    }
                 }
             }
         }
