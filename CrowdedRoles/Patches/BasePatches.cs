@@ -4,7 +4,7 @@ using CrowdedRoles.Extensions;
 using CrowdedRoles.Roles;
 using CrowdedRoles.Rpc;
 using HarmonyLib;
-using Reactor;
+using Reactor.Networking;
 using UnhollowerBaseLib;
 using UnityEngine;
 using Random = System.Random;
@@ -58,7 +58,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.DLGJDGFGAEA))]
         public static class IntroCutScene_BeginCrewmate
         {
             public static readonly int Color = Shader.PropertyToID("_Color");
@@ -96,7 +96,7 @@ namespace CrowdedRoles.Patches
                     ) * 1.5f;
                     player.SetFlipX(i % 2 == 0);
                     PlayerControl.SetPlayerMaterialColors(data.ColorId, player.Body);
-                    DestroyableSingleton<HatManager>.Instance.Method_60(player.SkinSlot, data.SkinId); // SetSkin
+                    DestroyableSingleton<HatManager>.Instance.MPEPCGDPFOD(player.SkinSlot, data.SkinId); // SetSkin
                     player.HatSlot.SetHat(data.HatId, data.ColorId);
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
                     float scale = 1f - oddness * 0.075f;
@@ -114,7 +114,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Method_129))]
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.ADFDAKNEKKN))]
         [HarmonyPatch(new[] { typeof(GameData.PlayerInfo) })]
         public static class MeetingHud_CreateButton
         {
@@ -138,10 +138,10 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPriority(Priority.First)]
-        [HarmonyPatch(typeof(IntroCutscene.CoBegin__d), nameof(IntroCutscene.CoBegin__d.MoveNext))]
+        [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__11), nameof(IntroCutscene._CoBegin_d__11.MoveNext))]
         public static class IntroCutScene_CoBegin
         {
-            public static bool Prefix(ref bool __result, IntroCutscene.CoBegin__d __instance)
+            public static bool Prefix(ref bool __result, IntroCutscene._CoBegin_d__11 __instance)
             {
                 // wait until we set our roles to prevent bugs
                 if (!RoleManager.rolesSet)

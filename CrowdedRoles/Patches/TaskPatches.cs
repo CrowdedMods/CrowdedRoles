@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Reactor;
+using Reactor.Networking;
 using CrowdedRoles.Extensions;
 using CrowdedRoles.Roles;
 using CrowdedRoles.Rpc;

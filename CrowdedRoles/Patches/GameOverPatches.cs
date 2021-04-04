@@ -55,7 +55,7 @@ namespace CrowdedRoles.Patches
                     "Stinger",
                     sound == null ? __instance.ImpostorStinger : sound,
                     false,
-                    (DynamicSound.GetDynamicsFunction) __instance.Method_58 // GetStingerVol
+                    (DynamicSound.GetDynamicsFunction) __instance.ILKCBLCGHCB // GetStingerVol
                 );
 
                 for (int i = 0; i < CustomGameOverReasonManager.ShownWinners.Count; i++)
@@ -63,14 +63,15 @@ namespace CrowdedRoles.Patches
                     var winner = CustomGameOverReasonManager.ShownWinners[i];
                     int oddness = (i + 1) / 2;
                     PoolablePlayer player = Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
-                    player.transform.localPosition = new Vector3(
+                    var transform = player.transform;
+                    transform.localPosition = new Vector3(
                         0.8f * (i % 2 == 0 ? -1 : 1) * oddness * 1 - oddness * 0.035f,
                         __instance.BaseY - 0.25f + oddness * 0.1f,
                         (i == 0 ? -8 : -1) + oddness * 0.01f
                     ) * 1.25f;
                     float scale = 1f - oddness * 0.075f;
                     var scaleVec = new Vector3(scale, scale, scale) * 1.25f;
-                    player.transform.localScale = scaleVec;
+                    transform.localScale = scaleVec;
                     if (winner.IsDead)
                     {
                         player.Body.sprite = __instance.GhostSprite;
@@ -80,7 +81,7 @@ namespace CrowdedRoles.Patches
                     else
                     {
                         player.SetFlipX(i % 2 == 0);
-                        DestroyableSingleton<HatManager>.Instance.Method_60(player.SkinSlot, winner.SkinId); // SetSkin
+                        DestroyableSingleton<HatManager>.Instance.MPEPCGDPFOD(player.SkinSlot, winner.SkinId); // SetSkin
                     }
                     PlayerControl.SetPlayerMaterialColors(winner.ColorId, player.Body);
                     player.HatSlot.SetHat(winner.HatId, winner.ColorId);
@@ -128,10 +129,10 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPriority(Priority.Last)]
-        [HarmonyPatch(typeof(AmongUsClient.Nested_1), nameof(AmongUsClient.Nested_1.MoveNext))]
+        [HarmonyPatch(typeof(AmongUsClient._CoEndGame_d__23), nameof(AmongUsClient._CoEndGame_d__23.MoveNext))]
         private static class AmongUsClient_CoEndGame
         {
-            private static void Prefix(AmongUsClient.Nested_1 __instance)
+            private static void Prefix(AmongUsClient._CoEndGame_d__23 __instance)
             {
                 if (__instance.__state == 0 && !TempData.EndReason.IsCustom())
                 {
@@ -151,8 +152,8 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.Method_48))]
-        private static class InnerNetClient_OnDisconnected
+        [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HandleDisconnect))]
+        private static class InnerNetClient_HandleDisconnect
         {
             private static void Postfix()
             {

@@ -4,13 +4,14 @@ using CrowdedRoles.Options;
 using CrowdedRoles.Roles;
 using Hazel;
 using Reactor;
+using Reactor.Networking;
 
 namespace CrowdedRoles.Rpc
 {
-    [RegisterCustomRpc]
+    [RegisterCustomRpc((uint)CustomRpcCalls.SyncCustomSettings)]
     internal class SyncCustomSettings : PlayerCustomRpc<RoleApiPlugin, SyncCustomSettings.Data>
     {
-        public SyncCustomSettings(RoleApiPlugin plugin) : base(plugin)
+        public SyncCustomSettings(RoleApiPlugin plugin, uint id) : base(plugin, id)
         {
         }
 

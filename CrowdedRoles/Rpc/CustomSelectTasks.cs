@@ -1,16 +1,18 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using CrowdedRoles.Extensions;
 using CrowdedRoles.Roles;
 using Hazel;
 using Il2CppSystem.Collections.Generic;
 using Reactor;
+using Reactor.Networking;
 
 namespace CrowdedRoles.Rpc
 {
-    [RegisterCustomRpc]
+    [RegisterCustomRpc((uint)CustomRpcCalls.CustomSelectTasks)]
     internal class CustomSelectTasks : CustomRpc<RoleApiPlugin, GameData, PlayerTaskList>
     {
-        public CustomSelectTasks(RoleApiPlugin plugin) : base(plugin)
+        public CustomSelectTasks(RoleApiPlugin plugin, uint id) : base(plugin, id)
         {
         }
 
@@ -30,10 +32,10 @@ namespace CrowdedRoles.Rpc
             }
 
             data.Player.Tasks = new List<GameData.TaskInfo>(data.NormalTasks.Count);
-            for (uint i = 0; i < data.NormalTasks.Count; i++)
+            for (var i = 0; i < data.NormalTasks.Count; i++)
             {
-                data.Player.Tasks.Add(new GameData.TaskInfo((byte)data.NormalTasks.Values.ElementAt((int)i).Index, i));
-                data.Player.Tasks[(int)i].Id = i;
+                data.Player.Tasks.Add(new GameData.TaskInfo((byte)data.NormalTasks.Values.ElementAt(i).Index, (uint)i));
+                data.Player.Tasks[(Index) i].Cast<GameData.TaskInfo>().Id = (uint)i;
             }
             data.Player.Object.CustomSetTasks(data);
             sender.SetDirtyBit(1u << data.Player.PlayerId);

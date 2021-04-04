@@ -1,13 +1,15 @@
 ﻿using CrowdedRoles.Extensions;
 using Hazel;
+using InnerNet;
 using Reactor;
+using Reactor.Networking;
 
 namespace CrowdedRoles.Rpc
 {
-    [RegisterCustomRpc]
+    [RegisterCustomRpc((uint)CustomRpcCalls.CmdCustomKill)]
     public class CmdCustomKill : PlayerCustomRpc<RoleApiPlugin, CmdCustomKill.Data>
     {
-        public CmdCustomKill(RoleApiPlugin plugin) : base(plugin)
+        public CmdCustomKill(RoleApiPlugin plugin, uint id) : base(plugin, id)
         {
         }
 

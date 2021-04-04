@@ -1,25 +1,24 @@
 ﻿using CrowdedRoles.Extensions;
 using HarmonyLib;
-using InnerNet;
 
 namespace CrowdedRoles.Patches
 {
     internal static class MiscPatches
     {
-        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-        public static class AmongUsClient_CreatePlayer
+        [HarmonyPatch(typeof(GameData), nameof(GameData.AddPlayer))]
+        public static class GameData_AddPlayer
         {
-            public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData data)
+            public static void Postfix([HarmonyArgument(0)] PlayerControl player)
             {
-                if (__instance.AmHost && !data.Character.AmOwner)
+                if (AmongUsClient.Instance.AmHost && !player.AmOwner)
                 {
-                    PlayerControl.LocalPlayer.RpcSyncCustomSettings(data.Character.OwnerId);
+                    PlayerControl.LocalPlayer.RpcSyncCustomSettings(player.OwnerId);
                 }
             }
         }
 
-        [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ResetAnim))]
-        public static class PlayerPhysics_ResetAnim
+        [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ResetAnimState))]
+        public static class PlayerPhysics_ResetAnimState
         {
             public static void Postfix(PlayerPhysics __instance)
             {

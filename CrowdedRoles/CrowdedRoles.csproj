@@ -7,8 +7,8 @@
     <Description>CrowdedRoles Api. Not an independent plugin</Description>
     <Authors>Galster</Authors>
 
-    <GameVersion>2021.3.5s</GameVersion>
-    <Mappings>NuclearPowered/Mappings:0.2.0</Mappings>
+    <GameVersion>2021.3.31.3s</GameVersion>
+    <Mappings>NuclearPowered/Mappings:0.3.0</Mappings>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>
@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Deobfuscate Include="$(AmongUs)\BepInEx\plugins\Reactor-$(GameVersion).dll" />
-    <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.2.9" />
+    <PackageReference Include="Reactor.OxygenFilter.MSBuild" Version="0.3.0" />
   </ItemGroup>
 
   <Target Name="Copy" AfterTargets="Reobfuscate">

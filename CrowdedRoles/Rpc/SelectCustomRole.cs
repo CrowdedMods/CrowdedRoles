@@ -3,13 +3,14 @@ using CrowdedRoles.Roles;
 using Hazel;
 using System.Collections.Generic;
 using Reactor;
+using Reactor.Networking;
 
 namespace CrowdedRoles.Rpc
 {
-    [RegisterCustomRpc]
+    [RegisterCustomRpc((uint)CustomRpcCalls.SelectCustomRole)]
     internal class SelectCustomRole : PlayerCustomRpc<RoleApiPlugin, Dictionary<RoleData, byte[]>>
     {
-        public SelectCustomRole(RoleApiPlugin plugin) : base(plugin)
+        public SelectCustomRole(RoleApiPlugin plugin, uint id) : base(plugin, id)
         {
         }
         

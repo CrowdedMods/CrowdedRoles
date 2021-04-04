@@ -1,13 +1,15 @@
 ﻿using CrowdedRoles.Extensions;
 using Hazel;
+using InnerNet;
 using Reactor;
+using Reactor.Networking;
 
 namespace CrowdedRoles.Rpc
 {
-    [RegisterCustomRpc]
+    [RegisterCustomRpc((uint)CustomRpcCalls.CustomSabotage)]
     internal class CustomSabotage : CustomRpc<RoleApiPlugin, ShipStatus, CustomSabotage.Data>
     {
-        public CustomSabotage(RoleApiPlugin plugin) : base(plugin)
+        public CustomSabotage(RoleApiPlugin plugin, uint id) : base(plugin, id)
         {
         }
         

@@ -39,7 +39,7 @@ namespace CrowdedRoles.UI
             set
             {
                 CustomButtonManager.Renderer.sprite = value;
-                CooldownHelpers.SetCooldownNormalizedUvs(CustomButtonManager.Renderer);
+                CustomButtonManager.Renderer.SetCooldownNormalizedUvs();
             } 
         }
 
@@ -70,7 +70,7 @@ namespace CrowdedRoles.UI
                 }
                 else
                 {
-                    CustomButtonManager.Renderer.color = Palette.DisabledColor;
+                    CustomButtonManager.Renderer.color = Palette.DisabledGrey;
                     CustomButtonManager.Renderer.material.SetFloat(Desat, 1f);
                 }
             }

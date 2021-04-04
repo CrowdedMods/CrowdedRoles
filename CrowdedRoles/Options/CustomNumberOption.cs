@@ -1,7 +1,6 @@
 ﻿using System;
 using BepInEx.Configuration;
 using CrowdedRoles.Extensions;
-using SuffixType = JIFICKIEJAK;
 
 namespace CrowdedRoles.Options
 {
@@ -18,9 +17,9 @@ namespace CrowdedRoles.Options
         private FloatRange ValidRange { get; }
         public bool ZeroIsInfinity { get; init; } = false;
         /// <summary>
-        /// New thing added in 2021.3.5 with translation support (only for <see cref="JIFICKIEJAK.Seconds"/> for now)
+        /// New thing added in 2021.3.5 with translation support (only for <see cref="NumberSuffixes.Seconds"/> for now)
         /// </summary>
-        public SuffixType SuffixType { get; init; } = SuffixType.None;
+        public NumberSuffixes SuffixType { get; init; } = NumberSuffixes.None;
         private readonly string _valueFormat = "G";
         /// <summary>
         /// Value format https://docs.microsoft.com/en-us/dotnet/api/system.single.tostring
@@ -47,9 +46,9 @@ namespace CrowdedRoles.Options
                 {
                     ValueText = string.Format(ValueFormat, "∞");
                 }
-                else if (SuffixType != SuffixType.None && TranslationController.InstanceExists)
+                else if (SuffixType != NumberSuffixes.None && TranslationController.InstanceExists)
                 {
-                    ValueText = string.Format(SuffixType == SuffixType.Seconds
+                    ValueText = string.Format(SuffixType == NumberSuffixes.Seconds
                         ? TranslationController.Instance.GetString(StringNames.GameSecondsAbbrev, 
                             Array.Empty<Il2CppSystem.Object>())
                         : "{0}x", value);

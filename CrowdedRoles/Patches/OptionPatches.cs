@@ -43,10 +43,11 @@ namespace CrowdedRoles.Patches
                     
                     option.Title = OptionsManager.CustomOptionStringName;
                     baseOption.ImplementOption(ref option);
-                    
-                    Vector3 oldPos = option.transform.position;
+
+                    var transform = option.transform;
+                    Vector3 oldPos = transform.position;
                     oldPos.y = lowestY -= 0.5f;
-                    option.transform.position = oldPos;
+                    transform.position = oldPos;
                     option.name = $"{baseOption.Name}_{optionsAdded++}";
                 }
 

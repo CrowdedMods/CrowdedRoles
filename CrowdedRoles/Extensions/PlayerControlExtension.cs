@@ -6,6 +6,7 @@ using CrowdedRoles.Roles;
 using CrowdedRoles.Rpc;
 using Reactor;
 using Reactor.Extensions;
+using Reactor.Networking;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -197,7 +198,7 @@ namespace CrowdedRoles.Extensions
                 }
             }
             
-            global::Extensions.Method_2(player.myTasks.Cast<Il2CppSystem.Collections.Generic.IList<PlayerTask>>()); // DestroyAll
+            player.myTasks.Cast<Il2CppSystem.Collections.Generic.IList<PlayerTask>>().LCBABMOODEH(); // DestroyAll
             player.myTasks = new Il2CppSystem.Collections.Generic.List<PlayerTask>(tasks.NormalTasks.Count + tasks.StringTasks.Count);
             for (int i = 0; i < player.myTasks.Capacity; i++)
             {
@@ -227,7 +228,7 @@ namespace CrowdedRoles.Extensions
                 normalTask.Id = k++;
                 normalTask.Owner = player;
                 normalTask.Initialize();
-                player.myTasks[id] = normalTask;
+                player.myTasks[(Index) id] = normalTask;
             }
 
             foreach (var (id, text) in tasks.StringTasks)
@@ -235,7 +236,7 @@ namespace CrowdedRoles.Extensions
                 ImportantTextTask task = gameObject.AddComponent<ImportantTextTask>();
                 task.transform.SetParent(player.transform, false);
                 task.Text = "[FFFFFFFF]" + text; // haha funny   
-                player.myTasks[id] = task;
+                player.myTasks[(Index) id] = task;
             }
         }
 
@@ -332,16 +333,6 @@ namespace CrowdedRoles.Extensions
         /// </summary>
         public static bool CanSeeSpecial(this PlayerControl me, PlayerControl other)
             => me.Data.CanSeeSpecial(other.Data);
-
-        private static void ClearTasksWorkaround(this PlayerControl me) // Reimplemented because obfuscated one is too hard to find
-        {
-            foreach (var task in me.myTasks)
-            {
-                task.OnRemove();
-                task.gameObject.Destroy();
-            }
-            me.myTasks.Clear();
-        }
         
         /// <summary>
         /// Api's reimplementation of <see cref="PlayerControl.MurderPlayer"/><br/>
@@ -349,7 +340,7 @@ namespace CrowdedRoles.Extensions
         /// </summary>
         public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
         {
-            if (killer.AmOwner && Constants.Method_3()) // ShouldPlaySfx
+            if (killer.AmOwner && Constants.DECMMJMOCKM()) // ShouldPlaySfx
             {
                 SoundManager.Instance.PlaySound(killer.KillSfx, false, 0.8f);
                 killer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
@@ -383,12 +374,12 @@ namespace CrowdedRoles.Extensions
                 text.transform.SetParent(killer.transform, false);
                 if (target.Data.IsImpostor)
                 {
-                    target.ClearTasksWorkaround(); // ClearTasks
+                    target.JBNJBHMIBOM(); // ClearTasks
                     text.Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GhostImpostor, new (Array.Empty<Il2CppSystem.Object>()));
                 }
                 else if (!PlayerControl.GameOptions.GhostsDoTasks)
                 {
-                    target.ClearTasksWorkaround(); // ClearTasks
+                    target.JBNJBHMIBOM(); // ClearTasks
                     text.Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GhostIgnoreTasks, new(Array.Empty<Il2CppSystem.Object>()));
                 }
                 else
