@@ -47,6 +47,30 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPatch]
+        public static class ResetButtonsPatches
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start))]
+            public static void MeetingHud_Start()
+            {
+                foreach (CooldownButton button in ButtonManager.ActiveButtons)
+                {
+                    button.IsEffectEnabled = false;
+                }
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(ExileController), nameof(ExileController.GALOAPAFIMJ))]
+            public static void ExileController_WrapUp()
+            {
+                foreach (CooldownButton button in ButtonManager.ActiveButtons)
+                {
+                    button.Timer = button.MaxTimer;
+                }
+            }
+        }
+
+        [HarmonyPatch]
         public static class SetActivePatches
         {
             [HarmonyPostfix]

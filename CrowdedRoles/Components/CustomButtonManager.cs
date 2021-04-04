@@ -18,10 +18,29 @@ namespace CrowdedRoles.Components
 
         private float _timer;
         private bool _executedCooldownEnd;
+        private bool _effectEnabled;
         private static readonly int Percent = Shader.PropertyToID("_Percent");
 
         [HideFromIl2Cpp]
-        public bool IsEffectEnabled { get; set; }
+        public bool IsEffectEnabled
+        {
+            get => _effectEnabled;
+            set
+            {
+                if (!_effectEnabled && value)
+                {
+                    Timer = Button.EffectDuration;
+                    Button.Active = false;
+                    Button.OnEffectStart();
+                } else if (_effectEnabled && !value)
+                {
+                    Timer = Button.MaxTimer;
+                    Button.OnEffectEnd();
+                }
+
+                _effectEnabled = value;
+            }
+        }
         
         [HideFromIl2Cpp]
         public float Timer
@@ -70,10 +89,7 @@ namespace CrowdedRoles.Components
             if (Button.OnClick())
             {
                 _executedCooldownEnd = false; // workaround to prevent bugs if EffectDuration is 0
-                Timer = Button.EffectDuration;
                 IsEffectEnabled = true;
-                Button.Active = false;
-                Button.OnEffectStart();
             }
         }
 
@@ -109,8 +125,6 @@ namespace CrowdedRoles.Components
                 {
                     IsEffectEnabled = false;
                     _executedCooldownEnd = false;
-                    Timer = Button.MaxTimer;
-                    Button.OnEffectEnd();
                 }
                 else
                 {

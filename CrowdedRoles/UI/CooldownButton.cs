@@ -80,6 +80,11 @@ namespace CrowdedRoles.UI
         }
 
         public bool IsCoolingDown => Timer > 0f;
+        public bool IsEffectEnabled
+        {
+            get => CustomButtonManager.IsEffectEnabled;
+            set => CustomButtonManager.IsEffectEnabled = value;
+        }
 
         public CustomButtonManager CustomButtonManager { get; internal set; } = null!;
 
