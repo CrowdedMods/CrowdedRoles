@@ -188,12 +188,7 @@ namespace CrowdedRoles.Patches
             [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HandleMessage))]
             private static bool HandleMessage(InnerNetClient __instance, [HarmonyArgument(0)] MessageReader reader)
             {
-                if (reader.Tag != 8)
-                {
-                    return true;
-                }
-
-                if (__instance.GameId != reader.ReadInt32() || __instance.GameState == InnerNetClient.GameStates.Ended)
+                if (reader.Tag != 8 || __instance.GameId != reader.ReadInt32() || __instance.GameState == InnerNetClient.GameStates.Ended)
                 {
                     return true;
                 }
