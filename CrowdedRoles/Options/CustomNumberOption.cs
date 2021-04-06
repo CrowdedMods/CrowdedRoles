@@ -9,6 +9,7 @@ namespace CrowdedRoles.Options
         public CustomNumberOption(string name, FloatRange validRange) : base(name)
         {
             ValidRange = validRange;
+            _value = validRange.min;
         }
 
         private ConfigEntry<float> SavedValue = null!;
@@ -104,7 +105,7 @@ namespace CrowdedRoles.Options
 
         internal override void LoadValue(ConfigFile file, string guid, string name = "")
         {
-            SavedValue = file.Bind(guid, OptionsManager.MakeSaveNameValid(name == "" ? Name : name), ValidRange.min);
+            SavedValue = file.Bind(guid, OptionsManager.MakeSaveNameValid(name == "" ? Name : name), Value);
 
             Value = SavedValue.Value;
         }
