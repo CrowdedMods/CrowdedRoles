@@ -31,6 +31,9 @@ namespace CrowdedRoles.UI
             aspectPosition.AdjustPosition();
         }
 
+        public static T? GetInstance<T>(bool activeOnly = true) where T : CooldownButton
+            => (activeOnly ? ActiveButtons : RegisteredButtons).FirstOrDefault(b => b is T) as T;
+
         internal static void ResetButtons()
         {
             foreach (var button in ActiveButtons)
