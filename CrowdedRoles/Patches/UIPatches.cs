@@ -36,11 +36,10 @@ namespace CrowdedRoles.Patches
             {
                 if (!__result)
                 {
-                    ButtonManager.ActiveButtons.Clear();
+                    ButtonManager.ResetButtons();
                     foreach (CooldownButton button in ButtonManager.RegisteredButtons.Where(button => button.CanUse()))
                     {
-                        ButtonManager.ActiveButtons.Add(button);
-                        button.CustomButtonManager.gameObject.SetActive(true);
+                        ButtonManager.AddButton(button);
                     }
                 }
             }

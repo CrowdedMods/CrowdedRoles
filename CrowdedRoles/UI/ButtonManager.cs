@@ -5,11 +5,10 @@ using ListButtonMatrix = System.Collections.Generic.List<System.Collections.Gene
 
 namespace CrowdedRoles.UI
 {
-    internal static class ButtonManager
+    public static class ButtonManager
     {
-        public static List<CooldownButton> RegisteredButtons { get; } = new();
-        public static List<CooldownButton> ActiveButtons { get; } = new();
-        public static ListButtonMatrix AlignedButtons { get; } = new();
+        internal static List<CooldownButton> RegisteredButtons { get; } = new();
+        internal static List<CooldownButton> ActiveButtons { get; } = new();
         private static int _currentIndex;
 
         private const float Delta = 0.7f;
@@ -32,15 +31,20 @@ namespace CrowdedRoles.UI
             aspectPosition.AdjustPosition();
         }
 
-        public static void ResetButtons()
+        internal static void ResetButtons()
         {
             foreach (var button in ActiveButtons)
             {
                 button.alignIndex = -1;
             }
             ActiveButtons.Clear();
-            AlignedButtons.Clear();
             _currentIndex = 0;
+        }
+
+        public static void AddButton(CooldownButton button)
+        {
+            ActiveButtons.Add(button);
+            button.Visible = true;
         }
     }
 }
