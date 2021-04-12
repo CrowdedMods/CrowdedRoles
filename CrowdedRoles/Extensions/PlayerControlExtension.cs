@@ -239,7 +239,6 @@ namespace CrowdedRoles.Extensions
 
             foreach (var (id, text) in tasks.StringTasks)
             {
-                Logger<RoleApiPlugin>.Message($"{id}:{text}");
                 var gameObject = new GameObject($"CustomStringTask_{id}");
                 gameObject.transform.SetParent(player.transform, false);
                 ImportantTextTask task = gameObject.AddComponent<ImportantTextTask>();
