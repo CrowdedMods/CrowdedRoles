@@ -71,7 +71,10 @@ namespace CrowdedRoles.Components
                 if (value > 0)
                 {
                     TimerText.text = Mathf.CeilToInt(_timer).ToString();
-                    TimerText.gameObject.SetActive(true);
+                    if (Button.Visible)
+                    {
+                        TimerText.gameObject.SetActive(true);
+                    }
                 }
                 else
                 {
@@ -85,7 +88,7 @@ namespace CrowdedRoles.Components
         
         private void OnClick()
         {
-            if (!isActiveAndEnabled || Button.IsCoolingDown || IsEffectEnabled) return;
+            if (!isActiveAndEnabled || !Button.Visible || Button.IsCoolingDown || IsEffectEnabled) return;
 
             if (Button.OnClick())
             {

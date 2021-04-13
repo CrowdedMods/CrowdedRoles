@@ -43,7 +43,7 @@ namespace CrowdedRoles.UI
             } 
         }
 
-        private bool _visible;
+        private bool _visible = true;
 
         /// <summary>
         /// Make button Visible or not. Difference from <see cref="Active"/> is that cooldown, <see cref="OnUpdate"/> and stuff still executes
