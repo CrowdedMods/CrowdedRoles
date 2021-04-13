@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using CrowdedRoles.Components;
+﻿using CrowdedRoles.Components;
 using CrowdedRoles.UI;
 using HarmonyLib;
 using Reactor.Extensions;
@@ -37,9 +36,16 @@ namespace CrowdedRoles.Patches
                 if (!__result)
                 {
                     ButtonManager.ResetButtons();
-                    foreach (CooldownButton button in ButtonManager.RegisteredButtons.Where(button => button.CanUse()))
+                    foreach (CooldownButton button in ButtonManager.RegisteredButtons)
                     {
-                        ButtonManager.AddButton(button);
+                        if (button.CanUse())
+                        {
+                            ButtonManager.AddButton(button);
+                        }
+                        else
+                        {
+                            button.gameObject.Destroy(); // to not overload ??
+                        }
                     }
                 }
             }
@@ -78,7 +84,7 @@ namespace CrowdedRoles.Patches
             {
                 foreach (CooldownButton button in ButtonManager.ActiveButtons)
                 {
-                    button.Visible = button.ShouldSetActive(isActive && !PlayerControl.LocalPlayer.Data.IsDead, SetActiveReason.Hud);
+                    button.Active = button.ShouldSetActive(isActive && !PlayerControl.LocalPlayer.Data.IsDead, SetActiveReason.Hud);
                 }
             }
 
@@ -90,7 +96,7 @@ namespace CrowdedRoles.Patches
                 
                 foreach (CooldownButton button in ButtonManager.ActiveButtons)
                 {
-                    button.Visible = button.ShouldSetActive(false, SetActiveReason.Death);
+                    button.Active = button.ShouldSetActive(false, SetActiveReason.Death);
                 }
             }
 
@@ -102,7 +108,7 @@ namespace CrowdedRoles.Patches
                 
                 foreach (CooldownButton button in ButtonManager.ActiveButtons)
                 {
-                    button.Visible = button.ShouldSetActive(true, SetActiveReason.Revival);
+                    button.Active = button.ShouldSetActive(true, SetActiveReason.Revival);
                 }
             }
         }

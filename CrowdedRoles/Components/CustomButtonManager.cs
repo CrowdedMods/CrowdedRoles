@@ -31,7 +31,7 @@ namespace CrowdedRoles.Components
                 if (!_effectEnabled && value)
                 {
                     Timer = Button.EffectDuration;
-                    Button.Active = false;
+                    Button.Triggered = false;
                     Button.OnEffectStart();
                 } else if (_effectEnabled && !value)
                 {
@@ -103,7 +103,7 @@ namespace CrowdedRoles.Components
         {
             Renderer = gameObject.GetComponent<SpriteRenderer>();
             Timer = Button.MaxTimer;
-            Button.Active = false;
+            Button.Triggered = false;
 
             var button = gameObject.GetComponent<PassiveButton>();
             button.OnClick.RemoveAllListeners();

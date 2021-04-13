@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using HarmonyLib;
 using UnityEngine;
 using ListButtonMatrix = System.Collections.Generic.List<System.Collections.Generic.List<AspectPosition>>;
 
@@ -47,7 +49,22 @@ namespace CrowdedRoles.UI
         public static void AddButton(CooldownButton button)
         {
             ActiveButtons.Add(button);
-            button.Visible = true;
+            button.Active = true;
         }
+    }
+
+    public static class ButtonSingleton<T> where T : CooldownButton
+    {
+        /// <summary>
+        /// Gets an instance of active (!) button
+        /// </summary>
+        /// <exception cref="NullReferenceException">If button is not active/registered</exception>
+        public static T Instance => ButtonManager.ActiveButtons.Single(b => b is T) as T ?? throw new NullReferenceException($"Button {typeof(T).FullDescription()} is not registered or/and active");
+
+        /// <summary>
+        /// Gets an instance of registered button. Please use carefully because buttons get destroyed on game start if <see cref="CooldownButton.DontDestroyOnGameStart"/> is false (default)
+        /// </summary>
+        /// <exception cref="NullReferenceException">If button is not registered/destroyed</exception>
+        public static T RegisteredInstance => ButtonManager.ActiveButtons.Single(b => b is T) as T ?? throw new NullReferenceException($"Button {typeof(T).FullDescription()} is not registered or destroyed");
     }
 }

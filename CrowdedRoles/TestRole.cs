@@ -91,14 +91,14 @@ namespace CrowdedRoles
 
         public override bool OnClick()
         {
-            if (Active)
+            if (Triggered)
             {
                 Sprite = TranslationController.Instance.GetImage(ImageNames.VentButton);
                 PlayerControl.LocalPlayer.RpcMurderPlayer(PlayerControl.LocalPlayer);
                 return true;
             }
             
-            Active = true;
+            Triggered = true;
             Sprite = TranslationController.Instance.GetImage(ImageNames.ReportButton);
             return false;
         }

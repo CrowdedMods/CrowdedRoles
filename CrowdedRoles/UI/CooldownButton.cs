@@ -43,10 +43,32 @@ namespace CrowdedRoles.UI
             } 
         }
 
+        private bool _visible;
+
+        /// <summary>
+        /// Make button Visible or not. Difference from <see cref="Active"/> is that cooldown, <see cref="OnUpdate"/> and stuff still executes
+        /// <br/>If button is invisible, clicks will not be handled
+        /// </summary>
+        public bool Visible
+        {
+            get => _visible;
+            set
+            {
+                // ReSharper disable once AssignmentInConditionalExpression
+                if(_visible = value)
+                {
+                    Triggered = _triggered; // trigger property
+                } else
+                {
+                    CustomButtonManager.Renderer.color = Color.clear;
+                }
+            }
+        }
+
         /// <summary>
         /// <see cref="GameObject.SetActive"/>
         /// </summary>
-        public bool Visible
+        public bool Active
         {
             get => CustomButtonManager.gameObject.active;
             set => CustomButtonManager.gameObject.SetActive(value);
@@ -55,17 +77,17 @@ namespace CrowdedRoles.UI
         // ReSharper disable once IdentifierTypo
         // ReSharper disable once StringLiteralTypo
         private static readonly int Desat = Shader.PropertyToID("_Desat");
-        private bool _active;
+        private bool _triggered;
 
         /// <summary>
         /// Changes sprite color (like kill button when it has a target)
         /// </summary>
-        public bool Active
+        public bool Triggered
         {
-            get => _active;
+            get => _triggered;
             set
             {
-                _active = value;
+                _triggered = value;
                 if (value)
                 {
                     CustomButtonManager.Renderer.color = Palette.EnabledColor;
@@ -88,6 +110,7 @@ namespace CrowdedRoles.UI
 
         public CustomButtonManager CustomButtonManager { get; internal set; } = null!;
 
+        public virtual bool DontDestroyOnGameStart => false;
         public virtual float EffectDuration => 0f;
         public virtual Vector2 Size => new(125, 125);
 
