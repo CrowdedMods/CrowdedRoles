@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CrowdedRoles.UI;
+using HarmonyLib;
 
 namespace CrowdedRoles.Roles
 {
@@ -28,5 +30,14 @@ namespace CrowdedRoles.Roles
             RolesSet = false;
             ButtonManager.ResetButtons();
         }
+    }
+
+    public class RoleSingleton<T> where T : BaseRole
+    {
+        private T? _instance;
+
+        public T Instance =>
+            (_instance ??= RoleManager.Roles.SelectMany(p => p.Value.Select(d => d.Value)).Single(r => r is T) as T) ??
+            throw new NullReferenceException($"{typeof(T).FullDescription()} is not registered");
     }
 }
