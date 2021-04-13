@@ -4,7 +4,7 @@ using System.Text;
 using CrowdedRoles.Options;
 using CrowdedRoles.Roles;
 using Reactor;
-using Reactor.Extensions;
+using TMPro;
 using UnityEngine;
 
 namespace CrowdedRoles.Components
@@ -16,13 +16,16 @@ namespace CrowdedRoles.Components
         {
         }
         
-        public TextRenderer Text { get; private set; } = null!;
+        public TextMeshPro Text { get; private set; } = null!;
 
         public void Start()
         {
-            Text = gameObject.AddTextRenderer();
-            Text.RightAligned = true;
-            Text.scale = 0.6f;
+            Text = gameObject.AddComponent<TextMeshPro>();
+            Text.fontMaterial = Instantiate(HudManager.Instance.GameSettings.fontMaterial);
+            Text.alignment = TextAlignmentOptions.TopRight;
+            Text.rectTransform.pivot = Vector2.one;
+            Text.autoSizeTextContainer = true;
+            Text.fontSize = 1.6f;
             
             var myAspect = gameObject.AddComponent<AspectPosition>();
             myAspect.Alignment = AspectPosition.EdgeAlignments.RightTop;
@@ -64,7 +67,7 @@ namespace CrowdedRoles.Components
                 builder.AppendLine($"{option.Name}: {option.ValueText}");
             }
 
-            Text.Text = builder.ToString();
+            Text.text = builder.ToString();
         }
     }
 }

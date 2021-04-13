@@ -22,9 +22,9 @@ namespace CrowdedRoles.Patches
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(StatsManager).GetMethod("OFEDNBOFMPB")!; // AddDrawReason
-                yield return typeof(StatsManager).GetMethod("HBHHDAEMAPG")!; // AddWinReason
-                yield return typeof(StatsManager).GetMethod("GKEDMKCGFGK")!; // AddLoseReason
+                yield return typeof(StatsManager).GetMethod("AGKLDNPDDGK")!; // AddDrawReason
+                yield return typeof(StatsManager).GetMethod("MCGCDPLJOLA")!; // AddWinReason
+                yield return typeof(StatsManager).GetMethod("NJMDIPJJPEH")!; // AddLoseReason
             }
             private static bool Prefix([HarmonyArgument(0)] GameOverReason reason)
             {
@@ -46,8 +46,8 @@ namespace CrowdedRoles.Patches
                 var reason = CustomGameOverReasonManager.EndReason;
                 bool youWon = CustomGameOverReasonManager.Winners.Any(w => w.IsYou);
 
-                __instance.WinText.Text = reason.WinText;
-                __instance.WinText.Color = reason.GetWinTextColor(youWon);
+                __instance.WinText.text = reason.WinText;
+                __instance.WinText.color = reason.GetWinTextColor(youWon);
                 __instance.BackgroundBar.material.SetColor(Color, reason.GetBackgroundColor(youWon));
                 
                 AudioClip? sound = reason.Stinger;
@@ -55,7 +55,7 @@ namespace CrowdedRoles.Patches
                     "Stinger",
                     sound == null ? __instance.ImpostorStinger : sound,
                     false,
-                    (DynamicSound.GetDynamicsFunction) __instance.ILKCBLCGHCB // GetStingerVol
+                    (DynamicSound.GetDynamicsFunction) __instance.GetStingerVol
                 );
 
                 for (int i = 0; i < CustomGameOverReasonManager.ShownWinners.Count; i++)
@@ -81,12 +81,12 @@ namespace CrowdedRoles.Patches
                     else
                     {
                         player.SetFlipX(i % 2 == 0);
-                        DestroyableSingleton<HatManager>.Instance.MPEPCGDPFOD(player.SkinSlot, winner.SkinId); // SetSkin
+                        DestroyableSingleton<HatManager>.Instance.SetSkin(player.SkinSlot, winner.SkinId); // SetSkin
                     }
                     PlayerControl.SetPlayerMaterialColors(winner.ColorId, player.Body);
                     player.HatSlot.SetHat(winner.HatId, winner.ColorId);
                     PlayerControl.SetPetImage(winner.PetId, winner.ColorId, player.PetSlot);
-                    player.NameText.Text = winner.Name;
+                    player.NameText.text = winner.Name;
                     player.NameText.transform.localScale = global::Extensions.Inv(scaleVec);
                 }
 
@@ -100,13 +100,13 @@ namespace CrowdedRoles.Patches
                     var allPlayers = GameData.Instance.AllPlayers.ToArray();
                     foreach (var player in __instance.GetComponentsInChildren<PoolablePlayer>())
                     {
-                        var pl = allPlayers.FirstOrDefault(p => p.PlayerName == player.NameText.Text); // yes idk what to do else
+                        var pl = allPlayers.FirstOrDefault(p => p.PlayerName == player.NameText.text); // yes idk what to do else
                         if(pl == null) continue;
                         var role = pl.GetRole();
                         if (role != null)
                         {
-                            player.NameText.Color = role.Color;
-                            player.NameText.Text = role.FormatName(pl);
+                            player.NameText.color = role.Color;
+                            player.NameText.text = role.FormatName(pl);
                         }
                     }
                 }

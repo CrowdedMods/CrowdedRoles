@@ -58,7 +58,7 @@ namespace CrowdedRoles.Options
                 return;
             }
             
-            option.TitleText.Text = Name; // why the heck it's not in OptionBehaviour
+            option.TitleText.text = Name; // why the heck it's not in OptionBehaviour
             option.CheckMark.enabled = Value;
             option.OnValueChanged = (Action<OptionBehaviour>) OnValueChangedRaw;
         }

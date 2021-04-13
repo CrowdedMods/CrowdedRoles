@@ -43,7 +43,7 @@ namespace CrowdedRoles.Options
             OnValueChanged?.Invoke(Value);
             if(Option != null)
             {
-                Option.ValueText.Text = ValueText;
+                Option.ValueText.text = ValueText;
             }
         }
 
@@ -66,10 +66,10 @@ namespace CrowdedRoles.Options
                 return;
             }
 
-            Option.TitleText.Text = Name;
+            Option.TitleText.text = Name;
             Option.Value = Value;
             Option.Values = Enumerable.Repeat<StringNames>(OptionsManager.CustomOptionStringName, Values.Length).ToArray();
-            Option.ValueText.Text = ValueText;
+            Option.ValueText.text = ValueText;
             Option.OnValueChanged = (Action<OptionBehaviour>) OnValueChangedRaw;
         }
 

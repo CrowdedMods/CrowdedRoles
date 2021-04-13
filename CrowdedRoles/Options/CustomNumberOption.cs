@@ -93,7 +93,7 @@ namespace CrowdedRoles.Options
                 return;
             }
             
-            option.TitleText.Text = Name;
+            option.TitleText.text = Name;
             option.Increment = Increment;
             option.FormatString = ValueFormat;
             option.ValidRange = ValidRange;

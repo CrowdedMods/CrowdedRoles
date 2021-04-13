@@ -29,7 +29,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__11), nameof(IntroCutscene._CoBegin_d__11.MoveNext))]
+        [HarmonyPatch(typeof(IntroCutscene.Nested_0), nameof(IntroCutscene.Nested_0.MoveNext))]
         public static class IntroCutscene_CoBegin
         {
             public static void Postfix(bool __result)
@@ -59,7 +59,7 @@ namespace CrowdedRoles.Patches
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(ExileController), nameof(ExileController.GALOAPAFIMJ))]
+            [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp))]
             public static void ExileController_WrapUp()
             {
                 foreach (CooldownButton button in ButtonManager.ActiveButtons)

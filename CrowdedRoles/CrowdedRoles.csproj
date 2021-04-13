@@ -7,8 +7,8 @@
     <Description>CrowdedRoles Api. Not an independent plugin</Description>
     <Authors>Galster</Authors>
 
-    <GameVersion>2021.3.31.3s</GameVersion>
-    <Mappings>NuclearPowered/Mappings:0.3.0</Mappings>
+    <GameVersion>2021.4.12s</GameVersion>
+    <Mappings>NuclearPowered/Mappings:0.4.0</Mappings>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>latest</AnalysisLevel>
     <Nullable>enable</Nullable>

@@ -203,7 +203,7 @@ namespace CrowdedRoles.Extensions
                 }
             }
             
-            global::Extensions.LCBABMOODEH(player.myTasks.Cast<Il2CppSystem.Collections.Generic.IList<PlayerTask>>()); //player.myTasks.Cast<Il2CppSystem.Collections.Generic.IList<PlayerTask>>().LCBABMOODEH(); // DestroyAll
+            global::Extensions.DestroyAll(player.myTasks.Cast<Il2CppSystem.Collections.Generic.IList<PlayerTask>>());
             player.myTasks = new Il2CppSystem.Collections.Generic.List<PlayerTask>(tasks.NormalTasks.Count + tasks.StringTasks.Count);
             for (int i = 0; i < player.myTasks.Capacity; i++)
             {
@@ -222,7 +222,7 @@ namespace CrowdedRoles.Extensions
                 ImportantTextTask task = gameObject.AddComponent<ImportantTextTask>();
                 task.transform.SetParent(player.transform, false);
                 task.Text = TranslationController.Instance.GetString(StringNames.ImpostorTask, Array.Empty<Il2CppSystem.Object>()) +
-                            "\n[FFFFFFFF]" +
+                            "</color>\n" +
                             TranslationController.Instance.GetString(StringNames.FakeTasks, Array.Empty<Il2CppSystem.Object>());
                 player.myTasks.Insert(0, task);
             }
@@ -242,7 +242,7 @@ namespace CrowdedRoles.Extensions
                 var gameObject = new GameObject($"CustomStringTask_{id}");
                 gameObject.transform.SetParent(player.transform, false);
                 ImportantTextTask task = gameObject.AddComponent<ImportantTextTask>();
-                task.Text = "[FFFFFFFF]" + text; // haha funny   
+                task.Text = "</color>" + text;
                 player.myTasks[(Index) id] = task;
             }
         }
@@ -347,7 +347,7 @@ namespace CrowdedRoles.Extensions
         /// </summary>
         public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, CustomMurderOptions options = CustomMurderOptions.None)
         {
-            if (killer.AmOwner && Constants.DECMMJMOCKM()) // ShouldPlaySfx
+            if (killer.AmOwner && Constants.ShouldPlaySfx())
             {
                 SoundManager.Instance.PlaySound(killer.KillSfx, false, 0.8f);
                 killer.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
@@ -381,12 +381,12 @@ namespace CrowdedRoles.Extensions
                 text.transform.SetParent(killer.transform, false);
                 if (target.Data.IsImpostor)
                 {
-                    target.JBNJBHMIBOM(); // ClearTasks
+                    target.ClearTasks();
                     text.Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GhostImpostor, new (Array.Empty<Il2CppSystem.Object>()));
                 }
                 else if (!PlayerControl.GameOptions.GhostsDoTasks)
                 {
-                    target.JBNJBHMIBOM(); // ClearTasks
+                    target.ClearTasks();
                     text.Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GhostIgnoreTasks, new(Array.Empty<Il2CppSystem.Object>()));
                 }
                 else

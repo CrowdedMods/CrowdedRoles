@@ -47,7 +47,7 @@ namespace CrowdedRoles.Rpc
                 return;
             }
 
-            if (RoleManager.rolesSet)
+            if (RoleManager.RolesSet)
             {
                 RoleApiPlugin.Logger.LogWarning($"{sender.NetId} tried to override roles");
                 return;
@@ -61,7 +61,7 @@ namespace CrowdedRoles.Rpc
                 }
             }
 
-            RoleManager.rolesSet = true;
+            RoleManager.RolesSet = true;
         }
     }
 }

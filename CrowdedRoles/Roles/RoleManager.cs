@@ -14,7 +14,7 @@ namespace CrowdedRoles.Roles
         public static Dictionary<byte, BaseRole> PlayerRoles { get; } = new();
         internal static Dictionary<string, Dictionary<byte, BaseRole>> Roles { get; } = new();
         internal static Dictionary<byte, TaskCompletion> TaskCompletions { get; } = new ();
-        internal static bool rolesSet;
+        public static bool RolesSet { get; internal set; }
 
         internal static BaseRole? GetRoleByData(RoleData data)
         {
@@ -25,7 +25,7 @@ namespace CrowdedRoles.Roles
         {
             PlayerRoles.Clear();
             TaskCompletions.Clear();
-            rolesSet = false;
+            RolesSet = false;
             ButtonManager.ResetButtons();
         }
     }

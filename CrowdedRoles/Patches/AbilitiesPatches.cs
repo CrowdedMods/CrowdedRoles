@@ -33,7 +33,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.KEKFAGHHAKA))] // HandleHud
+        [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.HandleHud))]
         public static class KeyboardJoystick_HandleHud
         {
             public static void Postfix()

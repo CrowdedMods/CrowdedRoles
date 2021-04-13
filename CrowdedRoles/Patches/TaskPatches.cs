@@ -35,7 +35,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(GameData), nameof(GameData.MCKHICLOCBA))]
+        [HarmonyPatch(typeof(GameData), nameof(GameData.SetTasks))]
         public static class GameData_SetTasks
         {
             public static bool Prefix(GameData __instance, [HarmonyArgument(0)] byte playerId) => !(__instance.GetPlayerById(playerId)?.HasCustomRole() ?? false); 

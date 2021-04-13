@@ -46,7 +46,7 @@ namespace CrowdedRoles
         }
     }
 
-    [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.KEKFAGHHAKA))] // HandleHud
+    [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.HandleHud))]
     internal class TestPatch
     {
         private static void Postfix()

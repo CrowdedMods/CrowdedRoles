@@ -1,6 +1,7 @@
 ﻿using System;
 using CrowdedRoles.UI;
 using Reactor;
+using TMPro;
 using UnhollowerBaseLib.Attributes;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace CrowdedRoles.Components
         }
 
         public SpriteRenderer Renderer { get; private set; } = null!;
-        public TextRenderer TimerText { get; internal set; } = null!;
+        public TextMeshPro TimerText { get; internal set; } = null!;
 
         private float _timer;
         private bool _executedCooldownEnd;
@@ -69,7 +70,7 @@ namespace CrowdedRoles.Components
 
                 if (value > 0)
                 {
-                    TimerText.Text = Mathf.CeilToInt(_timer).ToString();
+                    TimerText.text = Mathf.CeilToInt(_timer).ToString();
                     TimerText.gameObject.SetActive(true);
                 }
                 else

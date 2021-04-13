@@ -19,7 +19,7 @@ namespace CrowdedRoles.Patches
         {
             public static void Prefix([HarmonyArgument(0)] ref Il2CppReferenceArray<GameData.PlayerInfo> infected)
             {
-                if (RoleManager.rolesSet)
+                if (RoleManager.RolesSet)
                 {
                     RoleApiPlugin.Logger.LogWarning("Trying to override roles");
                     return;
@@ -58,7 +58,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.DLGJDGFGAEA))]
+        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
         public static class IntroCutScene_BeginCrewmate
         {
             public static readonly int Color = Shader.PropertyToID("_Color");
@@ -79,10 +79,10 @@ namespace CrowdedRoles.Patches
                     .OrderBy(p => !p.AmOwner)
                     .ToList();
 
-                __instance.Title.Text = myRole.Name;
-                __instance.Title.Color = myRole.Color;
+                __instance.Title.text = myRole.Name;
+                __instance.Title.color = myRole.Color;
                 __instance.BackgroundBar.material.SetColor(Color, myRole.Color);
-                __instance.ImpostorText.Text = myRole.Description;
+                __instance.ImpostorText.text = myRole.Description;
                 
                 for(var i = 0; i < myTeam.Count; i++)
                 {
@@ -96,14 +96,14 @@ namespace CrowdedRoles.Patches
                     ) * 1.5f;
                     player.SetFlipX(i % 2 == 0);
                     PlayerControl.SetPlayerMaterialColors(data.ColorId, player.Body);
-                    DestroyableSingleton<HatManager>.Instance.MPEPCGDPFOD(player.SkinSlot, data.SkinId); // SetSkin
+                    DestroyableSingleton<HatManager>.Instance.SetSkin(player.SkinSlot, data.SkinId); // SetSkin
                     player.HatSlot.SetHat(data.HatId, data.ColorId);
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
                     float scale = 1f - oddness * 0.075f;
                     Vector3 scaleVec = new Vector3(scale, scale, scale) * 1.5f;
                     player.transform.localScale = scaleVec;
                     player.NameText.transform.localScale = global::Extensions.Inv(scaleVec);
-                    player.NameText.Text = myRole.FormatName(data);
+                    player.NameText.text = myRole.FormatName(data);
                     if (i > 0 && myRole.Visibility != Visibility.Everyone)
                     {
                         player.NameText.gameObject.SetActive(true);
@@ -114,7 +114,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.ADFDAKNEKKN))]
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CreateButton))]
         [HarmonyPatch(new[] { typeof(GameData.PlayerInfo) })]
         public static class MeetingHud_CreateButton
         {
@@ -128,23 +128,23 @@ namespace CrowdedRoles.Patches
                 
                 if(PlayerControl.LocalPlayer.Data.CanSee(data) && data.HasRole())
                 {
-                    __result.NameText.Color = role?.Color ?? Palette.ImpostorRed;
+                    __result.NameText.color = role?.Color ?? Palette.ImpostorRed;
                     if (role != null)
                     {
-                        __result.NameText.Text = role.FormatName(data);
+                        __result.NameText.text = role.FormatName(data);
                     }
                 }
             }
         }
 
         [HarmonyPriority(Priority.First)]
-        [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__11), nameof(IntroCutscene._CoBegin_d__11.MoveNext))]
+        [HarmonyPatch(typeof(IntroCutscene.Nested_0), nameof(IntroCutscene.Nested_0.MoveNext))]
         public static class IntroCutScene_CoBegin
         {
-            public static bool Prefix(ref bool __result, IntroCutscene._CoBegin_d__11 __instance)
+            public static bool Prefix(ref bool __result, IntroCutscene.Nested_0 __instance)
             {
                 // wait until we set our roles to prevent bugs
-                if (!RoleManager.rolesSet)
+                if (!RoleManager.RolesSet)
                 {
                     return false;
                 }
@@ -165,10 +165,10 @@ namespace CrowdedRoles.Patches
                     foreach (var player in PlayerControl.AllPlayerControls.ToArray().Where(p => PlayerControl.LocalPlayer.CanSeeSpecial(p)))
                     {
                         BaseRole? role = player.GetRole();
-                        player.nameText.Color = role?.Color ?? Palette.ImpostorRed;
+                        player.nameText.color = role?.Color ?? Palette.ImpostorRed;
                         if (role != null)
                         { 
-                            player.nameText.Text = role.FormatName(player.Data);
+                            player.nameText.text = role.FormatName(player.Data);
                         }
                     }
 
