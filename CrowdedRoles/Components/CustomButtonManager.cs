@@ -31,7 +31,8 @@ namespace CrowdedRoles.Components
                 if (!_effectEnabled && value)
                 {
                     Timer = Button.EffectDuration;
-                    Button.Triggered = false;
+                    // Button.Triggered = false;
+                    // do it yourself in OnEffectStart if you need it? for now it's bad if you make gameplay always-triggered buttons (0 cooldown)
                     Button.OnEffectStart();
                 } else if (_effectEnabled && !value)
                 {

@@ -44,6 +44,7 @@ namespace CrowdedRoles.UI
         }
 
         private bool _visible = true;
+        private Color _oldTimerTextColor;
 
         /// <summary>
         /// Make button Visible or not. Difference from <see cref="Active"/> is that cooldown, <see cref="OnUpdate"/> and stuff still executes
@@ -57,10 +58,12 @@ namespace CrowdedRoles.UI
                 // ReSharper disable once AssignmentInConditionalExpression
                 if(_visible = value)
                 {
+                    CustomButtonManager.TimerText.color = _oldTimerTextColor;
                     Triggered = _triggered; // trigger property
                 } else
                 {
-                    CustomButtonManager.Renderer.color = Color.clear;
+                    _oldTimerTextColor = CustomButtonManager.TimerText.color;
+                    CustomButtonManager.TimerText.color = CustomButtonManager.Renderer.color = Color.clear;
                 }
             }
         }
