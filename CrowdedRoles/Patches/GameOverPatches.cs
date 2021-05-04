@@ -179,7 +179,7 @@ namespace CrowdedRoles.Patches
             {
                 if (isCustom)
                 {
-                    CustomGameOverReasonManager.EndReason.Deserialize(writer);
+                    CustomGameOverReasonManager.EndReason.Serialize(writer);
                 }
             }
 
@@ -204,7 +204,7 @@ namespace CrowdedRoles.Patches
 
                 if (reason.IsCustom())
                 {
-                    CustomGameOverReasonManager.EndReason = CustomGameOverReason.Serialize(reader);
+                    CustomGameOverReasonManager.EndReason = CustomGameOverReason.Deserialize(reader);
                 }
 
                 lock (__instance.Dispatcher)

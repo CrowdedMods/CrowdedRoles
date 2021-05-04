@@ -21,13 +21,13 @@ namespace CrowdedRoles.GameOverReasons
 
         internal readonly GlobalData Data = new();
 
-        internal void Deserialize(MessageWriter writer)
+        internal void Serialize(MessageWriter writer)
         {
             writer.Write(Data.pluginId);
             writer.Write(Data.localId);
         }
 
-        internal static CustomGameOverReason Serialize(MessageReader reader)
+        internal static CustomGameOverReason Deserialize(MessageReader reader)
         {
             var data = new GlobalData
             {
