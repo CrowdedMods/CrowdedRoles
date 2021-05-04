@@ -24,14 +24,14 @@ namespace CrowdedRoles.Rpc
         {
             MessageExtensions.WriteNetObject(writer, data.killer);
             MessageExtensions.WriteNetObject(writer, data.target);
-            writer.Write((uint)data.options);
+            writer.WritePacked((uint)data.options);
         }
 
         public override Data Read(MessageReader reader) => new()
         {
             killer = MessageExtensions.ReadNetObject<PlayerControl>(reader),
             target = MessageExtensions.ReadNetObject<PlayerControl>(reader),
-            options = (CustomMurderOptions)reader.ReadUInt32()
+            options = (CustomMurderOptions)reader.ReadPackedUInt32()
         };
 
         public override void Handle(PlayerControl sender, Data data)
