@@ -13,7 +13,7 @@ namespace CrowdedRoles.UI
         internal static List<CooldownButton> ActiveButtons { get; } = new();
         private static int _currentIndex;
 
-        private const float Delta = 0.7f;
+        private const float Delta = 0.8f;
         private const float ButtonSize = 0.5f; // it is hard-coded for now
 
         private static int MaxButtons => (int) ((Screen.safeArea.height - Delta) / ButtonSize);
