@@ -144,9 +144,9 @@ namespace CrowdedRoles.Patches
             [HarmonyPatch(typeof(PlayerControl._CoSetTasks_d__78), nameof(PlayerControl._CoSetTasks_d__78.MoveNext))]
             public static void PlayerControl_CoSetTasks(PlayerControl._CoSetTasks_d__78 __instance)
             {
-                if (__instance.__this.AmOwner)
+                if (__instance.__4__this.AmOwner)
                 {
-                    BaseRole? role = __instance.__this.GetRole();
+                    BaseRole? role = __instance.__4__this.GetRole();
                     if (role != null)
                     {
                         HudManager.Instance.KillButton.gameObject.SetActive(role.CanKill(null));

@@ -138,10 +138,10 @@ namespace CrowdedRoles.Patches
         }
 
         [HarmonyPriority(Priority.First)]
-        [HarmonyPatch(typeof(IntroCutscene.Nested_0), nameof(IntroCutscene.Nested_0.MoveNext))]
+        [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__11), nameof(IntroCutscene._CoBegin_d__11.MoveNext))]
         public static class IntroCutScene_CoBegin
         {
-            public static bool Prefix(ref bool __result, IntroCutscene.Nested_0 __instance)
+            public static bool Prefix(ref bool __result, IntroCutscene._CoBegin_d__11 __instance)
             {
                 // wait until we set our roles to prevent bugs
                 if (!RoleManager.RolesSet)

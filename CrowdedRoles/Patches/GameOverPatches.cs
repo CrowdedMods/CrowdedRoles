@@ -22,9 +22,9 @@ namespace CrowdedRoles.Patches
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(StatsManager).GetMethod("AGKLDNPDDGK")!; // AddDrawReason
-                yield return typeof(StatsManager).GetMethod("MCGCDPLJOLA")!; // AddWinReason
-                yield return typeof(StatsManager).GetMethod("NJMDIPJJPEH")!; // AddLoseReason
+                yield return typeof(StatsManager).GetMethod("AddDrawReason")!;
+                yield return typeof(StatsManager).GetMethod("AddWinReason")!;
+                yield return typeof(StatsManager).GetMethod("AddLoseReason")!;
             }
             private static bool Prefix([HarmonyArgument(0)] GameOverReason reason)
             {
@@ -134,7 +134,7 @@ namespace CrowdedRoles.Patches
         {
             private static void Prefix(AmongUsClient._CoEndGame_d__23 __instance)
             {
-                if (__instance.__state == 0 && !TempData.EndReason.IsCustom())
+                if (__instance.__1__state == 0 && !TempData.EndReason.IsCustom())
                 {
                     bool flag = TempData.DidHumansWin(TempData.EndReason);
                     TempData.winners.Clear();
