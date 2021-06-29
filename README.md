@@ -8,7 +8,7 @@ Coming soon, use XML docs in source code for now
 ## Using in your project
 Reference installed CrowdedRoles dll in your `.csproj` via Deobfuscate task. It should look like this `<Deobfuscate Include="$(AmongUs)\BepInEx\plugins\CrowdedRoles-$(GameVersion).dll" />`
 
-# Buidling
+# Building
 Debug build (as for now) has a lot of testing stuff located in `TestRole.cs` so if you don't want to see it, you should build CR library with Release configuration
 
 ## Contributing
