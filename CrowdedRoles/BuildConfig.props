@@ -1,0 +1,6 @@
+<Project>
+    <PropertyGroup>
+        <GameProvider>Github</GameProvider>
+        <GameVersion>2021.6.30s</GameVersion>
+    </PropertyGroup>
+</Project>
