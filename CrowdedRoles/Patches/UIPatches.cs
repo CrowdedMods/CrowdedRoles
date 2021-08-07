@@ -21,6 +21,7 @@ namespace CrowdedRoles.Patches
                     var customManager = copiedObject.AddComponent<CustomButtonManager>();
                     var killButtonManager = copiedObject.GetComponent<KillButtonManager>();
                     customManager.TimerText = killButtonManager.TimerText; // It works very weird, but works
+                    killButtonManager.killText.Destroy();
                     killButtonManager.Destroy();
                     customManager.Button = button;
                     button.CustomButtonManager = customManager;
