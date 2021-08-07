@@ -141,8 +141,8 @@ namespace CrowdedRoles.Patches
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(PlayerControl._CoSetTasks_d__78), nameof(PlayerControl._CoSetTasks_d__78.MoveNext))]
-            public static void PlayerControl_CoSetTasks(PlayerControl._CoSetTasks_d__78 __instance)
+            [HarmonyPatch(typeof(PlayerControl._CoSetTasks_d__83), nameof(PlayerControl._CoSetTasks_d__83.MoveNext))]
+            public static void PlayerControl_CoSetTasks(PlayerControl._CoSetTasks_d__83 __instance)
             {
                 if (__instance.__4__this.AmOwner)
                 {

@@ -28,7 +28,7 @@ namespace CrowdedRoles.Patches
             }
         }
 
-        [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__11), nameof(IntroCutscene._CoBegin_d__11.MoveNext))]
+        [HarmonyPatch(typeof(IntroCutscene._CoBegin_d__14), nameof(IntroCutscene._CoBegin_d__14.MoveNext))]
         public static class IntroCutscene_CoBegin
         {
             public static void Postfix(bool __result)
