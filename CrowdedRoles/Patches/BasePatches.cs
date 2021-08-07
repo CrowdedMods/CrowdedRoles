@@ -91,12 +91,12 @@ namespace CrowdedRoles.Patches
                     PoolablePlayer player = Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
                     player.transform.localPosition = new Vector3(
                         0.8f* oddness * (i % 2 == 0 ? -1 : 1) * (1 - oddness * 0.08f),
-                        __instance.BaseY + oddness * 0.15f,
+                        IntroCutscene.BaseY + oddness * 0.15f,
                         (i == 0 ? -8 : -1) + oddness * 0.01f
                     ) * 1.5f;
                     player.SetFlipX(i % 2 == 0);
                     PlayerControl.SetPlayerMaterialColors(data.ColorId, player.Body);
-                    DestroyableSingleton<HatManager>.Instance.SetSkin(player.SkinSlot, data.SkinId); // SetSkin
+                    DestroyableSingleton<HatManager>.Instance.SetSkin(player.Skin.layer, data.SkinId); // SetSkin
                     player.HatSlot.SetHat(data.HatId, data.ColorId);
                     PlayerControl.SetPetImage(data.PetId, data.ColorId, player.PetSlot);
                     float scale = 1f - oddness * 0.075f;

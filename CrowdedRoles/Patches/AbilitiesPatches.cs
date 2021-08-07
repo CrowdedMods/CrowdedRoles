@@ -162,9 +162,10 @@ namespace CrowdedRoles.Patches
                     (PlayerControl.LocalPlayer.GetRole()?.CanSabotage(null) ?? false) &&
                     PlayerControl.LocalPlayer.CanMove)
                 {
-                    __instance.UseButton.sprite = TranslationController.Instance.GetImage(ImageNames.SabotageButton);
-                    CooldownHelpers.SetCooldownNormalizedUvs(__instance.UseButton);
-                    __instance.UseButton.color = UseButtonManager.EnabledColor;
+                    __instance.currentButtonShown = __instance.otherButtons[ImageNames.SabotageButton];
+                    __instance.currentButtonShown.graphic.color = UseButtonManager.EnabledColor;
+                    __instance.currentButtonShown.text.color = UseButtonManager.EnabledColor;
+                    __instance.currentButtonShown.Show(0f);
                 }
             }
 
