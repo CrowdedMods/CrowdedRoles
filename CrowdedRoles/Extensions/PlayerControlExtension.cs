@@ -372,7 +372,7 @@ namespace CrowdedRoles.Extensions
 
                 if (!options.HasFlag(CustomMurderOptions.NoAnimation))
                 {
-                    HudManager.Instance.KillOverlay.ShowOne(killer.Data, target.Data);
+                    HudManager.Instance.KillOverlay.ShowKillAnimation(killer.Data, target.Data);
                 }
                 HudManager.Instance.ShadowQuad.gameObject.SetActive(false);
                 target.nameText.GetComponent<MeshRenderer>().material.SetInt(Mask, 0);
