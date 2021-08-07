@@ -22,9 +22,6 @@ namespace CrowdedRoles
 
         public override void Load()
         {
-            RegisterCustomRpcAttribute.Register(this);
-            RegisterInIl2CppAttribute.Register();
-            
             BepInPlugin metadata = MetadataHelper.GetMetadata(this);
             OptionsManager.SaveOptionsFile = new ConfigFile(Utility.CombinePaths(Paths.ConfigPath, Id + ".options.cfg"), false, metadata);
 
