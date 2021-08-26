@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using PowerTools;
+using Reactor;
 using UnityEngine;
 
 namespace CrowdedRoles.Extensions
@@ -14,28 +15,38 @@ namespace CrowdedRoles.Extensions
         {
             FollowerCamera camera = Camera.main!.GetComponent<FollowerCamera>();
             bool isParticipant = source == PlayerControl.LocalPlayer || target == PlayerControl.LocalPlayer;
+            PlayerPhysics sourcePhysics = source.MyPhysics;
             KillAnimation.SetMovement(target, false);
-            if (isParticipant)
-            {
-                camera.Locked = true;
-            }
-            target.Die(DeathReason.Kill);
             DeadBody deadBody = Object.Instantiate(anim.bodyPrefab); // https://github.com/Herysia/AmongUsTryhard
+            deadBody.enabled = false;
             Vector3 vector = target.transform.position + anim.BodyOffset;
             vector.z = vector.y / 1000;
             deadBody.transform.position = vector;
             deadBody.ParentId = target.PlayerId;
-            target.SetPlayerMaterialColors(deadBody.GetComponent<Renderer>());
+            target.SetPlayerMaterialColors(deadBody.bodyRenderer);
+            target.SetPlayerMaterialColors(deadBody.bloodSplatter);
+            if (isParticipant)
+            {
+                camera.Locked = true;
+                ConsoleJoystick.SetMode_Task();
+                if (PlayerControl.LocalPlayer.AmOwner)
+                {
+                    PlayerControl.LocalPlayer.MyPhysics.inputHandler.enabled = true;
+                }
+            }
+
+            target.Die(DeathReason.Kill);
             if (!options.HasFlag(CustomMurderOptions.NoSnap))
             {
                 KillAnimation.SetMovement(source, false);
-                SpriteAnim sourceAnim = source.GetComponent<SpriteAnim>();
+                SpriteAnim sourceAnim = source.MyAnim;
                 yield return new WaitForAnimationFinish(sourceAnim, anim.BlurAnim);
                 source.NetTransform.SnapTo(target.transform.position);
-                sourceAnim.Play(source.MyPhysics.IdleAnim, 1f);
+                sourceAnim.Play(sourcePhysics.IdleAnim, 1f);
                 KillAnimation.SetMovement(source, true);
             }
             KillAnimation.SetMovement(target, true);
+            deadBody.enabled = true;
             if (isParticipant)
             {
                 camera.Locked = false;
