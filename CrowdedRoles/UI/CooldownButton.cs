@@ -56,14 +56,15 @@ namespace CrowdedRoles.UI
             set
             {
                 // ReSharper disable once AssignmentInConditionalExpression
-                if(_visible = value)
-                {
-                    CustomButtonManager.TimerText.color = _oldTimerTextColor;
+                _visible = value;
+                if(_visible) {
+                    CustomButtonManager.TimerText.enabled = true;
+                    CustomButtonManager.Renderer.enabled = true;
                     Triggered = _triggered; // trigger property
                 } else
                 {
-                    _oldTimerTextColor = CustomButtonManager.TimerText.color;
-                    CustomButtonManager.TimerText.color = CustomButtonManager.Renderer.color = Color.clear;
+                    CustomButtonManager.TimerText.gameObject.SetActive(false);
+                    CustomButtonManager.Renderer.enabled = false;
                 }
             }
         }
